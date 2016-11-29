@@ -1,82 +1,119 @@
 package cn.edu.nju.dislab.moodexphttputils;
 
-import android.net.Uri;
-
-import com.google.common.io.ByteStreams;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Map;
+
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * Created by zhantong on 2016/11/29.
  */
 
 public class HttpRequest {
-    public JsonElement get(String url, Map<String, String> params) throws IOException {
-        URL parsedUrl;
-        parsedUrl = new URL(parseUrl(url, params));
-        HttpURLConnection urlConnection = (HttpURLConnection) parsedUrl.openConnection();
-        int status = urlConnection.getResponseCode();
-        if (status == HttpURLConnection.HTTP_OK) {
-            InputStream inputStream = urlConnection.getInputStream();
-            String inputString=new String(ByteStreams.toByteArray(inputStream));
-            JsonParser parser=new JsonParser();
-            JsonElement element=parser.parse(inputString);
-            urlConnection.disconnect();
-            return element;
-        } else {
-            urlConnection.disconnect();
-            throw new IOException("Server returned non-OK status: " + status);
-        }
+    OkHttpClient client;
+
+    public HttpRequest() {
+        client = new OkHttpClient();
     }
 
-    public void download(String url, String filePath) throws IOException {
-        File file = new File(filePath);
-        URL parsedUrl;
-        parsedUrl = new URL(parseUrl(url, null));
-        HttpURLConnection urlConnection = (HttpURLConnection) parsedUrl.openConnection();
-        int status = urlConnection.getResponseCode();
-        if (status == HttpURLConnection.HTTP_OK) {
-            InputStream inputStream = urlConnection.getInputStream();
-            byte[] fileInByteArray = ByteStreams.toByteArray(inputStream);
-            OutputStream os = new FileOutputStream(file);
-            os.write(fileInByteArray);
-            os.close();
-            urlConnection.disconnect();
-        } else {
-            urlConnection.disconnect();
-            throw new IOException("Server returned non-OK status: " + status);
+    public ResponseBody get(String host, int port, String segments, Map<String, String> params) throws IOException {
+        HttpUrl url = parseUrl(host, port, segments, params);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) {
+            throw new IOException("Server returned non-OK status: " + response.toString());
         }
+        return response.body();
     }
 
-    public JsonElement upload(String url, String filePath, Map<String, String> params) throws IOException {
-        URL parsedUrl = new URL(parseUrl(url, null));
-        MultipartUtility multipartUtility = new MultipartUtility(parsedUrl.toString(), "UTF-8");
+    public String getReturnString(String host, int port, String segments, Map<String, String> params) throws IOException {
+        return get(host, port, segments, params).string();
+    }
+
+    public JsonElement getReturnJson(String host, int port, String segments, Map<String, String> params) throws IOException {
+        JsonParser parser = new JsonParser();
+        return parser.parse(getReturnString(host, port, segments, params));
+    }
+
+    public byte[] getReturnBytes(String host, int port, String segments, Map<String, String> params) throws IOException {
+        return get(host, port, segments, params).bytes();
+    }
+
+    public void download(String host, int port, String segments, Map<String, String> params, String filePath) throws IOException {
+        byte[] fileInBytes = getReturnBytes(host, port, segments, params);
+        OutputStream os = new FileOutputStream(filePath);
+        os.write(fileInBytes);
+        os.close();
+    }
+
+    public void download(String host, int port, String segments, String filePath) throws IOException {
+        download(host, port, segments, null, filePath);
+    }
+
+    public ResponseBody post(String host, int port, String segments, Map<String, String> params, String filePath) throws IOException {
+        HttpUrl url = parseUrl(host, port, segments, null);
+        MultipartBody.Builder builder = new MultipartBody.Builder();
         if (params != null) {
             for (Map.Entry<String, String> entry : params.entrySet()) {
-                multipartUtility.addFormField(entry.getKey(), entry.getValue());
+                builder.addFormDataPart(entry.getKey(), entry.getValue());
             }
         }
-        multipartUtility.addFilePart("file", new File(filePath));
-        return multipartUtility.finish();
+        if (filePath != null) {
+            String contentType = "application/octet-stream; charset=utf-8";
+            File file = new File(filePath);
+            RequestBody requestBody = RequestBody.create(MediaType.parse(contentType), file);
+            builder.addFormDataPart("file", file.getName(), requestBody);
+        }
+        MultipartBody multipartBody = builder.build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(multipartBody)
+                .build();
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) {
+            throw new IOException("Server returned non-OK status: " + response.toString());
+        }
+        return response.body();
     }
 
-    public static String parseUrl(String url, Map<String, String> params) {
-        if (params != null) {
-            Uri.Builder builder = Uri.parse(url).buildUpon();
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                builder.appendQueryParameter(entry.getKey(), entry.getValue());
-            }
-            return builder.build().toString();
+    public String postReturnString(String host, int port, String segments, Map<String, String> params, String filePath) throws IOException {
+        return post(host, port, segments, params, filePath).string();
+    }
+
+    public JsonElement postReturnJson(String host, int port, String segments, Map<String, String> params, String filePath) throws IOException {
+        JsonParser parser = new JsonParser();
+        return parser.parse(postReturnString(host, port, segments, params, filePath));
+    }
+
+    public static HttpUrl parseUrl(String host, int port, String segments, Map<String, String> params) {
+        HttpUrl.Builder builder = new HttpUrl.Builder().scheme("http").host(host);
+        if (port != -1) {
+            builder.port(port);
         }
-        return Uri.parse(url).toString();
+        if (segments != null) {
+            builder.addPathSegments(segments);
+        }
+        if (params != null) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                builder.addQueryParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        return builder.build();
     }
 }
