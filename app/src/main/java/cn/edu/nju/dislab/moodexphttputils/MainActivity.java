@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +25,9 @@ import java.util.Map;
 
 public class MainActivity extends Activity {
     private static final String TAG = "MoodExp";
-    private static final String BASE_URL="http://114.212.80.16:9000";
+    private static final String BASE_URL = "";
+    private static final String HOST = "114.212.80.16";
+    private static final int PORT = 9000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +54,7 @@ public class MainActivity extends Activity {
         boolean resultBoolean;
         JsonElement resultJson;
 
-        if(false) {
+        if (false) {
             resultBoolean = register("一班", "我", "150001", "13888888888");
             if (resultBoolean) {
                 Log.d(TAG, "success");
@@ -63,18 +66,21 @@ public class MainActivity extends Activity {
         }
 
 
-
-        if(false) {
-            String[] fileNames = {"150001_1.db", "150001_3.db", "150003_2.db", "150003_4.db"};
-            for (String fileName : fileNames) {
-                resultBoolean = upload(Utils.combinePaths(Environment.getExternalStorageDirectory().getAbsolutePath(), fileName),fileName);
+        if (false) {
+            List<String[]> filesInfo = new ArrayList<>();
+            filesInfo.add(new String[]{"150001", "1", "1.2", "150001_1.db"});
+            filesInfo.add(new String[]{"150001", "3", "1.0", "150001_3.db"});
+            filesInfo.add(new String[]{"150003", "2", "1.2", "150003_2.db"});
+            filesInfo.add(new String[]{"150003", "4", "1.2", "150003_4.db"});
+            for (String[] fileInfo : filesInfo) {
+                resultBoolean = upload(Utils.combinePaths(Environment.getExternalStorageDirectory().getAbsolutePath(), fileInfo[3]), fileInfo[0], Integer.parseInt(fileInfo[1]), fileInfo[2]);
                 if (resultBoolean) {
-                    Log.d(TAG, "uploaded " + fileName);
+                    Log.d(TAG, "uploaded " + Arrays.toString(fileInfo));
                 }
             }
         }
 
-        if(false) {
+        if (false) {
             String[] fileNames = {"150001.db", "150003.db"};
             for (String fileName : fileNames) {
                 resultBoolean = download(fileName, Utils.combinePaths(Environment.getExternalStorageDirectory().getAbsolutePath(), fileName));
@@ -84,40 +90,41 @@ public class MainActivity extends Activity {
             }
         }
 
-        if(true) {
+        if (true) {
             resultJson = statistic();
-            if(resultJson!=null) {
-                JsonArray students=resultJson.getAsJsonArray();
+            if (resultJson != null) {
+                JsonArray students = resultJson.getAsJsonArray();
                 for (Iterator<JsonElement> it = students.iterator(); it.hasNext(); ) {
-                    JsonObject student=it.next().getAsJsonObject();
+                    JsonObject student = it.next().getAsJsonObject();
                     Log.d(TAG, "name: " + student.get("name").getAsString());
                     Log.d(TAG, "class: " + student.get("class").getAsString());
                     Log.d(TAG, "id: " + student.get("id").getAsString());
                     Log.d(TAG, "phone: " + student.get("phone").getAsString());
-                    JsonArray counts= student.getAsJsonArray("count");
-                    Type intListType=new TypeToken<ArrayList<Integer>>() {}.getType();
-                    List<Integer> countsList=new Gson().fromJson(counts,intListType);
-                    Log.d(TAG,"counts: "+countsList.toString());
+                    JsonArray counts = student.getAsJsonArray("count");
+                    Type intListType = new TypeToken<ArrayList<Integer>>() {
+                    }.getType();
+                    List<Integer> countsList = new Gson().fromJson(counts, intListType);
+                    Log.d(TAG, "counts: " + countsList.toString());
                 }
             }
         }
-        if(false){
-            String[] ids={"150001","150002"};
-            for(String id:ids){
-                String className=studentClass(id);
-                if(className!=null){
-                    Log.d(TAG,"id: "+id+", class: "+className);
-                }else{
-                    Log.d(TAG,"id: "+id+", class not found, you may try again");
+        if (false) {
+            String[] ids = {"150001", "150002"};
+            for (String id : ids) {
+                String className = studentClass(id);
+                if (className != null) {
+                    Log.d(TAG, "id: " + id + ", class: " + className);
+                } else {
+                    Log.d(TAG, "id: " + id + ", class not found, you may try again");
                 }
             }
         }
-        if(false){
-            String[] ids={"150001","150002"};
-            for(String id:ids){
-                resultBoolean=delete(id);
-                if(resultBoolean){
-                    Log.d(TAG,"successfully deleted "+id);
+        if (false) {
+            String[] ids = {"150001", "150002"};
+            for (String id : ids) {
+                resultBoolean = delete(id);
+                if (resultBoolean) {
+                    Log.d(TAG, "successfully deleted " + id);
                 }
             }
         }
@@ -132,8 +139,8 @@ public class MainActivity extends Activity {
 
         HttpRequest request = new HttpRequest();
         try {
-            JsonElement element = request.get(BASE_URL+"/register", params);
-            JsonObject result=element.getAsJsonObject();
+            JsonElement element = request.getReturnJson(HOST, PORT, "register", params);
+            JsonObject result = element.getAsJsonObject();
             return result.get("status").getAsBoolean();
         } catch (IOException e) {
             e.printStackTrace();
@@ -144,68 +151,94 @@ public class MainActivity extends Activity {
     public JsonElement statistic() {
         HttpRequest request = new HttpRequest();
         try {
-            JsonElement element = request.get(BASE_URL+"/statistic", null);
-            return element;
+            return request.getReturnJson(HOST, PORT, "statistic", null);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public boolean upload(String filePath,String fileName) {
+    public boolean upload(String filePath, String id, int count, String version) {
         Map<String, String> params = new HashMap<>();
-        params.put("filename", fileName);
+        params.put("id", id);
+        params.put("count", Integer.toString(count));
+        params.put("version", version);
 
         HttpRequest request = new HttpRequest();
         try {
-            JsonElement element = request.upload(BASE_URL+"/upload", filePath, params);
-            JsonObject result=element.getAsJsonObject();
-            return result.get("status").getAsBoolean();
+            JsonElement element = request.postReturnJson(HOST, PORT, "upload", params, filePath);
+            JsonObject result = element.getAsJsonObject();
+            if (result.get("status").getAsBoolean()) {
+                String serverSHA1 = result.get("sha1").getAsString();
+                String localSHA1 = Utils.fileToSHA1(filePath);
+                if (localSHA1 != null && localSHA1.toLowerCase().equals(serverSHA1.toLowerCase())) {
+                    return true;
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
 
     public boolean download(String fileName, String filePath) {
         HttpRequest request = new HttpRequest();
         try {
-            request.download(BASE_URL+"/uploads/" + fileName, filePath);
+            request.download(HOST, PORT, "uploads/" + fileName, filePath);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
     }
-    public String studentClass(String id){
-        JsonObject info=studentInfo(id);
-        if(info!=null&&info.get("status").getAsBoolean()){
+
+    public boolean download(String id, int count, String version, String filePath) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+        params.put("count", Integer.toString(count));
+        params.put("version", version);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            request.download(HOST, PORT, "download", params, filePath);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String studentClass(String id) {
+        JsonObject info = studentInfo(id);
+        if (info != null && info.get("status").getAsBoolean()) {
             return info.get("class").getAsString();
         }
         return null;
     }
-    private JsonObject studentInfo(String id){
+
+    private JsonObject studentInfo(String id) {
         Map<String, String> params = new HashMap<>();
-        params.put("id",id);
+        params.put("id", id);
 
         HttpRequest request = new HttpRequest();
         try {
-            JsonElement element = request.get(BASE_URL+"/info", params);
-            JsonObject result=element.getAsJsonObject();
+            JsonElement element = request.getReturnJson(HOST, PORT, "info", params);
+            JsonObject result = element.getAsJsonObject();
             return result;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
-    public boolean delete(String id){
+
+    public boolean delete(String id) {
         Map<String, String> params = new HashMap<>();
-        params.put("id",id);
+        params.put("id", id);
 
         HttpRequest request = new HttpRequest();
         try {
-            JsonElement element = request.get(BASE_URL+"/delete", params);
-            JsonObject result=element.getAsJsonObject();
+            JsonElement element = request.getReturnJson(HOST, PORT, "delete", params);
+            JsonObject result = element.getAsJsonObject();
             return result.get("status").getAsBoolean();
         } catch (IOException e) {
             e.printStackTrace();
