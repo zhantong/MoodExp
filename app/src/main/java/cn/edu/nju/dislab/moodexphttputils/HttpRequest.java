@@ -29,7 +29,7 @@ public class HttpRequest {
         client = new OkHttpClient();
     }
 
-    public ResponseBody get(String host, int port, String segments, Map<String, String> params) throws IOException {
+    private ResponseBody get(String host, int port, String segments, Map<String, String> params) throws IOException {
         HttpUrl url = parseUrl(host, port, segments, params);
         Request request = new Request.Builder()
                 .url(url)
@@ -37,6 +37,7 @@ public class HttpRequest {
 
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful()) {
+            response.close();
             throw new IOException("Server returned non-OK status: " + response.toString());
         }
         return response.body();
@@ -66,27 +67,28 @@ public class HttpRequest {
         download(host, port, segments, null, filePath);
     }
 
-    public ResponseBody post(String host, int port, String segments, Map<String, String> params, String filePath) throws IOException {
+    private ResponseBody post(String host, int port, String segments, Map<String, String> params, String filePath) throws IOException {
         HttpUrl url = parseUrl(host, port, segments, null);
-        MultipartBody.Builder builder = new MultipartBody.Builder();
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         if (params != null) {
             for (Map.Entry<String, String> entry : params.entrySet()) {
                 builder.addFormDataPart(entry.getKey(), entry.getValue());
             }
         }
         if (filePath != null) {
-            String contentType = "application/octet-stream; charset=utf-8";
+            String contentType = "application/octet-stream";
             File file = new File(filePath);
             RequestBody requestBody = RequestBody.create(MediaType.parse(contentType), file);
             builder.addFormDataPart("file", file.getName(), requestBody);
         }
-        MultipartBody multipartBody = builder.build();
+        RequestBody requestBody = builder.build();
         Request request = new Request.Builder()
                 .url(url)
-                .post(multipartBody)
+                .post(requestBody)
                 .build();
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful()) {
+            response.close();
             throw new IOException("Server returned non-OK status: " + response.toString());
         }
         return response.body();
