@@ -12,10 +12,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,7 +23,6 @@ import java.util.Map;
 
 public class MainActivity extends Activity {
     private static final String TAG = "MoodExp";
-    private static final String BASE_URL = "";
     private static final String HOST = "114.212.80.16";
     private static final int PORT = 9000;
 
@@ -54,7 +51,7 @@ public class MainActivity extends Activity {
         boolean resultBoolean;
         JsonElement resultJson;
 
-        if (false) {
+        if (true) {
             resultBoolean = register("一班", "我", "150001", "13888888888");
             if (resultBoolean) {
                 Log.d(TAG, "success");
@@ -75,22 +72,26 @@ public class MainActivity extends Activity {
             for (String[] fileInfo : filesInfo) {
                 resultBoolean = upload(Utils.combinePaths(Environment.getExternalStorageDirectory().getAbsolutePath(), fileInfo[3]), fileInfo[0], Integer.parseInt(fileInfo[1]), fileInfo[2]);
                 if (resultBoolean) {
-                    Log.d(TAG, "uploaded " + Arrays.toString(fileInfo));
+                    Log.d(TAG, "uploaded: " + Arrays.toString(fileInfo));
                 }
             }
         }
 
         if (false) {
-            String[] fileNames = {"150001.db", "150003.db"};
-            for (String fileName : fileNames) {
-                resultBoolean = download(fileName, Utils.combinePaths(Environment.getExternalStorageDirectory().getAbsolutePath(), fileName));
+            List<String[]> filesInfo = new ArrayList<>();
+            filesInfo.add(new String[]{"150001", "1", "1.2", "150001_1.db"});
+            filesInfo.add(new String[]{"150001", "3", "1.0", "150001_3.db"});
+            filesInfo.add(new String[]{"150003", "2", "1.2", "150003_2.db"});
+            filesInfo.add(new String[]{"150003", "4", "1.2", "150003_4.db"});
+            for (String[] fileInfo : filesInfo) {
+                resultBoolean = download(fileInfo[0], Integer.parseInt(fileInfo[1]), fileInfo[2], Utils.combinePaths(Environment.getExternalStorageDirectory().getAbsolutePath(), fileInfo[3]));
                 if (resultBoolean) {
-                    Log.d(TAG, "downloaded " + fileName);
+                    Log.d(TAG, "downloaded " + Arrays.toString(fileInfo));
                 }
             }
         }
 
-        if (true) {
+        if (false) {
             resultJson = statistic();
             if (resultJson != null) {
                 JsonArray students = resultJson.getAsJsonArray();
@@ -100,11 +101,12 @@ public class MainActivity extends Activity {
                     Log.d(TAG, "class: " + student.get("class").getAsString());
                     Log.d(TAG, "id: " + student.get("id").getAsString());
                     Log.d(TAG, "phone: " + student.get("phone").getAsString());
-                    JsonArray counts = student.getAsJsonArray("count");
-                    Type intListType = new TypeToken<ArrayList<Integer>>() {
-                    }.getType();
-                    List<Integer> countsList = new Gson().fromJson(counts, intListType);
-                    Log.d(TAG, "counts: " + countsList.toString());
+                    JsonObject uploads = student.get("uploads").getAsJsonObject();
+                    for (Map.Entry<String, JsonElement> entry : uploads.entrySet()) {
+                        String version = entry.getKey();
+                        int[] counts = new Gson().fromJson(entry.getValue(), int[].class);
+                        Log.d(TAG, "version: " + version + " counts: " + Arrays.toString(counts));
+                    }
                 }
             }
         }
@@ -179,17 +181,6 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public boolean download(String fileName, String filePath) {
-        HttpRequest request = new HttpRequest();
-        try {
-            request.download(HOST, PORT, "uploads/" + fileName, filePath);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
     public boolean download(String id, int count, String version, String filePath) {
