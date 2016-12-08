@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
         boolean resultBoolean;
         JsonElement resultJson;
 
-        if (true) {
+        if (false) {
             resultBoolean = register("一班", "我", "150001", "13888888888");
             if (resultBoolean) {
                 Log.d(TAG, "success");
@@ -128,6 +128,19 @@ public class MainActivity extends Activity {
                 if (resultBoolean) {
                     Log.d(TAG, "successfully deleted " + id);
                 }
+            }
+        }
+        if (true) {
+            String version = getVersion();
+            if (version != null) {
+                Log.d(TAG, "version: " + version);
+            }
+        }
+        if (false) {
+            String version = "2.3.4";
+            resultBoolean = setVersion(version);
+            if (resultBoolean) {
+                Log.d(TAG, "version has set");
             }
         }
     }
@@ -229,6 +242,34 @@ public class MainActivity extends Activity {
         HttpRequest request = new HttpRequest();
         try {
             JsonElement element = request.getReturnJson(HOST, PORT, "delete", params);
+            JsonObject result = element.getAsJsonObject();
+            return result.get("status").getAsBoolean();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String getVersion() {
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "version", null);
+            JsonObject result = element.getAsJsonObject();
+            return result.get("version").getAsString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean setVersion(String version) {
+        Map<String, String> params = new HashMap<>();
+        params.put("version", version);
+
+        HttpRequest request = new HttpRequest();
+        try {
+
+            JsonElement element = request.postReturnJson(HOST, PORT, "version", params, null);
             JsonObject result = element.getAsJsonObject();
             return result.get("status").getAsBoolean();
         } catch (IOException e) {
