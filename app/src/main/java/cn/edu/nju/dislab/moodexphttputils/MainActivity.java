@@ -130,7 +130,7 @@ public class MainActivity extends Activity {
                 }
             }
         }
-        if (true) {
+        if (false) {
             String version = getVersion();
             if (version != null) {
                 Log.d(TAG, "version: " + version);
@@ -141,6 +141,15 @@ public class MainActivity extends Activity {
             resultBoolean = setVersion(version);
             if (resultBoolean) {
                 Log.d(TAG, "version has set");
+            }
+        }
+        if (true) {
+            String[] ids = {"150001", "150003"};
+            for (String id : ids) {
+                resultBoolean = heartBeat(id);
+                if (resultBoolean) {
+                    Log.d(TAG, id + " heart beats");
+                }
             }
         }
     }
@@ -270,6 +279,22 @@ public class MainActivity extends Activity {
         try {
 
             JsonElement element = request.postReturnJson(HOST, PORT, "version", params, null);
+            JsonObject result = element.getAsJsonObject();
+            return result.get("status").getAsBoolean();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean heartBeat(String id) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+
+        HttpRequest request = new HttpRequest();
+        try {
+
+            JsonElement element = request.getReturnJson(HOST, PORT, "heartbeat", params);
             JsonObject result = element.getAsJsonObject();
             return result.get("status").getAsBoolean();
         } catch (IOException e) {
