@@ -131,16 +131,29 @@ public class MainActivity extends Activity {
             }
         }
         if (false) {
-            String version = getVersion();
-            if (version != null) {
-                Log.d(TAG, "version: " + version);
+            String releaseVersion = "2.5.0";
+            resultBoolean = setReleaseVersion(releaseVersion);
+            if (resultBoolean) {
+                Log.d(TAG, "release version has set");
             }
         }
         if (false) {
-            String version = "2.3.4";
-            resultBoolean = setVersion(version);
+            String debugVersion = "2.6.1";
+            resultBoolean = setDebugVersion(debugVersion);
             if (resultBoolean) {
-                Log.d(TAG, "version has set");
+                Log.d(TAG, "debug version has set");
+            }
+        }
+        if (true) {
+            String releaseVersion = getReleaseVersion();
+            if (releaseVersion != null) {
+                Log.d(TAG, "release version: " + releaseVersion);
+            }
+        }
+        if (true) {
+            String debugVersion = getDebugVersion();
+            if (debugVersion != null) {
+                Log.d(TAG, "debug version: " + debugVersion);
             }
         }
         if (false) {
@@ -167,7 +180,7 @@ public class MainActivity extends Activity {
                 }
             }
         }
-        if (true) {
+        if (false) {
             String[] groups = {"一组", "二组", "三组", "四组"};
             for (String group : groups) {
                 String url = getQuestionnaireUrl(group);
@@ -283,25 +296,47 @@ public class MainActivity extends Activity {
         }
     }
 
-    public String getVersion() {
+    public String getReleaseVersion() {
+        return getVersion("release");
+    }
+
+    public String getDebugVersion() {
+        return getVersion("debug");
+    }
+
+    private String getVersion(String type) {
+        Map<String, String> params = new HashMap<>();
+        params.put("type", type);
+
         HttpRequest request = new HttpRequest();
         try {
-            JsonElement element = request.getReturnJson(HOST, PORT, "version", null);
+            JsonElement element = request.getReturnJson(HOST, PORT, "version", params);
             JsonObject result = element.getAsJsonObject();
-            return result.get("version").getAsString();
+            if (result.get("status").getAsBoolean()) {
+                return result.get("version").getAsString();
+            }
+            return null;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public boolean setVersion(String version) {
+    public boolean setReleaseVersion(String version) {
+        return setVersion("release", version);
+    }
+
+    public boolean setDebugVersion(String version) {
+        return setVersion("debug", version);
+    }
+
+    private boolean setVersion(String type, String version) {
         Map<String, String> params = new HashMap<>();
+        params.put("type", type);
         params.put("version", version);
 
         HttpRequest request = new HttpRequest();
         try {
-
             JsonElement element = request.postReturnJson(HOST, PORT, "version", params, null);
             JsonObject result = element.getAsJsonObject();
             return result.get("status").getAsBoolean();
