@@ -143,12 +143,36 @@ public class MainActivity extends Activity {
                 Log.d(TAG, "version has set");
             }
         }
-        if (true) {
+        if (false) {
             String[] ids = {"150001", "150003"};
             for (String id : ids) {
                 resultBoolean = heartBeat(id);
                 if (resultBoolean) {
                     Log.d(TAG, id + " heart beats");
+                }
+            }
+        }
+        if (false) {
+            Map<String, String> questionnaireUrls = new HashMap<>();
+            questionnaireUrls.put("一组", "http://a.b.com");
+            questionnaireUrls.put("二组", "http://c.d.com");
+            questionnaireUrls.put("三组", "http://e.f.com");
+
+            for (Map.Entry<String, String> entry : questionnaireUrls.entrySet()) {
+                String group = entry.getKey();
+                String url = entry.getValue();
+                resultBoolean = setQuestionnaireUrl(group, url);
+                if (resultBoolean) {
+                    Log.d(TAG, "set group " + group + " questionnaire url success");
+                }
+            }
+        }
+        if (true) {
+            String[] groups = {"一组", "二组", "三组", "四组"};
+            for (String group : groups) {
+                String url = getQuestionnaireUrl(group);
+                if (url != null) {
+                    Log.d(TAG, group + " questionnair url: " + url);
                 }
             }
         }
@@ -295,6 +319,40 @@ public class MainActivity extends Activity {
         try {
 
             JsonElement element = request.getReturnJson(HOST, PORT, "heartbeat", params);
+            JsonObject result = element.getAsJsonObject();
+            return result.get("status").getAsBoolean();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String getQuestionnaireUrl(String group) {
+        Map<String, String> params = new HashMap<>();
+        params.put("group", group);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "questionnaireurl", params);
+            JsonObject result = element.getAsJsonObject();
+            if (result.get("status").getAsBoolean()) {
+                return result.get("url").getAsString();
+            }
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean setQuestionnaireUrl(String group, String url) {
+        Map<String, String> params = new HashMap<>();
+        params.put("group", group);
+        params.put("url", url);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.postReturnJson(HOST, PORT, "questionnaireurl", params, null);
             JsonObject result = element.getAsJsonObject();
             return result.get("status").getAsBoolean();
         } catch (IOException e) {
