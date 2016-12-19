@@ -21,6 +21,8 @@ public class MainApplication extends Application
         context = getApplicationContext();
 
 
+        YunBaManager.setThirdPartyEnable(getApplicationContext(), true);
+        YunBaManager.setXMRegister("2882303761517534526","5731753480526");
         YunBaManager.start(getApplicationContext());
 
         YunBaManager.subscribe(getApplicationContext(), new String[]{"debug"}, new IMqttActionListener() {
