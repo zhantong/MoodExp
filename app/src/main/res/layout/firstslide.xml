@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    >
+
+
+    <TextView
+        android:text="\t\t\t 本应用主要用于收集用户数据.\n
+        该数据将用于预测用户情绪的研究工作.\n
+        本应用应当每天10am,4pm,10pm三次提醒用户记录心情。但可能由于被管理软件清理而不能发出提醒。\n
+        如果发生这样的情况，希望用户能够主动记录心情数据。但两次记录数据间隔不得低于五小时。\n
+        用户在提交心情记录时，会上传这段时间收集的数据到服务器，大约100k。因此请保证提交心情记录时网络畅通。如果当前因网络不畅等原因上传失败，数据会保留到下次一同上传。\n
+        当你记录了60次数据，将得到我们提供的精美礼品。\n\n"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewGuide1"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_toLeftOf="@+id/textView8"
+        android:layout_toRightOf="@+id/textView9"
+
+        />
+
+    <TextView
+        android:text="Tex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentRight="true"
+
+        android:id="@+id/textView8"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:text="Tex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentLeft="true"
+
+        android:id="@+id/textView9"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:text="\n\n《安装条款与用户须知》"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textView10"
+        android:textSize="@dimen/item_touch_helper_max_drag_scroll_per_frame"/>
+</RelativeLayout>

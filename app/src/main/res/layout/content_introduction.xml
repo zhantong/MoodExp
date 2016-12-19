@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:text="Tex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textViewLeft"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:text="Tex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textViewLeft"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/textViewRight"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textViewTop"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/textViewTop"
+        android:layout_alignEnd="@+id/textViewTop"
+        android:id="@+id/textViewBottom"
+        android:visibility="invisible"/>
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_below="@+id/textViewTop"
+        android:layout_above="@+id/textViewBottom"
+
+        android:layout_toRightOf="@+id/textViewLeft"
+        android:layout_toLeftOf="@+id/textViewRight"
+        >
+
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow
+                android:id="@+id/tableRowInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textViewInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="账号信息:" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowEmpty2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textViewEmpty2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowEmptyStudnetName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textViewStudentName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="姓名 : " />
+
+
+                </RelativeLayout>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowEmpty6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textViewEmpty6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    android:text="" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowEmptyStudentId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textViewStudentId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="学号 : " />
+
+
+                </RelativeLayout>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowEmpty5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textViewEmpty5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    android:text="" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowEmptyEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textViewEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="邮箱地址 : " />
+
+
+                </RelativeLayout>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowEmpty3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textViewEmpty3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    android:text="" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowEmptyPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textViewPhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="联系电话 : " />
+
+
+                </RelativeLayout>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowEmpty4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textViewEmpty4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="__________________________\n\n使用说明：" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowInstruction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/textViewInstruction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="\n1. 安装之后首次开启时，在Android 5.1以上的版本需要用户通过权限要求。*请务必同意授予App GPS，音频和通讯录读取权限\n2. 应用每天在10：00，16：00，22：00左右通过通知提醒用户反馈自己在这一段时间内的情绪状态，点击通知便可从六种情绪中选择最接近自己情绪状态的选项。请用户注意：\n(a).情绪状态可多选，每次可选择一种或多种情绪，请尽可能包含从上次提交到目前提交所经历的所有情绪。\n(b).志愿者请每天提交3次情绪状态。\n(c).部分手机会无法显示通知提醒，若有上述情况，请用户手动打开App进行上传(每两次上传间隔时间至少5小时)。\n3. 当手机重启之后，需要重新运行一下应用来保证数据收集的正常进行。\n4. 应用其他时间运行在后台，不会产生打扰。请不要使用各种手机管理软件改变应用的运行环境，也不要再次从设置中调整软件的权限。\n5. 联系方式：如果安装和使用中遇到任何问题，请联系以下QQ或邮箱。\n邮箱:tobexiao1@dislab.nju.edu.cn
+
+                "/>
+            </TableRow>
+
+
+
+
+        </TableLayout>
+    </ScrollView>
+
+
+
+</RelativeLayout>

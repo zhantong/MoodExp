@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\src\main\java\httpcore-4.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="8dfd6286d04ad9dbf26cdf7d4ef5c8fad430cf30">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\httpcore-4.3_2ee0096cecad24d6ff99b4c44b59a845c0f17e43.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\exploded-aar\eu.chainfire\libsuperuser\1.0.0.201608240809\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="054e8bd9935e1d1cdf411dad8eda6a950a21ee60">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\eu.chainfire-libsuperuser-1.0.0.201608240809_770cd39df764af32b6c13bca4ff5d11e5abaae7b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\src\main\java\org\graduation\lib\nineoldandroids-2.4.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="a43cf9e271b5bc564e880a0a4be63ab9c69c97f8">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\nineoldandroids-2.4.0_7b18a410a65b852c78a83a58c5d7a7e93dce9c7b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\src\main\java\commons-codec-1.6.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="b7f0fc8f61ecadeb3695f0b9464755eee44374d4">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\commons-codec-1.6_1a29f6cb526c3b7bafd4509fc64313b9fa694099.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.1.1\support-annotations-23.1.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\support-annotations-23.1.1_bcce2a45b7e8b3d393446d13a5a0cb3c513cd435.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\src\main\java\fluent-hc-4.3.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="d8ad35f275f9874f9b5e51097021df537badedb1">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\fluent-hc-4.3.1_7b5d105a5a023ca886db95ddc9050719b6657197.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\.gradle\caches\modules-2\files-2.1\org.hamcrest\hamcrest-core\1.3\42a25dc3219429f0e5d060061f71acb49bf010a0\hamcrest-core-1.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="42a25dc3219429f0e5d060061f71acb49bf010a0">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\hamcrest-core-1.3_6fa3014d91df8d98160b01d2509b7cc2b9521b72.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\src\main\java\httpmime-4.3.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="f49e2348b768a7199e021a97e951df25cd5fb714">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\httpmime-4.3.1_e88df49209aa29f62178ddbb9be63d48fdb0fe5b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\mockwebserver\3.4.2\8719d9fb1ea11dedb7379d1fd341663a76b87de5\mockwebserver-3.4.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="8719d9fb1ea11dedb7379d1fd341663a76b87de5">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\mockwebserver-3.4.2_bf67f14f42d3fb168b77969362c97294a41e5ff4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\src\main\java\org\graduation\lib\mpchartlib.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="3390f40698955221eab52de2c9659ce418930540">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\mpchartlib_883e8b8944e37bf30d2621f84655aee370fca9d2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\okhttp\3.4.2\ccde00f7ccc77af5a6d5752e2cb21f6d8998289f\okhttp-3.4.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="ccde00f7ccc77af5a6d5752e2cb21f6d8998289f">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\okhttp-3.4.2_76f7e4263cdcd3c41b54461d77d4dde3e9809505.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.1.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="09c5e804bc67fc0580360043dff067df574a60d4">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\com.android.support-recyclerview-v7-23.1.1_3df09ce21ffeacb345201a41ac3bf44feec7d500.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\libs\commons-net-3.5.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="342fc284019f590e1308056990fdb24a08f06318">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\commons-net-3.5_7fb51a46b9d4ff14cdf014c3567655744691831d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\okhttp-ws\3.4.2\b70f8bc5b68f3a3c4d67a71b3ba5f3f53205ada\okhttp-ws-3.4.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="0b70f8bc5b68f3a3c4d67a71b3ba5f3f53205ada">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\okhttp-ws-3.4.2_a465ded6a23f9c656b6a63e0a6f06ca9b39fb6af.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="6cbc7773921fcfedbe55657578f0cbfe614778dc">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-23.1.1_af2e0b8aa4efd73e09862c22610859a1f1977022.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.9.0\f824591a0016efbaeddb8300bee54832a1398cfa\okio-1.9.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="f824591a0016efbaeddb8300bee54832a1398cfa">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\okio-1.9.0_c9d7cbf31277aecb7e4e5bc1e983dc0c1158df12.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\src\main\java\commons-logging-1.1.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="f6f66e966c70a83ffbdb6f17a0919eaf7c8aca7f">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\commons-logging-1.1.3_060f7c7989107865e765f5055eb4a5a5eacc2578.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\exploded-aar\com.android.support\design\23.1.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="379471b2bd17d9737c050345c08e8c7d16589784">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\com.android.support-design-23.1.1_b8189c5320cf94062e5a36169b1bb92c8b1d799a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.8.0\c4ba5371a29ac9b2ad6129b1d39ea38750043eff\gson-2.8.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="c4ba5371a29ac9b2ad6129b1d39ea38750043eff">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\gson-2.8.0_30647aa55bf87c12bbafd487270ac2b31540a4c3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\libs\internal_impl-23.1.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="a4de9c81ae239414e1ed0f86441b02abaf29bca9">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\internal_impl-23.1.1_f4814f926e4a3502a714036e497147156ec1d909.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\src\main\java\httpclient-4.3.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="0171c67fa04952e76bc9ee1e578fe629db35d769">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\httpclient-4.3.1_c460545ea33d0dab577362338187850bbcdc1694.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\src\main\java\httpclient-cache-4.3.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="546eee25fa025a455040bbf1708b0c0490c2311b">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\httpclient-cache-4.3.1_7eb314ae831669197de3eb7d875fbdaf088d3e4f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\.gradle\caches\modules-2\files-2.1\org.bouncycastle\bcprov-jdk15on\1.50\be504b4901d75cbe129a178f5830e6c358ec214c\bcprov-jdk15on-1.50.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="be504b4901d75cbe129a178f5830e6c358ec214c">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\bcprov-jdk15on-1.50_6ff3c1ef719662a15feae7d6a58da01e60067b3d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\.gradle\caches\modules-2\files-2.1\junit\junit\4.12\2973d150c0dc1fefe998f834810d68f278ea58ec\junit-4.12.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="2973d150c0dc1fefe998f834810d68f278ea58ec">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\junit-4.12_4914e477172b97d0a309b64ffccd79d392ef13e4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.1\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.2"
+        sha1="5c5699834e9722f1c288fea2de82725d078ba127">
+        <dex dex="C:\Users\dell\Desktop\emotion\HealthyLife-ekman\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-23.1.1_401c4fe9e138d452e0a058e739fcf9113afb3a84.jar" />
+    </item>
+
+</items>

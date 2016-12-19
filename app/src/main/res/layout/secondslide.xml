@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:text="\n\n《安装条款与用户须知》"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/textView10"
+        android:textSize="@dimen/item_touch_helper_max_drag_scroll_per_frame"/>
+
+
+    <TextView
+        android:text="隐私声明:\n1. 本应用目前收集：\n环境声音数据，但并不保存原始数据，只收集声音的噪声值等特征\n加速度传感器信息\n光照传感器信息\nGPS的原始信息，包括经度纬度海拔高度等信息\n周边WiFi的SSID,BSSID,rssi信息\n陀螺仪数据(角速度)\n电子罗盘数据(磁场)\n通讯录，不保留原始数据，仅记录联系人姓名与号码的hashcode\n通话记录，不保留原始数据，仅记录通话号码的hashcode\n短信，不保留原始数据，仅记录对方号码的hashcode\n2. 应用不会记录敏感信息数据，数据仅用于跟随其后的情绪模型训练的研究，不用作他用。"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewGuide1"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_toLeftOf="@+id/textView8"
+        android:layout_toRightOf="@+id/textView9"
+
+        />
+
+    <TextView
+        android:text="Tex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentRight="true"
+
+        android:id="@+id/textView8"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:text="Tex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentLeft="true"
+
+        android:id="@+id/textView9"
+        android:visibility="invisible"/>
+</RelativeLayout>
