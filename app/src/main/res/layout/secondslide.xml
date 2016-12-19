@@ -11,8 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/textView10"
-        android:textSize="@dimen/item_touch_helper_max_drag_scroll_per_frame"/>
+        android:id="@+id/textView10" />
 
 
     <TextView
