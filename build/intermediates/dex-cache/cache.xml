@@ -30,15 +30,6 @@
     </item>
     <item
         is-multidex="true"
-        jar="/Users/zhantong/Documents/GitHub/MoodExp/app/MoodExp/app/libs/mpchartlib.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="3390f40698955221eab52de2c9659ce418930540">
-        <dex dex="/Users/zhantong/Documents/GitHub/MoodExp/app/MoodExp/app/build/intermediates/transforms/dex/debug/folders/1000/2/mpchartlib_aa7501f9a5d44f7c9d4f03cf610a1383e7056a98/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="/Users/zhantong/Desktop/MoodExp/app/build/intermediates/exploded-aar/com.android.support/design/23.1.1/jars/classes.jar"
         jumboMode="true"
         optimize="true"
@@ -61,7 +52,7 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.1"
-        sha1="5eaf836695dad8073c850d61c6372517eac30195">
+        sha1="8b443b4fe70f9ece277684bb34a050395a9e76b0">
         <dex dex="/Users/zhantong/Documents/GitHub/MoodExp/app/MoodExp/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_e52d98039aab0e9d7880ad004a6236ef201fca88/classes.dex" />
     </item>
     <item
@@ -81,15 +72,6 @@
         revision="25.0.1"
         sha1="6fb12cf0fc575b69f562845cd30d27245e471512">
         <dex dex="/Users/zhantong/Desktop/MoodExp/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_e594aeb1fa3b044c40855b30ec016b34deb16c1b/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/zhantong/Documents/GitHub/MoodExp/app/MoodExp/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.1.1/jars/classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="09c5e804bc67fc0580360043dff067df574a60d4">
-        <dex dex="/Users/zhantong/Documents/GitHub/MoodExp/app/MoodExp/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-recyclerview-v7-23.1.1_8fb5cac602aa3e4041110760de1c9223c5c7e97f/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -129,30 +111,12 @@
     </item>
     <item
         is-multidex="true"
-        jar="/Users/zhantong/Documents/GitHub/MoodExp/app/MoodExp/app/build/intermediates/exploded-aar/com.android.support/design/23.1.1/jars/classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="379471b2bd17d9737c050345c08e8c7d16589784">
-        <dex dex="/Users/zhantong/Documents/GitHub/MoodExp/app/MoodExp/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-design-23.1.1_77b30e38ea5cf9f2a191118d4222cdf62476a86f/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="/Users/zhantong/Documents/GitHub/MoodExp/app/MoodExp/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
         jumboMode="true"
         optimize="true"
         revision="25.0.1"
-        sha1="a1247730412267c528a4a029d69f05afc2b8c9b0">
+        sha1="6e94c65696020fe3e2e26a1d1d932a8f8a4b77b2">
         <dex dex="/Users/zhantong/Documents/GitHub/MoodExp/app/MoodExp/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_cbd4516f8ebfa7fd2cf81e3d0972571f4827baf3/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/Users/zhantong/Documents/GitHub/MoodExp/app/MoodExp/app/libs/yunba-sdk-release1.8.0.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="25.0.1"
-        sha1="8f1326a81924837d8745276e993cfab47c87c212">
-        <dex dex="/Users/zhantong/Documents/GitHub/MoodExp/app/MoodExp/app/build/intermediates/transforms/dex/debug/folders/1000/2/yunba-sdk-release1.8.0_43ce52f147a74ba4209dd6b804e4d6705cb65a2c/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -162,6 +126,15 @@
         revision="25.0.1"
         sha1="42a25dc3219429f0e5d060061f71acb49bf010a0">
         <dex dex="/Users/zhantong/Desktop/MoodExp/app/build/intermediates/transforms/dex/debug/folders/1000/10/hamcrest-core-1.3_56559376cd88a235467331aff5401c868a7c0059/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/zhantong/Documents/GitHub/MoodExp/app/MoodExp/app/libs/yunba-sdk-release1.8.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.1"
+        sha1="8f1326a81924837d8745276e993cfab47c87c212">
+        <dex dex="/Users/zhantong/Documents/GitHub/MoodExp/app/MoodExp/app/build/intermediates/transforms/dex/debug/folders/1000/2/yunba-sdk-release1.8.0_43ce52f147a74ba4209dd6b804e4d6705cb65a2c/classes.dex" />
     </item>
     <item
         is-multidex="true"

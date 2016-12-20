@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity
         };
 
         checkPermission();//开启权限
-        prepareServices();//开始服务
+        //prepareServices();//开始服务
 
         if(!hasOpened())
         {
