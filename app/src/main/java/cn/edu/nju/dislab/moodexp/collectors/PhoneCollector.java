@@ -2,6 +2,8 @@ package cn.edu.nju.dislab.moodexp.collectors;
 
 import android.Manifest;
 import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
 
 import cn.edu.nju.dislab.moodexp.EasyPermissions;
@@ -13,9 +15,10 @@ import cn.edu.nju.dislab.moodexp.MainApplication;
 
 public class PhoneCollector {
     private static final String TAG = "PhoneCollector";
-    private static final String[] PERMISSIONS = {Manifest.permission.READ_PHONE_STATE};
+    private static final String[] PERMISSIONS = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_WIFI_STATE};
     private Context mContext;
     private TelephonyManager mTelecomManager;
+    private WifiManager mWifiManager;
     private PhoneData result;
 
     public PhoneCollector() {
@@ -25,6 +28,7 @@ public class PhoneCollector {
     public PhoneCollector(Context context) {
         mContext = context;
         mTelecomManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
     }
 
     public int collect() {
@@ -66,6 +70,15 @@ public class PhoneCollector {
             result.put("sim_operator_name", simOperatorName);
             result.put("sim_serial_number", simSerialNumber);
             result.put("sim_state", Integer.toString(simState));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collector.NO_PERMISSION;
+        }
+        try {
+            WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+            String macAddress = wifiInfo.getMacAddress();
+
+            result.put("mac_address", macAddress);
         } catch (Exception e) {
             e.printStackTrace();
             return Collector.NO_PERMISSION;
