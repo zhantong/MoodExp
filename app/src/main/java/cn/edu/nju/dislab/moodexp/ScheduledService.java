@@ -85,123 +85,117 @@ public class ScheduledService extends Service implements Runnable{
 
     @Override
     public void run() {
-        Cursor cursor=readableDatabase.query(DbHelper.ScheduleTable.TABLE_NAME,null,null,null,null,null,null);
-        while(cursor.moveToNext()){
-            long nextFireTime= cursor.getLong(cursor.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME));
-            long currentTime=System.currentTimeMillis();
-            if(currentTime<nextFireTime){
-                continue;
-            }
-            int level= cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_LEVEL));
-            String type=cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_TYPE));
-            int interval= cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_INTERVAL));
-            String[] actions= new Gson().fromJson(cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_ACTIONS)),String[].class);
+        try(Cursor cursorSchedule=readableDatabase.query(DbHelper.ScheduleTable.TABLE_NAME,null,null,null,null,null,null)) {
+            while (cursorSchedule.moveToNext()) {
+                long nextFireTime = cursorSchedule.getLong(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME));
+                long currentTime = System.currentTimeMillis();
+                if (currentTime < nextFireTime) {
+                    continue;
+                }
+                int level = cursorSchedule.getInt(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_LEVEL));
+                String type = cursorSchedule.getString(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_TYPE));
+                int interval = cursorSchedule.getInt(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_INTERVAL));
+                String[] actions = new Gson().fromJson(cursorSchedule.getString(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_ACTIONS)), String[].class);
 
-            switch (type){
-                case "collect":
-                    Cursor cursorCollectDb=readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING+" = ?",new String[]{"1"},null,null,null);
-                    String collectDbName;
-                    if(cursorCollectDb.getCount()>0){
-                        cursorCollectDb.moveToFirst();
-                        collectDbName=cursorCollectDb.getString(cursorCollectDb.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
-                        cursorCollectDb.close();
-                    }else{
-                        cursorCollectDb.close();
-                        continue;
-                    }
-                    CollectorDbHelper collectorDbHelper=new CollectorDbHelper(collectDbName);
-                    final SQLiteDatabase collectorDb=collectorDbHelper.getWritableDatabase();
-                    List<Thread> threads=new ArrayList<>();
-                    for(String action:actions){
-                        threads.add(getCollectorThread(action,collectorDb));
-                    }
-                    for(Thread thread:threads){
-                        thread.start();
-                    }
-                    for(Thread thread:threads){
-                        try {
-                            thread.join(10000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                switch (type) {
+                    case "collect":
+                        String collectDbName;
+                        try(Cursor cursorCollectDb = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ?", new String[]{"1"}, null, null, null)) {
+                            if (cursorCollectDb.getCount() > 0) {
+                                cursorCollectDb.moveToFirst();
+                                collectDbName = cursorCollectDb.getString(cursorCollectDb.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
+                            } else {
+                                continue;
+                            }
                         }
-                    }
-                    break;
-                case "upload":
-                    if(!isNetworkConnected()){
-                        continue;
-                    }
-                    List<String> dbNames=new ArrayList<>();
-                    Cursor cursorCheckUpload=readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME,new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME},DbHelper.CollectDbTable.COLUMN_NAME_IS_USING+" = ? AND "+DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED+" = ?",new String[]{"0","0"},null,null,null);
-                    while (cursorCheckUpload.moveToNext()){
-                        String dbName=cursorCheckUpload.getString(cursorCheckUpload.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
-                        dbNames.add(dbName);
-                    }
-                    cursorCheckUpload.close();
-                    final String userId=mDbHelper.getUser("id");
-                    final String version=getVersionName();
-                    for(String dbName:dbNames){
-                        final String dbNameFinal=dbName;
+                        CollectorDbHelper collectorDbHelper = new CollectorDbHelper(collectDbName);
+                        final SQLiteDatabase collectorDb = collectorDbHelper.getWritableDatabase();
+                        List<Thread> threads = new ArrayList<>();
+                        for (String action : actions) {
+                            threads.add(getCollectorThread(action, collectorDb));
+                        }
+                        for (Thread thread : threads) {
+                            thread.start();
+                        }
+                        for (Thread thread : threads) {
+                            try {
+                                thread.join(10000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        break;
+                    case "upload":
+                        if (!isNetworkConnected()) {
+                            continue;
+                        }
+                        final String userId = mDbHelper.getUser("id");
+                        final String version = getVersionName();
+                        try(Cursor cursorCheckUpload = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ? AND " + DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED + " = ?", new String[]{"0", "0"}, null, null, null)) {
+                            while (cursorCheckUpload.moveToNext()) {
+                                final String dbName = cursorCheckUpload.getString(cursorCheckUpload.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        File dbPath = getDatabasePath(dbName);
+                                        boolean isUploadSuccess = HttpAPI.upload(dbPath.getAbsolutePath(), userId, 0, version);
+                                        if (isUploadSuccess) {
+                                            ContentValues updateValues = new ContentValues();
+                                            updateValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED, 1);
+                                            writableDatabase.update(DbHelper.CollectDbTable.TABLE_NAME, updateValues, DbHelper.CollectDbTable.COLUMN_NAME_NAME + " = ?", new String[]{dbName});
+                                        }
+                                    }
+                                }).start();
+                            }
+                        }
+                        break;
+                    case "newDb":
+                        String currentUsingDb = null;
+                        try(Cursor cursorCurrentUsingDb = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ?", new String[]{"1"}, null, null, null)) {
+                            if (cursorCurrentUsingDb.getCount() > 0) {
+                                cursorCurrentUsingDb.moveToFirst();
+                                currentUsingDb = cursorCurrentUsingDb.getString(cursorCurrentUsingDb.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
+                            }
+                        }
+                        if (currentUsingDb == null) {
+                            ContentValues initCollectDb = new ContentValues();
+                            initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_NAME, System.currentTimeMillis() + ".db");
+                            initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_USING, 1);
+                            initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED, 0);
+                            initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
+                            writableDatabase.insert(DbHelper.CollectDbTable.TABLE_NAME, null, initCollectDb);
+                        } else {
+                            writableDatabase.beginTransaction();
+                            ContentValues updateValues = new ContentValues();
+                            updateValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_USING, 0);
+                            writableDatabase.update(DbHelper.CollectDbTable.TABLE_NAME, updateValues, DbHelper.CollectDbTable.COLUMN_NAME_NAME + " = ?", new String[]{currentUsingDb});
+                            ContentValues initCollectDb = new ContentValues();
+                            initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_NAME, System.currentTimeMillis() + ".db");
+                            initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_USING, 1);
+                            initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED, 0);
+                            initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
+                            writableDatabase.insert(DbHelper.CollectDbTable.TABLE_NAME, null, initCollectDb);
+                            writableDatabase.setTransactionSuccessful();
+                            writableDatabase.endTransaction();
+                        }
+                        break;
+                    case "heartBeat":
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                File dbPath=getDatabasePath(dbNameFinal);
-                                boolean isUploadSuccess= HttpAPI.upload(dbPath.getAbsolutePath(),userId,0,version);
-                                if(isUploadSuccess){
-                                    ContentValues updateValues=new ContentValues();
-                                    updateValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED,1);
-                                    writableDatabase.update(DbHelper.CollectDbTable.TABLE_NAME,updateValues,DbHelper.CollectDbTable.COLUMN_NAME_NAME+" = ?",new String[]{dbNameFinal});
-                                }
+                                HttpAPI.heartBeat(mDbHelper.getUser("id"));
                             }
                         }).start();
-                    }
-                    break;
-                case "newDb":
-                    Cursor cursorCurrentUsingDb=readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING+" = ?",new String[]{"1"},null,null,null);
-                    String currentUsingDb=null;
-                    if(cursorCurrentUsingDb.getCount()>0){
-                        cursorCurrentUsingDb.moveToFirst();
-                        currentUsingDb=cursorCurrentUsingDb.getString(cursorCurrentUsingDb.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
-                    }
-                    cursorCurrentUsingDb.close();
-                    if(currentUsingDb==null){
-                        ContentValues initCollectDb=new ContentValues();
-                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_NAME,System.currentTimeMillis()+".db");
-                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_USING,1);
-                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED,0);
-                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
-                        writableDatabase.insert(DbHelper.CollectDbTable.TABLE_NAME,null,initCollectDb);
-                    }else{
-                        writableDatabase.beginTransaction();
-                        ContentValues updateValues=new ContentValues();
-                        updateValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_USING,0);
-                        writableDatabase.update(DbHelper.CollectDbTable.TABLE_NAME,updateValues,DbHelper.CollectDbTable.COLUMN_NAME_NAME+" = ?",new String[]{currentUsingDb});
-                        ContentValues initCollectDb=new ContentValues();
-                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_NAME,System.currentTimeMillis()+".db");
-                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_USING,1);
-                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED,0);
-                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
-                        writableDatabase.insert(DbHelper.CollectDbTable.TABLE_NAME,null,initCollectDb);
-                        writableDatabase.setTransactionSuccessful();
-                        writableDatabase.endTransaction();
-                    }
-                    break;
-                case "heartBeat":
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            HttpAPI.heartBeat(mDbHelper.getUser("id"));
-                        }
-                    }).start();
-                    break;
+                        break;
+                }
+                while (nextFireTime < System.currentTimeMillis()) {
+                    nextFireTime += interval;
+                }
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, nextFireTime);
+                writableDatabase.update(DbHelper.ScheduleTable.TABLE_NAME, updateValues, DbHelper.ScheduleTable.COLUMN_NAME_LEVEL + " = ?", new String[]{Integer.toString(level)});
             }
-            while (nextFireTime<System.currentTimeMillis()){
-                nextFireTime+=interval;
-            }
-            ContentValues updateValues=new ContentValues();
-            updateValues.put(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME,nextFireTime);
-            writableDatabase.update(DbHelper.ScheduleTable.TABLE_NAME,updateValues,DbHelper.ScheduleTable.COLUMN_NAME_LEVEL+" = ?",new String[]{Integer.toString(level)});
         }
-        cursor.close();
         Log.i(TAG,"running");
     }
     private Thread getCollectorThread(final String type,final SQLiteDatabase db){

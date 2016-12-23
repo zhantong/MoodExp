@@ -134,13 +134,13 @@ public class DbHelper extends SQLiteOpenHelper {
         }
     }
     public String getUser(String key){
-        Cursor cursor= mReadableDb.query(UserTable.TABLE_NAME,new String[]{UserTable.COLUMN_NAME_VALUE},UserTable.COLUMN_NAME_KEY+" = ?",new String[]{key},null,null,null);
         String value="";
-        if(cursor.getCount()>0){
-            cursor.moveToFirst();
-            value= cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_NAME_VALUE));
+        try(Cursor cursor= mReadableDb.query(UserTable.TABLE_NAME,new String[]{UserTable.COLUMN_NAME_VALUE},UserTable.COLUMN_NAME_KEY+" = ?",new String[]{key},null,null,null)) {
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                value = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_NAME_VALUE));
+            }
         }
-        cursor.close();
         return value;
     }
     @Override

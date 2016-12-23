@@ -52,11 +52,12 @@ public class SmsData {
         }
         String SQL_CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                        Table._ID + " INTEGER PRIMARY KEY," +
                         Table.COLUMN_NAME_ADDRESS + " TEXT," +
                         Table.COLUMN_NAME_TYPE + " TEXT," +
                         Table.COLUMN_NAME_DATE + " TEXT," +
-                        Table.COLUMN_NAME_PERSON + " TEXT)";
+                        Table.COLUMN_NAME_PERSON + " TEXT," +
+                        "PRIMARY KEY (" + Table.COLUMN_NAME_ADDRESS + ", " + Table.COLUMN_NAME_DATE + ")" +
+                        ")";
         db.execSQL(SQL_CREATE_TABLE);
         for (Sms sms : smses) {
             ContentValues values = new ContentValues();
@@ -64,7 +65,7 @@ public class SmsData {
             values.put(Table.COLUMN_NAME_TYPE, sms.type);
             values.put(Table.COLUMN_NAME_DATE, sms.date);
             values.put(Table.COLUMN_NAME_PERSON, sms.person);
-            db.insert(Table.TABLE_NAME, null, values);
+            db.insertWithOnConflict(Table.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         }
     }
 

@@ -47,6 +47,7 @@ public class ContactCollector {
                 result.put(name, number);
             }
         } else {
+            cursor.close();
             Log.i(TAG, "empty cursor");
             return Collector.COLLECT_FAILED;
         }

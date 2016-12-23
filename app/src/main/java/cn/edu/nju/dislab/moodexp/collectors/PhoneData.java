@@ -30,15 +30,14 @@ public class PhoneData {
         }
         String SQL_CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                        Table._ID + " INTEGER PRIMARY KEY," +
-                        Table.COLUMN_NAME_NAME + " TEXT," +
+                        Table.COLUMN_NAME_NAME + " TEXT PRIMARY KEY," +
                         Table.COLUMN_NAME_VALUE + " TEXT)";
         db.execSQL(SQL_CREATE_TABLE);
         for (Map.Entry<String, String> entry : data.entrySet()) {
             ContentValues values = new ContentValues();
             values.put(Table.COLUMN_NAME_NAME, entry.getKey());
             values.put(Table.COLUMN_NAME_VALUE, entry.getValue());
-            db.insert(Table.TABLE_NAME, null, values);
+            db.insertWithOnConflict(Table.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         }
     }
 

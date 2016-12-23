@@ -55,6 +55,7 @@ public class CallLogCollector {
                 result.put(number, type, date, duration);
             }
         } else {
+            cursor.close();
             Log.i(TAG, "empty cursor");
             return Collector.COLLECT_FAILED;
         }

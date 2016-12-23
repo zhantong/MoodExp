@@ -55,6 +55,7 @@ public class SmsCollector {
                 result.put(address, type, date, person);
             }
         } else {
+            cursor.close();
             Log.i(TAG, "empty cursor");
             return Collector.COLLECT_FAILED;
         }
