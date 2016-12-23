@@ -130,7 +130,7 @@ public class ScheduledService extends Service implements Runnable{
     public void run() {
         Cursor cursor=readableDatabase.query(ScheduleTable.TABLE_NAME,null,null,null,null,null,null);
         while(cursor.moveToNext()){
-            long nextFireTime= cursor.getInt(cursor.getColumnIndexOrThrow(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME));
+            long nextFireTime= cursor.getLong(cursor.getColumnIndexOrThrow(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME));
             long currentTime=System.currentTimeMillis();
             if(currentTime<nextFireTime){
                 continue;

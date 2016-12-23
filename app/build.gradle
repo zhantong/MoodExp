@@ -30,4 +30,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
 
     compile files('libs/AMap_Location_V3.2.0_20161205.jar')
+
+    compile files('libs/yunba-sdk-release1.8.0.jar')
+    compile files('libs/HwPush_SDK_V2705.jar')
+    compile files('libs/MiPush_SDK_Client_3_1_2.jar')
 }
