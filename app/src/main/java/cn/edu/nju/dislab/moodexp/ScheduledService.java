@@ -3,9 +3,11 @@ package cn.edu.nju.dislab.moodexp;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
+import android.net.ConnectivityManager;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.BaseColumns;
@@ -13,6 +15,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +46,7 @@ import cn.edu.nju.dislab.moodexp.collectors.SmsCollector;
 import cn.edu.nju.dislab.moodexp.collectors.SmsData;
 import cn.edu.nju.dislab.moodexp.collectors.WifiCollector;
 import cn.edu.nju.dislab.moodexp.collectors.WifiData;
+import cn.edu.nju.dislab.moodexp.httputils.HttpAPI;
 
 /**
  * Created by zhantong on 2016/12/23.
@@ -56,21 +60,7 @@ public class ScheduledService extends Service implements Runnable{
     private SQLiteDatabase readableDatabase;
     private SQLiteDatabase writableDatabase;
 
-    public static class ScheduleTable implements BaseColumns {
-        static final String TABLE_NAME = "schedule";
-        static final String COLUMN_NAME_LEVEL = "level";
-        static final String COLUMN_NAME_TYPE = "type";
-        static final String COLUMN_NAME_NEXT_FIRE_TIME = "next_fire_time";
-        static final String COLUMN_NAME_INTERVAL = "interval";
-        static final String COLUMN_NAME_ACTIONS = "actions";
-    }
-    public static class CollectDbTable implements BaseColumns{
-        static final String TABLE_NAME = "collect_db";
-        static final String COLUMN_NAME_NAME = "name";
-        static final String COLUMN_NAME_IS_USING = "is_using";
-        static final String COLUMN_NAME_IS_UPLOADED = "is_uploaded";
-        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
-    }
+
 
     @Override
     public void onCreate() {
@@ -79,39 +69,6 @@ public class ScheduledService extends Service implements Runnable{
         mDbHelper=new DbHelper();
         readableDatabase=mDbHelper.getReadableDatabase();
         writableDatabase=mDbHelper.getWritableDatabase();
-
-
-        String SQL_CREATE_TABLE_SCHEDULE=
-                "CREATE TABLE IF NOT EXISTS "+ ScheduleTable.TABLE_NAME+" ("+
-                        ScheduleTable.COLUMN_NAME_LEVEL+" INTEGER PRIMARY KEY,"+
-                        ScheduleTable.COLUMN_NAME_TYPE+" TEXT,"+
-                        ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME+" INTEGER,"+
-                        ScheduleTable.COLUMN_NAME_INTERVAL+" INTEGER,"+
-                        ScheduleTable.COLUMN_NAME_ACTIONS +" TEXT)";
-        writableDatabase.execSQL(SQL_CREATE_TABLE_SCHEDULE);
-        ContentValues valuesSchedule=new ContentValues();
-        valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL,1);
-        valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE,"collect");
-        valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME,System.currentTimeMillis());
-        valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL,10*1000);
-        valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS,new Gson().toJson(new String[]{"CallLog","Contact"}));
-        writableDatabase.insert(ScheduleTable.TABLE_NAME,null,valuesSchedule);
-
-
-        String SQL_CREATE_TABLE_COLLECT_DB=
-                "CREATE TABLE IF NOT EXISTS "+ CollectDbTable.TABLE_NAME+" ("+
-                        CollectDbTable.COLUMN_NAME_NAME+" TEXT PRIMARY KEY,"+
-                        CollectDbTable.COLUMN_NAME_IS_USING+" INTEGER,"+
-                        CollectDbTable.COLUMN_NAME_IS_UPLOADED+" INTEGER,"+
-                        CollectDbTable.COLUMN_NAME_TIMESTAMP+" INTEGER)";
-        writableDatabase.execSQL(SQL_CREATE_TABLE_COLLECT_DB);
-        ContentValues valuesCollectDb=new ContentValues();
-        valuesCollectDb.put(CollectDbTable.COLUMN_NAME_NAME,System.currentTimeMillis()+".db");
-        valuesCollectDb.put(CollectDbTable.COLUMN_NAME_IS_USING,1);
-        valuesCollectDb.put(CollectDbTable.COLUMN_NAME_IS_UPLOADED,0);
-        valuesCollectDb.put(CollectDbTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
-        writableDatabase.insert(CollectDbTable.TABLE_NAME,null,valuesCollectDb);
-
 
         PowerManager powerManager=(PowerManager)getSystemService(POWER_SERVICE);
 
@@ -128,30 +85,31 @@ public class ScheduledService extends Service implements Runnable{
 
     @Override
     public void run() {
-        Cursor cursor=readableDatabase.query(ScheduleTable.TABLE_NAME,null,null,null,null,null,null);
+        Cursor cursor=readableDatabase.query(DbHelper.ScheduleTable.TABLE_NAME,null,null,null,null,null,null);
         while(cursor.moveToNext()){
-            long nextFireTime= cursor.getLong(cursor.getColumnIndexOrThrow(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME));
+            long nextFireTime= cursor.getLong(cursor.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME));
             long currentTime=System.currentTimeMillis();
             if(currentTime<nextFireTime){
                 continue;
             }
-            int level= cursor.getInt(cursor.getColumnIndexOrThrow(ScheduleTable.COLUMN_NAME_LEVEL));
-            String type=cursor.getString(cursor.getColumnIndexOrThrow(ScheduleTable.COLUMN_NAME_TYPE));
-            int interval= cursor.getInt(cursor.getColumnIndexOrThrow(ScheduleTable.COLUMN_NAME_INTERVAL));
-            String[] actions= new Gson().fromJson(cursor.getString(cursor.getColumnIndexOrThrow(ScheduleTable.COLUMN_NAME_ACTIONS)),String[].class);
+            int level= cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_LEVEL));
+            String type=cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_TYPE));
+            int interval= cursor.getInt(cursor.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_INTERVAL));
+            String[] actions= new Gson().fromJson(cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_ACTIONS)),String[].class);
 
             switch (type){
                 case "collect":
-                    Cursor cursorCollectDb=readableDatabase.query(CollectDbTable.TABLE_NAME, new String[]{CollectDbTable.COLUMN_NAME_NAME}, CollectDbTable.COLUMN_NAME_IS_USING+" = ?",new String[]{"1"},null,null,null);
-                    String collctDbName;
+                    Cursor cursorCollectDb=readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING+" = ?",new String[]{"1"},null,null,null);
+                    String collectDbName;
                     if(cursorCollectDb.getCount()>0){
                         cursorCollectDb.moveToFirst();
-                        collctDbName=cursorCollectDb.getString(cursorCollectDb.getColumnIndexOrThrow(CollectDbTable.COLUMN_NAME_NAME));
+                        collectDbName=cursorCollectDb.getString(cursorCollectDb.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
+                        cursorCollectDb.close();
                     }else{
-                        throw new RuntimeException();
+                        cursorCollectDb.close();
+                        continue;
                     }
-                    cursorCollectDb.close();
-                    CollectorDbHelper collectorDbHelper=new CollectorDbHelper(collctDbName);
+                    CollectorDbHelper collectorDbHelper=new CollectorDbHelper(collectDbName);
                     final SQLiteDatabase collectorDb=collectorDbHelper.getWritableDatabase();
                     List<Thread> threads=new ArrayList<>();
                     for(String action:actions){
@@ -162,19 +120,86 @@ public class ScheduledService extends Service implements Runnable{
                     }
                     for(Thread thread:threads){
                         try {
-                            thread.join();
+                            thread.join(10000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
+                    break;
+                case "upload":
+                    if(!isNetworkConnected()){
+                        continue;
+                    }
+                    List<String> dbNames=new ArrayList<>();
+                    Cursor cursorCheckUpload=readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME,new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME},DbHelper.CollectDbTable.COLUMN_NAME_IS_USING+" = ? AND "+DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED+" = ?",new String[]{"0","0"},null,null,null);
+                    while (cursorCheckUpload.moveToNext()){
+                        String dbName=cursorCheckUpload.getString(cursorCheckUpload.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
+                        dbNames.add(dbName);
+                    }
+                    cursorCheckUpload.close();
+                    final String userId=mDbHelper.getUser("id");
+                    final String version=getVersionName();
+                    for(String dbName:dbNames){
+                        final String dbNameFinal=dbName;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                File dbPath=getDatabasePath(dbNameFinal);
+                                boolean isUploadSuccess= HttpAPI.upload(dbPath.getAbsolutePath(),userId,0,version);
+                                if(isUploadSuccess){
+                                    ContentValues updateValues=new ContentValues();
+                                    updateValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED,1);
+                                    writableDatabase.update(DbHelper.CollectDbTable.TABLE_NAME,updateValues,DbHelper.CollectDbTable.COLUMN_NAME_NAME+" = ?",new String[]{dbNameFinal});
+                                }
+                            }
+                        }).start();
+                    }
+                    break;
+                case "newDb":
+                    Cursor cursorCurrentUsingDb=readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING+" = ?",new String[]{"1"},null,null,null);
+                    String currentUsingDb=null;
+                    if(cursorCurrentUsingDb.getCount()>0){
+                        cursorCurrentUsingDb.moveToFirst();
+                        currentUsingDb=cursorCurrentUsingDb.getString(cursorCurrentUsingDb.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
+                    }
+                    cursorCurrentUsingDb.close();
+                    if(currentUsingDb==null){
+                        ContentValues initCollectDb=new ContentValues();
+                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_NAME,System.currentTimeMillis()+".db");
+                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_USING,1);
+                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED,0);
+                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
+                        writableDatabase.insert(DbHelper.CollectDbTable.TABLE_NAME,null,initCollectDb);
+                    }else{
+                        writableDatabase.beginTransaction();
+                        ContentValues updateValues=new ContentValues();
+                        updateValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_USING,0);
+                        writableDatabase.update(DbHelper.CollectDbTable.TABLE_NAME,updateValues,DbHelper.CollectDbTable.COLUMN_NAME_NAME+" = ?",new String[]{currentUsingDb});
+                        ContentValues initCollectDb=new ContentValues();
+                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_NAME,System.currentTimeMillis()+".db");
+                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_USING,1);
+                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED,0);
+                        initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
+                        writableDatabase.insert(DbHelper.CollectDbTable.TABLE_NAME,null,initCollectDb);
+                        writableDatabase.setTransactionSuccessful();
+                        writableDatabase.endTransaction();
+                    }
+                    break;
+                case "heartBeat":
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            HttpAPI.heartBeat(mDbHelper.getUser("id"));
+                        }
+                    }).start();
                     break;
             }
             while (nextFireTime<System.currentTimeMillis()){
                 nextFireTime+=interval;
             }
             ContentValues updateValues=new ContentValues();
-            updateValues.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME,nextFireTime);
-            writableDatabase.update(ScheduleTable.TABLE_NAME,updateValues,ScheduleTable.COLUMN_NAME_LEVEL+" = ?",new String[]{Integer.toString(level)});
+            updateValues.put(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME,nextFireTime);
+            writableDatabase.update(DbHelper.ScheduleTable.TABLE_NAME,updateValues,DbHelper.ScheduleTable.COLUMN_NAME_LEVEL+" = ?",new String[]{Integer.toString(level)});
         }
         cursor.close();
         Log.i(TAG,"running");
@@ -300,7 +325,17 @@ public class ScheduledService extends Service implements Runnable{
             }
         });
     }
-
+    public static boolean isNetworkConnected(){
+        return ((ConnectivityManager)MainApplication.getContext().getSystemService(CONNECTIVITY_SERVICE)).getActiveNetworkInfo()!=null;
+    }
+    public static String getVersionName(){
+        try {
+            return MainApplication.getContext().getPackageManager().getPackageInfo(MainApplication.getContext().getPackageName(), 0).versionName;
+        }catch (PackageManager.NameNotFoundException e){
+            e.printStackTrace();
+            return "";
+        }
+    }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
@@ -310,7 +345,6 @@ public class ScheduledService extends Service implements Runnable{
     public void onDestroy() {
         mScheduledExecutorService.shutdownNow();
         mWakeLock.release();
-
         super.onDestroy();
     }
 }
