@@ -1,5 +1,7 @@
 package cn.edu.nju.dislab.moodexp;
 
+import android.Manifest;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -31,11 +33,18 @@ public class IntroActivity extends MaterialIntroActivity {
         if(!MainApplication.isUsageStatsGranted()){
             addSlide(new UsagePermissionSlide());
         }
-        addSlide(new SlideFragmentBuilder()
+
+        SlideFragmentBuilder builder=new SlideFragmentBuilder()
                 .backgroundColor(R.color.colorPrimary)
                 .buttonsColor(R.color.colorAccent)
                 .title(getString(R.string.privacy_permission))
-                .description(getString(R.string.privacy_permission_hint))
-                .build());
+                .description(getString(R.string.privacy_permission_hint));
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            builder.neededPermissions(new String[]{Manifest.permission.READ_CONTACTS,
+                    Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.RECORD_AUDIO,Manifest.permission.READ_PHONE_STATE,Manifest.permission.READ_CALL_LOG,
+            Manifest.permission.READ_SMS,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE});
+        }
+        addSlide(builder.build());
     }
 }

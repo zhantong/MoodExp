@@ -24,7 +24,7 @@ public class UsagePermissionSlide extends SlideFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.permission_slide,container,false);
+        View view=inflater.inflate(R.layout.usage_permission_slide,container,false);
         Button button=(Button)view.findViewById(R.id.button_permission_slide);
         button.setOnClickListener(new View.OnClickListener() {
             @Override

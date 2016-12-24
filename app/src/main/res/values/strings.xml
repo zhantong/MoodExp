@@ -19,4 +19,6 @@
     <string name="setting_now">现在设置</string>
     <string name="privacy_permission">隐私权限</string>
     <string name="privacy_permission_hint">由于系统限制，应用在运行中可能需要用户的权限许可；请在当应用申请权限时，选择默认允许。</string>
+    <string name="usage_permission">使用情况权限</string>
+    <string name="usage_permission_hint">应用需要分析设备的使用情况，请在弹出的提示框中点击设置。</string>
 </resources>
