@@ -26,7 +26,8 @@ public class MainActivity extends Activity {
         if(isFirstStart){
             startActivityForResult(new Intent(this,IntroActivity.class),REQUEST_CODE_INTRO);
         }else{
-            startScheduledService();
+            checkRegisterAndLogin();
+            //startScheduledService();
         }
     }
     private void startScheduledService(){
@@ -44,14 +45,18 @@ public class MainActivity extends Activity {
         }
         startService(new Intent(this,ScheduledService.class));
     }
-
+    private void checkRegisterAndLogin(){
+        startActivity(new Intent(this,RegisterAndLoginActivity.class));
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode==REQUEST_CODE_INTRO){
             SharedPreferences.Editor editor=preferences.edit();
             editor.putBoolean("firstStart",false);
             editor.apply();
-            startScheduledService();
+
+            checkRegisterAndLogin();
+            //startScheduledService();
         }
     }
 }

@@ -21,4 +21,10 @@
     <string name="privacy_permission_hint">由于系统限制，应用在运行中可能需要用户的权限许可；请在当应用申请权限时，选择默认允许。</string>
     <string name="usage_permission">使用情况权限</string>
     <string name="usage_permission_hint">应用需要分析设备的使用情况，请在弹出的提示框中点击设置。</string>
+    <string name="register">注册</string>
+    <string name="login">登录</string>
+    <string name="student_id">学号</string>
+    <string name="name">姓名</string>
+    <string name="mail">邮箱</string>
+    <string name="phone_number">手机号</string>
 </resources>

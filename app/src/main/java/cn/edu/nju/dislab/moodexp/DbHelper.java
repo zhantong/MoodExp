@@ -144,16 +144,6 @@ public class DbHelper extends SQLiteOpenHelper {
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
     }
-    public String getUser(String key){
-        String value="";
-        try(Cursor cursor= mReadableDb.query(UserTable.TABLE_NAME,new String[]{UserTable.COLUMN_NAME_VALUE},UserTable.COLUMN_NAME_KEY+" = ?",new String[]{key},null,null,null)) {
-            if (cursor.getCount() > 0) {
-                cursor.moveToFirst();
-                value = cursor.getString(cursor.getColumnIndexOrThrow(UserTable.COLUMN_NAME_VALUE));
-            }
-        }
-        return value;
-    }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);

@@ -129,8 +129,8 @@ public class ScheduledService extends Service implements Runnable{
                         if (!isNetworkConnected()) {
                             continue;
                         }
-                        final String userId = mDbHelper.getUser("id");
-                        final String version = getVersionName();
+                        final String userId = MainApplication.getUserId();
+                        final String version = MainApplication.getVersionName();
                         try(Cursor cursorCheckUpload = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ? AND " + DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED + " = ?", new String[]{"0", "0"}, null, null, null)) {
                             while (cursorCheckUpload.moveToNext()) {
                                 final String dbName = cursorCheckUpload.getString(cursorCheckUpload.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
@@ -183,7 +183,7 @@ public class ScheduledService extends Service implements Runnable{
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                HttpAPI.heartBeat(mDbHelper.getUser("id"));
+                                HttpAPI.heartBeat(MainApplication.getUserId());
                             }
                         }).start();
                         break;
@@ -334,14 +334,7 @@ public class ScheduledService extends Service implements Runnable{
     public static boolean isNetworkConnected(){
         return ((ConnectivityManager)MainApplication.getContext().getSystemService(CONNECTIVITY_SERVICE)).getActiveNetworkInfo()!=null;
     }
-    public static String getVersionName(){
-        try {
-            return MainApplication.getContext().getPackageManager().getPackageInfo(MainApplication.getContext().getPackageName(), 0).versionName;
-        }catch (PackageManager.NameNotFoundException e){
-            e.printStackTrace();
-            return "";
-        }
-    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;

@@ -59,6 +59,8 @@
 
         <activity android:name=".IntroActivity"
             android:theme="@style/Theme.Intro"/>
+        <activity android:name=".RegisterAndLoginActivity"
+            android:theme="@style/Theme.AppCompat"/>
 
         <service android:name=".ScheduledService"/>
 
