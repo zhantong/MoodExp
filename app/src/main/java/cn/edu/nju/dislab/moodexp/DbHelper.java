@@ -32,6 +32,7 @@ public class DbHelper extends SQLiteOpenHelper {
         static final String COLUMN_NAME_NAME = "name";
         static final String COLUMN_NAME_IS_USING = "is_using";
         static final String COLUMN_NAME_IS_UPLOADED = "is_uploaded";
+        static final String COLUMN_NAME_IS_DELETED = "is_deleted";
         static final String COLUMN_NAME_TIMESTAMP = "timestamp";
     }
     public static class UserTable implements BaseColumns{
@@ -52,6 +53,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     CollectDbTable.COLUMN_NAME_NAME+" TEXT PRIMARY KEY,"+
                     CollectDbTable.COLUMN_NAME_IS_USING+" INTEGER,"+
                     CollectDbTable.COLUMN_NAME_IS_UPLOADED+" INTEGER,"+
+                    CollectDbTable.COLUMN_NAME_IS_DELETED+" INTEGER DEFAULT 0,"+
                     CollectDbTable.COLUMN_NAME_TIMESTAMP+" INTEGER)";
     private static final String SQL_CREATE_TABLE_USER=
             "CREATE TABLE "+ UserTable.TABLE_NAME+" ("+
@@ -129,6 +131,15 @@ public class DbHelper extends SQLiteOpenHelper {
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "upload");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 2*60 * 1000);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
+            db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
+        }
+        if(true) {
+            ContentValues valuesSchedule = new ContentValues();
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 5);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "cleanUp");
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 4*60 * 1000);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }

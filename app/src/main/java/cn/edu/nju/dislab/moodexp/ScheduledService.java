@@ -187,6 +187,18 @@ public class ScheduledService extends Service implements Runnable{
                             }
                         }).start();
                         break;
+                    case "cleanUp":
+                        try(Cursor cursorCheckUpload = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ? AND " + DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED + " = ? AND "+DbHelper.CollectDbTable.COLUMN_NAME_IS_DELETED+" = ?", new String[]{"0", "1","0"}, null, null, null)) {
+                            while (cursorCheckUpload.moveToNext()) {
+                                final String dbName = cursorCheckUpload.getString(cursorCheckUpload.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
+                                File dbPath = getDatabasePath(dbName);
+                                if((!dbPath.exists())||dbPath.delete()){
+                                    ContentValues updateValues = new ContentValues();
+                                    updateValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_DELETED, 1);
+                                    writableDatabase.update(DbHelper.CollectDbTable.TABLE_NAME, updateValues, DbHelper.CollectDbTable.COLUMN_NAME_NAME + " = ?", new String[]{dbName});
+                                }
+                            }
+                        }
                 }
                 while (nextFireTime < System.currentTimeMillis()) {
                     nextFireTime += interval;
