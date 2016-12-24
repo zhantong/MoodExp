@@ -37,5 +37,5 @@ dependencies {
 
     compile 'com.squareup.okhttp3:okhttp:3.4.2'
 
-    compile 'com.github.paolorotolo:appintro:4.1.0'
+    compile 'agency.tango.android:material-intro-screen:0.0.5'
 }

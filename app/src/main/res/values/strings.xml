@@ -1,18 +1,22 @@
 <resources>
     <string name="app_name">MoodExp</string>
-    <string name="intro_title">安装条款与用户须知</string>
-    <string name="intro2_title">安装条款与用户须知</string>
-    <string name="intro_description">本应用主要用于收集用户数据.\n该数据将用于预测用户情绪的研究工作.\n
+    <string name="terms_and_notification">安装条款与用户须知</string>
+    <string name="terms_and_notification_hint_1">本应用主要用于收集用户数据.\n该数据将用于预测用户情绪的研究工作.\n
         本应用应当每天10am,5pm,10pm三次提醒用户记录心情。但可能由于被管理软件清理而不能发出提醒。\n
         如果发生这样的情况，希望用户能够主动记录心情数据。但两次记录数据间隔不得低于五小时。\n
         用户在提交心情记录时，会上传这段时间收集的数据到服务器，大约100k。因此请保证提交心情记录时网络畅通。如果当前因网络不畅等原因上传失败，数据会保留到下次一同上传。\n
         当你记录了60次数据，将得到我们提供的精美礼品。
     </string>
-        <string name="intro2_description">本应用收集的数据如下：\n加速度传感器数据;\n陀螺仪(角速度)数据;\n电子罗盘(磁力)数据;\n
+        <string name="terms_and_notification_hint_2">本应用收集的数据如下：\n加速度传感器数据;\n陀螺仪(角速度)数据;\n电子罗盘(磁力)数据;\n
         光传感器数据;\nGPS经纬度信息;\n数据声音分贝值;\n屏幕点亮熄灭;\n
         各个应用使用时间;\n通讯录中姓名的哈希值与号码的哈希值;\n通话记录中号码的哈希值与通话时间;\n
         短信记录中号码的哈希值与短信时间;\n用户提供的心情标签;\nWifi的ssid,bssid,rssi。\n\n
         我们承诺收集数据仅用于跟随其后的情绪模型训练的研究，不用作他用。研究结束后即进行销毁。</string>
-    <string name="skip_button">跳过</string>
-    <string name="done_button">完成</string>
+    <string name="skip">跳过</string>
+    <string name="done">完成</string>
+    <string name="background_and_boot_permission">后台与自启动权限</string>
+    <string name="background_and_boot_permission_hint">应用需要后台运行与自动启动权限，请在弹出的提示框中点击设置。</string>
+    <string name="setting_now">现在设置</string>
+    <string name="privacy_permission">隐私权限</string>
+    <string name="privacy_permission_hint">由于系统限制，应用在运行中可能需要用户的权限许可；请在当应用申请权限时，选择默认允许。</string>
 </resources>

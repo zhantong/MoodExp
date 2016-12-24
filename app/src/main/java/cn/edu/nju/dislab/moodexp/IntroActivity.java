@@ -1,36 +1,38 @@
 package cn.edu.nju.dislab.moodexp;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 
-import com.github.paolorotolo.appintro.AppIntro;
+import agency.tango.materialintroscreen.MaterialIntroActivity;
+import agency.tango.materialintroscreen.SlideFragmentBuilder;
 
 /**
  * Created by zhantong on 2016/12/24.
  */
 
-public class IntroActivity extends AppIntro {
+public class IntroActivity extends MaterialIntroActivity {
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-    }
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    @Override
-    public void init(@Nullable Bundle savedInstanceState) {
-        showSkipButton(false);
-        addSlide(IntroSilde.newInstance(R.layout.intro));
-        addSlide(IntroSilde.newInstance(R.layout.intro2));
-    }
-
-    @Override
-    public void onDonePressed(Fragment currentFragment) {
-        finish();
-    }
-
-    @Override
-    public void onSkipPressed(Fragment currentFragment) {
-        finish();
+        addSlide(new SlideFragmentBuilder()
+                .backgroundColor(R.color.colorPrimary)
+                .buttonsColor(R.color.colorAccent)
+                .title(getString(R.string.terms_and_notification))
+                .description(getString(R.string.terms_and_notification_hint_1))
+                .build());
+        addSlide(new SlideFragmentBuilder()
+                        .backgroundColor(R.color.colorPrimary)
+                        .buttonsColor(R.color.colorAccent)
+                        .title(getString(R.string.terms_and_notification))
+                        .description(getString(R.string.terms_and_notification_hint_2))
+                        .build());
+        addSlide(new BackgroundPermissionSlide());
+        addSlide(new SlideFragmentBuilder()
+                .backgroundColor(R.color.colorPrimary)
+                .buttonsColor(R.color.colorAccent)
+                .title(getString(R.string.privacy_permission))
+                .description(getString(R.string.privacy_permission_hint))
+                .build());
     }
 }
