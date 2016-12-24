@@ -28,6 +28,9 @@ public class IntroActivity extends MaterialIntroActivity {
                         .description(getString(R.string.terms_and_notification_hint_2))
                         .build());
         addSlide(new BackgroundPermissionSlide());
+        if(!MainApplication.isUsageStatsGranted()){
+            addSlide(new UsagePermissionSlide());
+        }
         addSlide(new SlideFragmentBuilder()
                 .backgroundColor(R.color.colorPrimary)
                 .buttonsColor(R.color.colorAccent)
