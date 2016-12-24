@@ -57,6 +57,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".IntroActivity"
+            android:theme="@style/Theme.AppCompat"/>
+
         <service android:name=".ScheduledService"/>
 
         <service android:name="com.amap.api.location.APSService" />
