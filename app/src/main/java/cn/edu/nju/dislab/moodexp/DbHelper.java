@@ -80,6 +80,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TABLE_COLLECT_DB);
         db.execSQL(SQL_CREATE_TABLE_USER);
 
+        /*
         ContentValues userName=new ContentValues();
         userName.put(UserTable.COLUMN_NAME_KEY,"name");
         userName.put(UserTable.COLUMN_NAME_VALUE,"test0");
@@ -91,6 +92,7 @@ public class DbHelper extends SQLiteOpenHelper {
         userId.put(UserTable.COLUMN_NAME_VALUE,"test0");
         userId.put(UserTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
         db.insert(UserTable.TABLE_NAME,null,userId);
+        */
 
         ContentValues initCollectDb=new ContentValues();
         initCollectDb.put(CollectDbTable.COLUMN_NAME_NAME,System.currentTimeMillis()+".db");

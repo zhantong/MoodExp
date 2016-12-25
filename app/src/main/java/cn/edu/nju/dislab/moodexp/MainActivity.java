@@ -26,7 +26,10 @@ public class MainActivity extends Activity {
         if(isFirstStart){
             startActivityForResult(new Intent(this,IntroActivity.class),REQUEST_CODE_INTRO);
         }else{
-            checkRegisterAndLogin();
+            Log.i(TAG,MainApplication.getUserId());
+            if(MainApplication.getUserId().isEmpty()) {
+                checkRegisterAndLogin();
+            }
             //startScheduledService();
         }
     }
@@ -55,7 +58,9 @@ public class MainActivity extends Activity {
             editor.putBoolean("firstStart",false);
             editor.apply();
 
-            checkRegisterAndLogin();
+            if(MainApplication.getUserId().isEmpty()) {
+                checkRegisterAndLogin();
+            }
             //startScheduledService();
         }
     }

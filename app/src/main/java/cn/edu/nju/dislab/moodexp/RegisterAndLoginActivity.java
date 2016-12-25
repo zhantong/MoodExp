@@ -40,6 +40,7 @@ public class RegisterAndLoginActivity extends Activity{
                 transaction.commit();
             }
         });
-        ((RadioButton)radioGroup.getChildAt(0)).setChecked(true);
+        ((RadioButton)radioGroup.getChildAt(0)).setEnabled(false);
+        ((RadioButton)radioGroup.getChildAt(1)).setChecked(true);
     }
 }

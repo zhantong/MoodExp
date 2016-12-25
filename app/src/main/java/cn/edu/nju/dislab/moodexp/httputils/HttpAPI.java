@@ -247,7 +247,7 @@ public class HttpAPI {
         return null;
     }
 
-    private static JsonObject studentInfo(String id) {
+    public static JsonObject studentInfo(String id) {
         Map<String, String> params = new HashMap<>();
         params.put("id", id);
 
