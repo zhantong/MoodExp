@@ -10,6 +10,9 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 public class MainActivity extends Activity {
     private static final String TAG="MainActivity";
@@ -33,6 +36,14 @@ public class MainActivity extends Activity {
             //startScheduledService();
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.main_menu,menu);
+        return true;
+    }
+
     private void startScheduledService(){
         if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1) {
             String pkg=getPackageName();
@@ -62,6 +73,17 @@ public class MainActivity extends Activity {
                 checkRegisterAndLogin();
             }
             //startScheduledService();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.about:
+                startActivity(new Intent(this,AboutActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

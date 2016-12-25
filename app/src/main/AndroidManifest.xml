@@ -61,6 +61,8 @@
             android:theme="@style/Theme.Intro"/>
         <activity android:name=".RegisterAndLoginActivity"
             android:theme="@style/Theme.AppCompat"/>
+        <activity android:name=".AboutActivity"
+            android:parentActivityName=".MainActivity"/>
 
         <service android:name=".ScheduledService"/>
 
