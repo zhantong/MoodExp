@@ -63,6 +63,8 @@
             android:theme="@style/Theme.AppCompat"/>
         <activity android:name=".AboutActivity"
             android:parentActivityName=".MainActivity"/>
+        <activity android:name=".SurveyActivity"
+            android:theme="@style/Theme.AppCompat"/>
 
         <service android:name=".ScheduledService"/>
 

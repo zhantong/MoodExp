@@ -34,4 +34,5 @@
     <string name="confirm_logout">确定退出登录吗？</string>
     <string name="ok">确定</string>
     <string name="cancel">取消</string>
+    <string name="next_question">下一题</string>
 </resources>
