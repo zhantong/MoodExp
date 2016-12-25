@@ -1,8 +1,12 @@
 package cn.edu.nju.dislab.moodexp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -84,6 +88,49 @@ public class MainActivity extends Activity {
                 return true;
             case R.id.intro:
                 startActivity(new Intent(this,IntroActivity.class));
+                return true;
+            case R.id.log_out:
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.confirm_logout)
+                        .setNegativeButton(R.string.cancel,null)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DbHelper dbHelper=new DbHelper();
+                                SQLiteDatabase writableDb=dbHelper.getWritableDatabase();
+                                if(true) {
+                                    ContentValues values=new ContentValues();
+                                    values.put(DbHelper.UserTable.COLUMN_NAME_KEY, "id");
+                                    values.put(DbHelper.UserTable.COLUMN_NAME_VALUE, "");
+                                    values.put(DbHelper.UserTable.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
+                                    writableDb.insertWithOnConflict(DbHelper.UserTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                                }
+                                if(true) {
+                                    ContentValues values=new ContentValues();
+                                    values.put(DbHelper.UserTable.COLUMN_NAME_KEY, "class");
+                                    values.put(DbHelper.UserTable.COLUMN_NAME_VALUE, "");
+                                    values.put(DbHelper.UserTable.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
+                                    writableDb.insertWithOnConflict(DbHelper.UserTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                                }
+                                if(true) {
+                                    ContentValues values=new ContentValues();
+                                    values.put(DbHelper.UserTable.COLUMN_NAME_KEY, "name");
+                                    values.put(DbHelper.UserTable.COLUMN_NAME_VALUE, "");
+                                    values.put(DbHelper.UserTable.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
+                                    writableDb.insertWithOnConflict(DbHelper.UserTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                                }
+                                if(true) {
+                                    ContentValues values=new ContentValues();
+                                    values.put(DbHelper.UserTable.COLUMN_NAME_KEY, "phone");
+                                    values.put(DbHelper.UserTable.COLUMN_NAME_VALUE, "");
+                                    values.put(DbHelper.UserTable.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
+                                    writableDb.insertWithOnConflict(DbHelper.UserTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+                                }
+                                MainApplication.getUserId(true);
+                                startActivity(new Intent(getBaseContext(),RegisterAndLoginActivity.class));
+                            }
+                        }).show();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

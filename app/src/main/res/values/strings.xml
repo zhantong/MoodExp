@@ -30,4 +30,8 @@
     <string name="about">关于</string>
     <string name="display_version_name">版本：%1$s</string>
     <string name="intro_page">引导页面</string>
+    <string name="logout">退出登录</string>
+    <string name="confirm_logout">确定退出登录吗？</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
 </resources>
