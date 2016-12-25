@@ -29,4 +29,5 @@
     <string name="phone_number">手机号</string>
     <string name="about">关于</string>
     <string name="display_version_name">版本：%1$s</string>
+    <string name="intro_page">引导页面</string>
 </resources>

@@ -82,6 +82,8 @@ public class MainActivity extends Activity {
             case R.id.about:
                 startActivity(new Intent(this,AboutActivity.class));
                 return true;
+            case R.id.intro:
+                startActivity(new Intent(this,IntroActivity.class));
             default:
                 return super.onOptionsItemSelected(item);
         }
