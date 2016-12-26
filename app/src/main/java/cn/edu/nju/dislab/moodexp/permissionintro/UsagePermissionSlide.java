@@ -1,4 +1,4 @@
-package cn.edu.nju.dislab.moodexp;
+package cn.edu.nju.dislab.moodexp.permissionintro;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -12,15 +12,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import agency.tango.materialintroscreen.SlideFragment;
+import cn.edu.nju.dislab.moodexp.MainApplication;
+import cn.edu.nju.dislab.moodexp.R;
 
-import static cn.edu.nju.dislab.moodexp.IntentWrapper.getApplicationName;
+import static cn.edu.nju.dislab.moodexp.permissionintro.IntentWrapper.getApplicationName;
 
 /**
  * Created by zhantong on 2016/12/24.
  */
 
 public class UsagePermissionSlide extends SlideFragment {
-    private boolean canMoveFurther=false;
+    //private boolean canMoveFurther=false;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -30,16 +32,16 @@ public class UsagePermissionSlide extends SlideFragment {
             @Override
             public void onClick(View view) {
                 usageStatsCheck();
-                canMoveFurther=true;
+                //canMoveFurther=true;
             }
         });
         return view;
     }
 
-    @Override
+/*    @Override
     public boolean canMoveFurther() {
         return canMoveFurther;
-    }
+    }*/
     @Override
     public String cantMoveFurtherErrorMessage() {
         return "请点击按钮";
@@ -57,7 +59,7 @@ public class UsagePermissionSlide extends SlideFragment {
     private void usageStatsCheck(){
         if(!MainApplication.isUsageStatsGranted()) {
             new AlertDialog.Builder(getContext())
-                    .setCancelable(false)
+                    .setCancelable(true)
                     .setTitle(getApplicationName() + " 需要查看系统统计信息")
                     .setMessage(getApplicationName() + " 需要分析应用的使用情况。\n\n" +
                             "请点击『确定』，在弹出的『查看使用情况』列表中，将 " + getApplicationName() + " 对应的开关打开。")
@@ -67,6 +69,7 @@ public class UsagePermissionSlide extends SlideFragment {
                             startActivity(new Intent().setAction(Settings.ACTION_USAGE_ACCESS_SETTINGS));
                         }
                     })
+                    .setNegativeButton("取消",null)
                     .show();
         }
     }

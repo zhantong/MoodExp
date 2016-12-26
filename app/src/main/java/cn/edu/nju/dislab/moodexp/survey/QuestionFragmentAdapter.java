@@ -1,4 +1,4 @@
-package cn.edu.nju.dislab.moodexp;
+package cn.edu.nju.dislab.moodexp.survey;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -6,14 +6,16 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.List;
 
+import cn.edu.nju.dislab.moodexp.survey.QuestionFragment;
+
 /**
  * Created by zhantong on 2016/12/25.
  */
 
-public class FragmentAdapter extends FragmentPagerAdapter {
+public class QuestionFragmentAdapter extends FragmentPagerAdapter {
     private List<QuestionFragment> mQuestionFragments;
 
-    public FragmentAdapter(FragmentManager fm, List<QuestionFragment> questionFragments) {
+    public QuestionFragmentAdapter(FragmentManager fm, List<QuestionFragment> questionFragments) {
         super(fm);
         mQuestionFragments=questionFragments;
     }

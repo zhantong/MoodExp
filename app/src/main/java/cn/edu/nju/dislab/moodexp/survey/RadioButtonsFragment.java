@@ -1,4 +1,4 @@
-package cn.edu.nju.dislab.moodexp;
+package cn.edu.nju.dislab.moodexp.survey;
 
 
 import android.content.Context;
@@ -14,6 +14,11 @@ import android.widget.ScrollView;
 
 
 import java.util.List;
+
+import cn.edu.nju.dislab.moodexp.R;
+import cn.edu.nju.dislab.moodexp.survey.Choice;
+import cn.edu.nju.dislab.moodexp.survey.Question;
+import cn.edu.nju.dislab.moodexp.survey.QuestionFragment;
 
 /**
  * Created by zhantong on 2016/12/25.

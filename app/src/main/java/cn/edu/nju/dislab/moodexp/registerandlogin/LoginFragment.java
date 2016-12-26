@@ -1,5 +1,6 @@
-package cn.edu.nju.dislab.moodexp;
+package cn.edu.nju.dislab.moodexp.registerandlogin;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -16,15 +17,20 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
+import cn.edu.nju.dislab.moodexp.R;
 import cn.edu.nju.dislab.moodexp.httputils.HttpAPI;
+import cn.edu.nju.dislab.moodexp.survey.OnSubmitAnswerListener;
 
 /**
  * Created by zhantong on 2016/12/24.
  */
 
 public class LoginFragment extends Fragment {
-
+    public interface OnLoginSuccessListener{
+        void onLoginSuccess(String studentId,String studentName,String studentClass,String studentPhone);
+    }
     private View mView;
+    private OnLoginSuccessListener mCallback;
 
     @Nullable
     @Override
@@ -75,47 +81,23 @@ public class LoginFragment extends Fragment {
             }else if(!studentInfo.get("status").getAsBoolean()){
                 Toast.makeText(getActivity(),"登录失败",Toast.LENGTH_SHORT).show();
             }else{
+
                 String studentId=studentInfo.get("id").getAsString();
                 String studentClass=studentInfo.get("class").getAsString();
                 final String studentName=studentInfo.get("name").getAsString();
                 String studentPhone=studentInfo.get("phone").getAsString();
-
-                DbHelper dbHelper=new DbHelper();
-                SQLiteDatabase writableDb=dbHelper.getWritableDatabase();
-                if(studentId!=null){
-                    ContentValues values=new ContentValues();
-                    values.put(DbHelper.UserTable.COLUMN_NAME_KEY,"id");
-                    values.put(DbHelper.UserTable.COLUMN_NAME_VALUE,studentId);
-                    values.put(DbHelper.UserTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
-                    writableDb.insertWithOnConflict(DbHelper.UserTable.TABLE_NAME,null,values,SQLiteDatabase.CONFLICT_REPLACE);
-                }
-                if(studentClass!=null){
-                    ContentValues values=new ContentValues();
-                    values.put(DbHelper.UserTable.COLUMN_NAME_KEY,"class");
-                    values.put(DbHelper.UserTable.COLUMN_NAME_VALUE,studentClass);
-                    values.put(DbHelper.UserTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
-                    writableDb.insertWithOnConflict(DbHelper.UserTable.TABLE_NAME,null,values,SQLiteDatabase.CONFLICT_REPLACE);
-                }
-                if(studentName!=null){
-                    ContentValues values=new ContentValues();
-                    values.put(DbHelper.UserTable.COLUMN_NAME_KEY,"name");
-                    values.put(DbHelper.UserTable.COLUMN_NAME_VALUE,studentName);
-                    values.put(DbHelper.UserTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
-                    writableDb.insertWithOnConflict(DbHelper.UserTable.TABLE_NAME,null,values,SQLiteDatabase.CONFLICT_REPLACE);
-                }
-                if(studentPhone!=null){
-                    ContentValues values=new ContentValues();
-                    values.put(DbHelper.UserTable.COLUMN_NAME_KEY,"phone");
-                    values.put(DbHelper.UserTable.COLUMN_NAME_VALUE,studentPhone);
-                    values.put(DbHelper.UserTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
-                    writableDb.insertWithOnConflict(DbHelper.UserTable.TABLE_NAME,null,values,SQLiteDatabase.CONFLICT_REPLACE);
-                }
-                MainApplication.getUserId(true);
-                if(studentName!=null) {
-                    Toast.makeText(getActivity(), "欢迎你，" +studentName+"。",Toast.LENGTH_SHORT).show();
-                }
-                getActivity().finish();
+                mCallback.onLoginSuccess(studentId,studentName,studentClass,studentPhone);
             }
+        }
+    }
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        try{
+            mCallback=(OnLoginSuccessListener) activity;
+        }catch (ClassCastException e){
+            throw new ClassCastException(activity.toString()+" must implement OnLoginSuccessListener");
         }
     }
 }

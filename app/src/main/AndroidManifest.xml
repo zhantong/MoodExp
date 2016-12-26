@@ -57,13 +57,15 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".IntroActivity"
+        <activity android:name=".FirstTimeIntroActivity"
             android:theme="@style/Theme.Intro"/>
-        <activity android:name=".RegisterAndLoginActivity"
+        <activity android:name=".permissionintro.PermissionIntroActivity"
+            android:theme="@style/Theme.Intro"/>
+        <activity android:name=".registerandlogin.RegisterAndLoginActivity"
             android:theme="@style/Theme.AppCompat"/>
         <activity android:name=".AboutActivity"
             android:parentActivityName=".MainActivity"/>
-        <activity android:name=".SurveyActivity"
+        <activity android:name=".survey.SurveyActivity"
             android:theme="@style/Theme.AppCompat"/>
 
         <service android:name=".ScheduledService"/>

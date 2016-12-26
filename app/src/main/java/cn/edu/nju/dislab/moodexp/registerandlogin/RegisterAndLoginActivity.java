@@ -1,19 +1,22 @@
-package cn.edu.nju.dislab.moodexp;
+package cn.edu.nju.dislab.moodexp.registerandlogin;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import cn.edu.nju.dislab.moodexp.R;
+
 /**
  * Created by zhantong on 2016/12/24.
  */
 
-public class RegisterAndLoginActivity extends Activity{
+public class RegisterAndLoginActivity extends Activity implements LoginFragment.OnLoginSuccessListener{
     private static final String TAG="RegisterAndLogin";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,5 +45,16 @@ public class RegisterAndLoginActivity extends Activity{
         });
         ((RadioButton)radioGroup.getChildAt(0)).setEnabled(false);
         ((RadioButton)radioGroup.getChildAt(1)).setChecked(true);
+    }
+
+    @Override
+    public void onLoginSuccess(String studentId, String studentName, String studentClass, String studentPhone) {
+        Intent intent=new Intent();
+        intent.putExtra("id",studentId);
+        intent.putExtra("name",studentName);
+        intent.putExtra("class",studentClass);
+        intent.putExtra("phone",studentPhone);
+        setResult(Activity.RESULT_OK,intent);
+        finish();
     }
 }

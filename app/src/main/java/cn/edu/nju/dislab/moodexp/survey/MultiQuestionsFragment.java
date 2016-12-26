@@ -1,4 +1,4 @@
-package cn.edu.nju.dislab.moodexp;
+package cn.edu.nju.dislab.moodexp.survey;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +11,8 @@ import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.edu.nju.dislab.moodexp.R;
 
 /**
  * Created by zhantong on 2016/12/25.
@@ -51,7 +53,7 @@ public class MultiQuestionsFragment extends QuestionFragment {
             FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
             mQuestionFragments=new ArrayList<>();
             for(Question childQuestion:questions){
-                QuestionFragment questionFragment=QuestionFragmentFactory.get(childQuestion.getType());
+                QuestionFragment questionFragment= QuestionFragmentFactory.get(childQuestion.getType());
                 if(questionFragment!=null){
                     Bundle bundleToFragment=new Bundle();
                     bundleToFragment.putSerializable("data",childQuestion);

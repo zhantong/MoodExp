@@ -1,4 +1,4 @@
-package cn.edu.nju.dislab.moodexp;
+package cn.edu.nju.dislab.moodexp.permissionintro;
 
 import android.app.*;
 import android.content.*;
@@ -9,6 +9,8 @@ import android.provider.*;
 import android.text.*;
 
 import java.util.*;
+
+import cn.edu.nju.dislab.moodexp.MainApplication;
 
 
 /**

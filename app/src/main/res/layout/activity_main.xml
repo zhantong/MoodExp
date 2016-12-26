@@ -11,7 +11,7 @@
     tools:context="cn.edu.nju.dislab.moodexp.MainActivity">
 
     <Button
-        android:id="@+id/btn_test"
+        android:id="@+id/btn_do_survey"
         android:text="@string/do_survey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

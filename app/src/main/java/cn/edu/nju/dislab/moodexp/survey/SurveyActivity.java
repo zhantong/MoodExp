@@ -1,25 +1,25 @@
-package cn.edu.nju.dislab.moodexp;
+package cn.edu.nju.dislab.moodexp.survey;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.edu.nju.dislab.moodexp.R;
+
 /**
  * Created by zhantong on 2016/12/25.
  */
 
-public class SurveyActivity extends AppCompatActivity implements OnSubmitAnswerListener{
+public class SurveyActivity extends AppCompatActivity implements OnSubmitAnswerListener {
     private static final String TAG="SurveyActivity";
     private ViewPager mViewPager;
     private Map<Integer,Answer> answerMap;
@@ -38,7 +38,7 @@ public class SurveyActivity extends AppCompatActivity implements OnSubmitAnswerL
         List<QuestionFragment> questionFragments=new ArrayList<>();
 
         for(Question question:survey.getQuestions()){
-            QuestionFragment questionFragment=QuestionFragmentFactory.get(question.getType());
+            QuestionFragment questionFragment= QuestionFragmentFactory.get(question.getType());
             if(questionFragment!=null) {
                 Bundle bundleToFragment = new Bundle();
                 bundleToFragment.putSerializable("data", question);
@@ -47,8 +47,8 @@ public class SurveyActivity extends AppCompatActivity implements OnSubmitAnswerL
             }
         }
         mViewPager=(ViewPager)findViewById(R.id.view_pager);
-        FragmentAdapter fragmentAdapter=new FragmentAdapter(getSupportFragmentManager(),questionFragments);
-        mViewPager.setAdapter(fragmentAdapter);
+        QuestionFragmentAdapter questionFragmentAdapter=new QuestionFragmentAdapter(getSupportFragmentManager(),questionFragments);
+        mViewPager.setAdapter(questionFragmentAdapter);
 
         answerMap=new HashMap<>();
     }

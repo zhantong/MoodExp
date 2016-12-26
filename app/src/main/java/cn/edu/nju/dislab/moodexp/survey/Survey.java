@@ -1,9 +1,11 @@
-package cn.edu.nju.dislab.moodexp;
+package cn.edu.nju.dislab.moodexp.survey;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
+
+import cn.edu.nju.dislab.moodexp.survey.Question;
 
 /**
  * Created by zhantong on 2016/12/25.

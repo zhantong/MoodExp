@@ -1,4 +1,4 @@
-package cn.edu.nju.dislab.moodexp;
+package cn.edu.nju.dislab.moodexp.survey;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import cn.edu.nju.dislab.moodexp.R;
 
 /**
  * Created by zhantong on 2016/12/25.

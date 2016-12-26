@@ -12,7 +12,7 @@ import agency.tango.materialintroscreen.SlideFragmentBuilder;
  * Created by zhantong on 2016/12/24.
  */
 
-public class IntroActivity extends MaterialIntroActivity {
+public class FirstTimeIntroActivity extends MaterialIntroActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,11 +29,6 @@ public class IntroActivity extends MaterialIntroActivity {
                         .title(getString(R.string.terms_and_notification))
                         .description(getString(R.string.terms_and_notification_hint_2))
                         .build());
-        addSlide(new BackgroundPermissionSlide());
-        if(!MainApplication.isUsageStatsGranted()){
-            addSlide(new UsagePermissionSlide());
-        }
-
         SlideFragmentBuilder builder=new SlideFragmentBuilder()
                 .backgroundColor(R.color.colorPrimary)
                 .buttonsColor(R.color.colorAccent)

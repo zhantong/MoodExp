@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 
 import com.google.gson.Gson;
@@ -30,10 +31,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 
+import cn.edu.nju.dislab.moodexp.permissionintro.PermissionIntroActivity;
+import cn.edu.nju.dislab.moodexp.registerandlogin.RegisterAndLoginActivity;
+import cn.edu.nju.dislab.moodexp.survey.Answer;
+import cn.edu.nju.dislab.moodexp.survey.SurveyActivity;
+
 public class MainActivity extends Activity {
     private static final String TAG="MainActivity";
     private static final int REQUEST_CODE_INTRO=1;
     private static final int REQUEST_CODE_SURVEY=2;
+    private static final int REQUEST_CODE_REGISTER_AND_LOGIN=3;
     private SharedPreferences preferences;
 
     @Override
@@ -44,7 +51,7 @@ public class MainActivity extends Activity {
         preferences= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean isFirstStart=preferences.getBoolean("firstStart",true);
         if(isFirstStart){
-            startActivityForResult(new Intent(this,IntroActivity.class),REQUEST_CODE_INTRO);
+            startActivityForResult(new Intent(this,FirstTimeIntroActivity.class),REQUEST_CODE_INTRO);
         }else{
             Log.i(TAG,MainApplication.getUserId());
             if(MainApplication.getUserId().isEmpty()) {
@@ -53,11 +60,11 @@ public class MainActivity extends Activity {
             startScheduledService();
         }
 
-        Button buttonTest=(Button)findViewById(R.id.btn_test);
-        buttonTest.setOnClickListener(new View.OnClickListener() {
+        Button buttonDoSurvey=(Button)findViewById(R.id.btn_do_survey);
+        buttonDoSurvey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                test();
+                doSurvey();
             }
         });
     }
@@ -78,7 +85,7 @@ public class MainActivity extends Activity {
         reader.close();
         return sb.toString();
     }
-    private void test(){
+    private void doSurvey(){
         InputStream inputStream=null;
         try {
             inputStream= getAssets().open("example_survey.json");
@@ -111,7 +118,7 @@ public class MainActivity extends Activity {
         startService(new Intent(this,ScheduledService.class));
     }
     private void checkRegisterAndLogin(){
-        startActivity(new Intent(this,RegisterAndLoginActivity.class));
+        startActivityForResult(new Intent(this,RegisterAndLoginActivity.class),REQUEST_CODE_REGISTER_AND_LOGIN);
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -130,6 +137,49 @@ public class MainActivity extends Activity {
                 Map<Integer,Answer> answerMap=new Gson().fromJson(data.getExtras().getString("answers"), new TypeToken<Map<Integer,Answer>>(){}.getType());
                 saveSurvryAnswersToDb(answerMap);
                 startService(new Intent(this,ScheduledService.class));
+            }
+        }
+        if(requestCode==REQUEST_CODE_REGISTER_AND_LOGIN){
+            if(resultCode==Activity.RESULT_OK){
+                String studentId=data.getStringExtra("id");
+                String studentName=data.getStringExtra("name");
+                String studentClass=data.getStringExtra("class");
+                String studentPhone=data.getStringExtra("phone");
+
+                DbHelper dbHelper=new DbHelper();
+                SQLiteDatabase writableDb=dbHelper.getWritableDatabase();
+                if(studentId!=null){
+                    ContentValues values=new ContentValues();
+                    values.put(DbHelper.UserTable.COLUMN_NAME_KEY,"id");
+                    values.put(DbHelper.UserTable.COLUMN_NAME_VALUE,studentId);
+                    values.put(DbHelper.UserTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
+                    writableDb.insertWithOnConflict(DbHelper.UserTable.TABLE_NAME,null,values,SQLiteDatabase.CONFLICT_REPLACE);
+                }
+                if(studentClass!=null){
+                    ContentValues values=new ContentValues();
+                    values.put(DbHelper.UserTable.COLUMN_NAME_KEY,"class");
+                    values.put(DbHelper.UserTable.COLUMN_NAME_VALUE,studentClass);
+                    values.put(DbHelper.UserTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
+                    writableDb.insertWithOnConflict(DbHelper.UserTable.TABLE_NAME,null,values,SQLiteDatabase.CONFLICT_REPLACE);
+                }
+                if(studentName!=null){
+                    ContentValues values=new ContentValues();
+                    values.put(DbHelper.UserTable.COLUMN_NAME_KEY,"name");
+                    values.put(DbHelper.UserTable.COLUMN_NAME_VALUE,studentName);
+                    values.put(DbHelper.UserTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
+                    writableDb.insertWithOnConflict(DbHelper.UserTable.TABLE_NAME,null,values,SQLiteDatabase.CONFLICT_REPLACE);
+                }
+                if(studentPhone!=null){
+                    ContentValues values=new ContentValues();
+                    values.put(DbHelper.UserTable.COLUMN_NAME_KEY,"phone");
+                    values.put(DbHelper.UserTable.COLUMN_NAME_VALUE,studentPhone);
+                    values.put(DbHelper.UserTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
+                    writableDb.insertWithOnConflict(DbHelper.UserTable.TABLE_NAME,null,values,SQLiteDatabase.CONFLICT_REPLACE);
+                }
+                MainApplication.getUserId(true);
+                if(studentName!=null) {
+                    Toast.makeText(this, "欢迎你，" +studentName+"。",Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
@@ -181,8 +231,8 @@ public class MainActivity extends Activity {
             case R.id.about:
                 startActivity(new Intent(this,AboutActivity.class));
                 return true;
-            case R.id.intro:
-                startActivity(new Intent(this,IntroActivity.class));
+            case R.id.permission_intro:
+                startActivity(new Intent(this,PermissionIntroActivity.class));
                 return true;
             case R.id.log_out:
                 new AlertDialog.Builder(this)

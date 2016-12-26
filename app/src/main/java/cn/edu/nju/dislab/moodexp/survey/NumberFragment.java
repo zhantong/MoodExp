@@ -1,9 +1,12 @@
-package cn.edu.nju.dislab.moodexp;
+package cn.edu.nju.dislab.moodexp.survey;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.InputType;
 import android.widget.EditText;
+
+import cn.edu.nju.dislab.moodexp.R;
+import cn.edu.nju.dislab.moodexp.survey.LineFragment;
 
 /**
  * Created by zhantong on 2016/12/26.

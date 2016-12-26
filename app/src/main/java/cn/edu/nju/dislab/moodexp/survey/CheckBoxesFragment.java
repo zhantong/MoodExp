@@ -1,4 +1,4 @@
-package cn.edu.nju.dislab.moodexp;
+package cn.edu.nju.dislab.moodexp.survey;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -16,6 +16,8 @@ import com.google.gson.annotations.Expose;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.edu.nju.dislab.moodexp.R;
 
 /**
  * Created by zhantong on 2016/12/26.
