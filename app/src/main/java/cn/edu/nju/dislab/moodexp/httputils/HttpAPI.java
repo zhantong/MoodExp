@@ -302,6 +302,24 @@ public class HttpAPI {
             return null;
         }
     }
+    public static JsonObject checkUpdate(String id,String currentVersion){
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+        params.put("version", currentVersion);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "checkUpdate", params);
+            JsonObject result = element.getAsJsonObject();
+            if (result.get("status").getAsBoolean()) {
+                return result;
+            }
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public static boolean setReleaseVersion(String version) {
         return setVersion("release", version);

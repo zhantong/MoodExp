@@ -4,6 +4,8 @@
         android:title="@string/permission_intro_page"/>
     <item android:id="@+id/log_out"
         android:title="@string/logout"/>
+    <item android:id="@+id/check_update"
+        android:title="@string/check_update"/>
     <item android:id="@+id/about"
         android:title="@string/about"/>
 </menu>

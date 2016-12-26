@@ -37,4 +37,5 @@
     <string name="next_question">下一题</string>
     <string name="do_survey">填写问卷</string>
     <string name="permission_intro_page">权限设置引导</string>
+    <string name="check_update">检查更新</string>
 </resources>

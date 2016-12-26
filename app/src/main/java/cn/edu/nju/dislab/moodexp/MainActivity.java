@@ -58,6 +58,7 @@ public class MainActivity extends Activity {
                 checkRegisterAndLogin();
             }
             startScheduledService();
+            new CheckUpdate(MainActivity.this,false).execute();
         }
 
         Button buttonDoSurvey=(Button)findViewById(R.id.btn_do_survey);
@@ -131,6 +132,7 @@ public class MainActivity extends Activity {
                 checkRegisterAndLogin();
             }
             startScheduledService();
+            new CheckUpdate(MainActivity.this,false).execute();
         }
         if(requestCode==REQUEST_CODE_SURVEY){
             if(resultCode==Activity.RESULT_OK){
@@ -275,6 +277,9 @@ public class MainActivity extends Activity {
                                 startActivity(new Intent(getBaseContext(),RegisterAndLoginActivity.class));
                             }
                         }).show();
+                return true;
+            case R.id.check_update:
+                new CheckUpdate(MainActivity.this,true).execute();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
