@@ -75,6 +75,7 @@ public class ScheduledService extends Service implements Runnable{
         mWakeLock=powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,getClass().getSimpleName());
         mWakeLock.acquire();
         mScheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        Log.i(TAG,"setting schedule");
         mScheduledExecutorService.scheduleAtFixedRate(this,0,5, TimeUnit.SECONDS);
     }
 
@@ -85,18 +86,19 @@ public class ScheduledService extends Service implements Runnable{
 
     @Override
     public void run() {
-        readableDatabase.query(DbHelper.ScheduleTable.TABLE_NAME,null,DbHelper.ScheduleTable.COLUMN_NAME_IS_ENABLED+" = ?",new String[]{"1"},null,null,null);
-        try(Cursor cursorSchedule=readableDatabase.query(DbHelper.ScheduleTable.TABLE_NAME,null,null,null,null,null,null)) {
+        Log.i(TAG,"running started");
+        try(Cursor cursorSchedule=readableDatabase.query(DbHelper.ScheduleTable.TABLE_NAME,null,DbHelper.ScheduleTable.COLUMN_NAME_IS_ENABLED+" = ?",new String[]{"1"},null,null,null)) {
             while (cursorSchedule.moveToNext()) {
                 long nextFireTime = cursorSchedule.getLong(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME));
                 long currentTime = System.currentTimeMillis();
                 if (currentTime < nextFireTime) {
                     continue;
                 }
-                int level = cursorSchedule.getInt(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_LEVEL));
+                long level = cursorSchedule.getLong(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_LEVEL));
                 String type = cursorSchedule.getString(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_TYPE));
                 int interval = cursorSchedule.getInt(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_INTERVAL));
                 String[] actions = new Gson().fromJson(cursorSchedule.getString(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_ACTIONS)), String[].class);
+                Log.i(TAG,"level: "+level+" type: "+type+" interval: "+interval);
 
                 switch (type) {
                     case "collect":
@@ -133,9 +135,10 @@ public class ScheduledService extends Service implements Runnable{
                         final String userId = MainApplication.getUserId();
                         final String version = MainApplication.getVersionName();
                         try(Cursor cursorCheckUpload = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ? AND " + DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED + " = ?", new String[]{"0", "0"}, null, null, null)) {
+                            Log.i(TAG,cursorCheckUpload.getCount()+" databases need upload"+" at thread "+Thread.currentThread().getId());
                             while (cursorCheckUpload.moveToNext()) {
                                 final String dbName = cursorCheckUpload.getString(cursorCheckUpload.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
-                                Log.i(TAG,"uploading "+dbName);
+                                Log.i(TAG,"uploading "+dbName+" at thread "+Thread.currentThread().getId());
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -208,15 +211,15 @@ public class ScheduledService extends Service implements Runnable{
                     }
                     ContentValues updateValues = new ContentValues();
                     updateValues.put(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, nextFireTime);
-                    writableDatabase.update(DbHelper.ScheduleTable.TABLE_NAME, updateValues, DbHelper.ScheduleTable.COLUMN_NAME_LEVEL + " = ?", new String[]{Integer.toString(level)});
+                    writableDatabase.update(DbHelper.ScheduleTable.TABLE_NAME, updateValues, DbHelper.ScheduleTable.COLUMN_NAME_LEVEL + " = ?", new String[]{Long.toString(level)});
                 }else{
                     ContentValues updateValues = new ContentValues();
                     updateValues.put(DbHelper.ScheduleTable.COLUMN_NAME_IS_ENABLED, 0);
-                    writableDatabase.update(DbHelper.ScheduleTable.TABLE_NAME, updateValues, DbHelper.ScheduleTable.COLUMN_NAME_LEVEL + " = ?", new String[]{Integer.toString(level)});
+                    writableDatabase.update(DbHelper.ScheduleTable.TABLE_NAME, updateValues, DbHelper.ScheduleTable.COLUMN_NAME_LEVEL + " = ?", new String[]{Long.toString(level)});
                 }
             }
         }
-        Log.i(TAG,"running");
+        Log.i(TAG,"running at thread "+Thread.currentThread().getId());
     }
     private Thread getCollectorThread(final String type,final SQLiteDatabase db){
         return new Thread(new Runnable() {
