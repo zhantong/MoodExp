@@ -19,6 +19,8 @@ public class QuestionFragmentFactory {
                 return new RadioButtonsFragment();
             case "SingleLine":
                 return new SingleLineFragment();
+            case "Finish":
+                return new FinishFragment();
             default:
                 return null;
         }

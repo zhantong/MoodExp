@@ -26,6 +26,7 @@ public class DbHelper extends SQLiteOpenHelper {
         static final String COLUMN_NAME_NEXT_FIRE_TIME = "next_fire_time";
         static final String COLUMN_NAME_INTERVAL = "interval";
         static final String COLUMN_NAME_ACTIONS = "actions";
+        static final String COLUMN_NAME_IS_ENABLED = "is_enabled";
     }
     public static class CollectDbTable implements BaseColumns{
         static final String TABLE_NAME = "collect_db";
@@ -47,7 +48,8 @@ public class DbHelper extends SQLiteOpenHelper {
                     ScheduleTable.COLUMN_NAME_TYPE+" TEXT,"+
                     ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME+" INTEGER,"+
                     ScheduleTable.COLUMN_NAME_INTERVAL+" INTEGER,"+
-                    ScheduleTable.COLUMN_NAME_ACTIONS +" TEXT)";
+                    ScheduleTable.COLUMN_NAME_ACTIONS +" TEXT,"+
+                    ScheduleTable.COLUMN_NAME_IS_ENABLED+" INTEGER DEFAULT 1)";
     private static final String SQL_CREATE_TABLE_COLLECT_DB=
             "CREATE TABLE "+ CollectDbTable.TABLE_NAME+" ("+
                     CollectDbTable.COLUMN_NAME_NAME+" TEXT PRIMARY KEY,"+

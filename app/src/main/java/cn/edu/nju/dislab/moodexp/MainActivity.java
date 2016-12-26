@@ -21,14 +21,19 @@ import android.view.View;
 import android.widget.Button;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 public class MainActivity extends Activity {
     private static final String TAG="MainActivity";
     private static final int REQUEST_CODE_INTRO=1;
+    private static final int REQUEST_CODE_SURVEY=2;
     private SharedPreferences preferences;
 
     @Override
@@ -45,7 +50,7 @@ public class MainActivity extends Activity {
             if(MainApplication.getUserId().isEmpty()) {
                 checkRegisterAndLogin();
             }
-            //startScheduledService();
+            startScheduledService();
         }
 
         Button buttonTest=(Button)findViewById(R.id.btn_test);
@@ -88,7 +93,7 @@ public class MainActivity extends Activity {
         }
         Intent intent=new Intent(this,SurveyActivity.class);
         intent.putExtra("survey",string);
-        startActivity(intent);
+        startActivityForResult(intent,REQUEST_CODE_SURVEY);
     }
     private void startScheduledService(){
         if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -118,8 +123,56 @@ public class MainActivity extends Activity {
             if(MainApplication.getUserId().isEmpty()) {
                 checkRegisterAndLogin();
             }
-            //startScheduledService();
+            startScheduledService();
         }
+        if(requestCode==REQUEST_CODE_SURVEY){
+            if(resultCode==Activity.RESULT_OK){
+                Map<Integer,Answer> answerMap=new Gson().fromJson(data.getExtras().getString("answers"), new TypeToken<Map<Integer,Answer>>(){}.getType());
+                saveSurvryAnswersToDb(answerMap);
+                startService(new Intent(this,ScheduledService.class));
+            }
+        }
+    }
+    private void saveSurvryAnswersToDb(Map<Integer,Answer> answerMap){
+        String surveyAnswersDbName=System.currentTimeMillis()+".db";
+        SurveyAnswersDbHelper surveyAnswersDbHelper=new SurveyAnswersDbHelper(surveyAnswersDbName);
+        SQLiteDatabase writableSurveyAnswersDb=surveyAnswersDbHelper.getWritableDatabase();
+        Gson gson=new Gson();
+        for(Map.Entry<Integer,Answer> entry:answerMap.entrySet()){
+            int questionId=entry.getKey();
+            String answer=gson.toJson(entry.getValue());
+            ContentValues contentValues=new ContentValues();
+            contentValues.put(SurveyAnswersDbHelper.AnswersTable.COLUMN_NAME_QUESTION_ID,questionId);
+            contentValues.put(SurveyAnswersDbHelper.AnswersTable.COLUMN_NAME_ANSWER,answer);
+            contentValues.put(SurveyAnswersDbHelper.AnswersTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
+            writableSurveyAnswersDb.insertWithOnConflict(SurveyAnswersDbHelper.AnswersTable.TABLE_NAME,null,contentValues,SQLiteDatabase.CONFLICT_REPLACE);
+        }
+        writableSurveyAnswersDb.close();
+        surveyAnswersDbHelper.close();
+
+        DbHelper dbHelper=new DbHelper();
+        SQLiteDatabase writableDb=dbHelper.getWritableDatabase();
+        if(true) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DbHelper.CollectDbTable.COLUMN_NAME_NAME, surveyAnswersDbName);
+            contentValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_USING, 0);
+            contentValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED, 0);
+            contentValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_DELETED, 0);
+            contentValues.put(DbHelper.CollectDbTable.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
+            writableDb.insertWithOnConflict(DbHelper.CollectDbTable.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+        }
+
+        if(true){
+            ContentValues valuesSchedule = new ContentValues();
+            valuesSchedule.put(DbHelper.ScheduleTable.COLUMN_NAME_LEVEL, System.currentTimeMillis());
+            valuesSchedule.put(DbHelper.ScheduleTable.COLUMN_NAME_TYPE, "upload");
+            valuesSchedule.put(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
+            valuesSchedule.put(DbHelper.ScheduleTable.COLUMN_NAME_INTERVAL, 0);
+            valuesSchedule.put(DbHelper.ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
+            writableDb.insert(DbHelper.ScheduleTable.TABLE_NAME, null, valuesSchedule);
+        }
+        writableDb.close();
+        dbHelper.close();
     }
 
     @Override

@@ -85,6 +85,7 @@ public class ScheduledService extends Service implements Runnable{
 
     @Override
     public void run() {
+        readableDatabase.query(DbHelper.ScheduleTable.TABLE_NAME,null,DbHelper.ScheduleTable.COLUMN_NAME_IS_ENABLED+" = ?",new String[]{"1"},null,null,null);
         try(Cursor cursorSchedule=readableDatabase.query(DbHelper.ScheduleTable.TABLE_NAME,null,null,null,null,null,null)) {
             while (cursorSchedule.moveToNext()) {
                 long nextFireTime = cursorSchedule.getLong(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME));
@@ -134,6 +135,7 @@ public class ScheduledService extends Service implements Runnable{
                         try(Cursor cursorCheckUpload = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ? AND " + DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED + " = ?", new String[]{"0", "0"}, null, null, null)) {
                             while (cursorCheckUpload.moveToNext()) {
                                 final String dbName = cursorCheckUpload.getString(cursorCheckUpload.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
+                                Log.i(TAG,"uploading "+dbName);
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -200,12 +202,18 @@ public class ScheduledService extends Service implements Runnable{
                             }
                         }
                 }
-                while (nextFireTime < System.currentTimeMillis()) {
-                    nextFireTime += interval;
+                if(interval>0) {
+                    while (nextFireTime < System.currentTimeMillis()) {
+                        nextFireTime += interval;
+                    }
+                    ContentValues updateValues = new ContentValues();
+                    updateValues.put(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, nextFireTime);
+                    writableDatabase.update(DbHelper.ScheduleTable.TABLE_NAME, updateValues, DbHelper.ScheduleTable.COLUMN_NAME_LEVEL + " = ?", new String[]{Integer.toString(level)});
+                }else{
+                    ContentValues updateValues = new ContentValues();
+                    updateValues.put(DbHelper.ScheduleTable.COLUMN_NAME_IS_ENABLED, 0);
+                    writableDatabase.update(DbHelper.ScheduleTable.TABLE_NAME, updateValues, DbHelper.ScheduleTable.COLUMN_NAME_LEVEL + " = ?", new String[]{Integer.toString(level)});
                 }
-                ContentValues updateValues = new ContentValues();
-                updateValues.put(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, nextFireTime);
-                writableDatabase.update(DbHelper.ScheduleTable.TABLE_NAME, updateValues, DbHelper.ScheduleTable.COLUMN_NAME_LEVEL + " = ?", new String[]{Integer.toString(level)});
             }
         }
         Log.i(TAG,"running");
@@ -337,6 +345,9 @@ public class ScheduledService extends Service implements Runnable{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if(mScheduledExecutorService!=null){
+            mScheduledExecutorService.submit(this);
+        }
         return START_STICKY;
     }
 

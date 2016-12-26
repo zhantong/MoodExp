@@ -34,6 +34,9 @@ public class Answer implements Serializable {
     public void setId(int id){
         this.id=id;
     }
+    public int getQuestionId(){
+        return questionId;
+    }
     @Override
     public String toString() {
         return "questionTitle: "+ questionTitle +" questionId: "+questionId+" answer: "+answer+" id: "+id;
