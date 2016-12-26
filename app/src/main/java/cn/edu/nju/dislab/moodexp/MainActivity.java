@@ -2,12 +2,15 @@ package cn.edu.nju.dislab.moodexp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -31,6 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 
+import cn.edu.nju.dislab.moodexp.httputils.HttpAPI;
 import cn.edu.nju.dislab.moodexp.permissionintro.PermissionIntroActivity;
 import cn.edu.nju.dislab.moodexp.registerandlogin.RegisterAndLoginActivity;
 import cn.edu.nju.dislab.moodexp.survey.Answer;
@@ -65,7 +69,7 @@ public class MainActivity extends Activity {
         buttonDoSurvey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doSurvey();
+                new DoSurvey(MainActivity.this).execute();
             }
         });
     }
@@ -86,22 +90,35 @@ public class MainActivity extends Activity {
         reader.close();
         return sb.toString();
     }
-    private void doSurvey(){
-        InputStream inputStream=null;
-        try {
-            inputStream= getAssets().open("example_survey.json");
-        } catch (IOException e) {
-            e.printStackTrace();
+    private class DoSurvey extends AsyncTask<Void,Void,String>{
+        private ProgressDialog mProgressDialog;
+        private Context mContext;
+        public DoSurvey(Context context){
+            mContext=context;
+            mProgressDialog=new ProgressDialog(mContext);
         }
-        String string=null;
-        try {
-            string=convertStreamToString(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
+        @Override
+        protected void onPreExecute() {
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setMessage("加载中...");
+            mProgressDialog.show();
         }
-        Intent intent=new Intent(this,SurveyActivity.class);
-        intent.putExtra("survey",string);
-        startActivityForResult(intent,REQUEST_CODE_SURVEY);
+        @Override
+        protected String doInBackground(Void... params) {
+            return HttpAPI.getSurvey(MainApplication.getUserId());
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            mProgressDialog.dismiss();
+            if(s==null){
+                Toast.makeText(mContext,"加载失败，请重试",Toast.LENGTH_SHORT).show();
+            }else{
+                Intent intent=new Intent(mContext,SurveyActivity.class);
+                intent.putExtra("survey",s);
+                startActivityForResult(intent,REQUEST_CODE_SURVEY);
+            }
+        }
     }
     private void startScheduledService(){
         if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1) {
@@ -138,6 +155,7 @@ public class MainActivity extends Activity {
             if(resultCode==Activity.RESULT_OK){
                 Map<Integer,Answer> answerMap=new Gson().fromJson(data.getExtras().getString("answers"), new TypeToken<Map<Integer,Answer>>(){}.getType());
                 saveSurvryAnswersToDb(answerMap);
+                Toast.makeText(this,"问卷已提交",Toast.LENGTH_SHORT).show();
                 startService(new Intent(this,ScheduledService.class));
             }
         }

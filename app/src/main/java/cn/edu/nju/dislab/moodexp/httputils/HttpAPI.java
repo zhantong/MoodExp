@@ -360,7 +360,23 @@ public class HttpAPI {
             return false;
         }
     }
+    public static String getSurvey(String id){
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
 
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "survey", params);
+            JsonObject result = element.getAsJsonObject();
+            if (result.get("status").getAsBoolean()) {
+                return result.get("survey").getAsString();
+            }
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     public static String getQuestionnaireUrl(String group) {
         Map<String, String> params = new HashMap<>();
         params.put("group", group);
