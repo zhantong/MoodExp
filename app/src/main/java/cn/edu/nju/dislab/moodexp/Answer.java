@@ -10,20 +10,32 @@ import java.io.Serializable;
 
 public class Answer implements Serializable {
     @Expose
-    private String title;
+    private String questionTitle;
+
+    @Expose
+    private int questionId;
 
     @Expose
     private String answer;
 
-    public void setTitle(String title){
-        this.title=title;
+    @Expose
+    private int id;
+
+    public void setQuestionTitle(String questionTitle){
+        this.questionTitle = questionTitle;
+    }
+
+    public void setQuestionId(int id){
+        this.questionId=id;
     }
     public void setAnswer(String answer){
         this.answer=answer;
     }
-
+    public void setId(int id){
+        this.id=id;
+    }
     @Override
     public String toString() {
-        return "title: "+title+"\n"+"answer: "+answer;
+        return "questionTitle: "+ questionTitle +" questionId: "+questionId+" answer: "+answer+" id: "+id;
     }
 }

@@ -5,41 +5,133 @@
   "questions":[
     {
       "type":"RadioButtons",
-      "title":"问题一",
-      "description":"问题一描述",
-      "random_choices":false,
+      "id":60,
+      "title":"如何评价您昨晚的睡眠质量？",
+      "description":"1=非常好，2=较好，3=一般，4=糟糕，5=非常糟糕",
       "choices":[
-        "第一项",
-        "第二项",
-        "第三项"
+        {
+          "id":1,
+          "description":"1"
+        },
+        {
+          "id":2,
+          "description":"2"
+        },
+        {
+          "id":3,
+          "description":"3"
+        },
+        {
+          "id":4,
+          "description":"4"
+        },
+        {
+          "id":5,
+          "description":"5"
+        }
       ]
     },
     {
+      "type":"SingleLine",
+      "id":50,
+      "title":"你幸福吗？"
+    },
+    {
+      "type":"MultiLines",
+      "id":40,
+      "title":"你还有什么想说的？"
+    },
+    {
+      "type":"CheckBoxes",
+      "id":30,
+      "title":"如何分享？",
+      "choices":[
+        {
+          "id":1,
+          "description":"当面"
+        },
+        {
+          "id":2,
+          "description":"电话"
+        },
+        {
+          "id":3,
+          "description":"微信等社交媒体"
+        }
+      ]
+    },
+    {
+      "type":"Number",
+      "id":20,
+      "title":"从下午填问卷到现在，分享了几次？"
+    },
+    {
       "type":"MultiQuestions",
-      "title":"问题一",
-      "description":"问题一描述",
+      "id":1,
+      "title":"此刻，你在多大程度上有以下感受和情绪？",
+      "description":"1=完全没有， 2=感到一点，3=中等程度，4=感到挺多，5=感到非常多",
       "questions":[
         {
           "type":"RadioButtons",
-          "title":"子问题一",
-          "description":"子问题一描述",
-          "random_choices":false,
+          "id":2,
+          "title":"如何评价您昨晚的睡眠质量？",
+          "description":"1=非常好，2=较好，3=一般，4=糟糕，5=非常糟糕",
           "choices":[
-            "第一项",
-            "第二项",
-            "第三项"
+            {
+              "id":1,
+              "description":"1"
+            },
+            {
+              "id":2,
+              "description":"2"
+            },
+            {
+              "id":3,
+              "description":"3"
+            },
+            {
+              "id":4,
+              "description":"4"
+            },
+            {
+              "id":5,
+              "description":"5"
+            }
           ]
         },
         {
-          "type":"RadioButtons",
-          "title":"子问题二",
-          "description":"子问题二描述",
-          "random_choices":false,
+          "type":"SingleLine",
+          "id":3,
+          "title":"你幸福吗？"
+        },
+        {
+          "type":"MultiLines",
+          "id":4,
+          "title":"你还有什么想说的？"
+        },
+        {
+          "type":"CheckBoxes",
+          "id":5,
+          "title":"如何分享？",
           "choices":[
-            "第一项",
-            "第二项",
-            "第三项"
+            {
+              "id":1,
+              "description":"当面"
+            },
+            {
+              "id":2,
+              "description":"电话"
+            },
+            {
+              "id":3,
+              "description":"微信等社交媒体"
+            }
           ]
+        },
+        {
+          "type":"Number",
+          "id":6,
+          "title":"从下午填问卷到现在，分享了几次？"
         }
       ]
     }

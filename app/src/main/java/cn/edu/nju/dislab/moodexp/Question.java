@@ -15,6 +15,10 @@ public class Question implements Serializable{
     @Expose
     private String type;
 
+    @SerializedName("id")
+    @Expose
+    private int id;
+
     @SerializedName("title")
     @Expose
     private String title;
@@ -29,7 +33,7 @@ public class Question implements Serializable{
 
     @SerializedName("choices")
     @Expose
-    private List<String> choices;
+    private List<Choice> choices;
 
     @SerializedName("questions")
     @Expose
@@ -38,13 +42,16 @@ public class Question implements Serializable{
     public String getType(){
         return type;
     }
+    public int getId(){
+        return id;
+    }
     public String getTitle(){
         return title;
     }
     public String getDescription(){
         return description;
     }
-    public List<String> getChoices(){
+    public List<Choice> getChoices(){
         return choices;
     }
     public List<Question> getQuestions(){

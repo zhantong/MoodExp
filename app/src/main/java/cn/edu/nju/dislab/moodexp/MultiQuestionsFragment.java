@@ -1,6 +1,5 @@
 package cn.edu.nju.dislab.moodexp;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -9,10 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,16 +17,7 @@ import java.util.List;
  */
 
 public class MultiQuestionsFragment extends QuestionFragment {
-    private static final String TAG="MultiQuestionsFragment";
-    View mView;
-    TextView mTextViewTitle;
-    TextView mTextViewDescription;
-    LinearLayout mContent;
     List<QuestionFragment> mQuestionFragments;
-
-
-
-    private List<Question> questions;
 
     @Nullable
     @Override
@@ -53,47 +39,26 @@ public class MultiQuestionsFragment extends QuestionFragment {
                         mCallback.onSubmitAnswer(questionFragment.getAnswer());
                     }
                 }
-                //((SurveyActivity) getActivity()).nextPage();
+                ((SurveyActivity) getActivity()).nextPage();
             }
         });
 
-        mTextViewTitle=(TextView)mView.findViewById(R.id.txt_title);
-        mTextViewDescription=(TextView)mView.findViewById(R.id.txt_description);
-        mContent=(LinearLayout)mView.findViewById(R.id.questions_content);
-
-        Context context=getActivity();
-
         Question question=(Question)getArguments().getSerializable("data");
 
-        String title=question.getTitle();
-        if(title!=null){
-            mTextViewTitle.setText(title);
-        }else{
-            mTextViewTitle.setVisibility(View.GONE);
-        }
-
-        String description=question.getDescription();
-        if(description!=null){
-            mTextViewDescription.setText(description);
-        }else{
-            mTextViewDescription.setVisibility(View.GONE);
-        }
-        questions=question.getQuestions();
+        List<Question> questions=question.getQuestions();
         if(questions!=null){
             FragmentManager fragmentManager= getChildFragmentManager();
             FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
             mQuestionFragments=new ArrayList<>();
             for(Question childQuestion:questions){
-                Bundle bundleToFragment=new Bundle();
-                switch (childQuestion.getType()){
-                    case "RadioButtons":
-                        RadioButtonsFragment fragment=new RadioButtonsFragment();
-                        bundleToFragment.putSerializable("data",childQuestion);
-                        bundleToFragment.putBoolean("isComplete",false);
-                        fragment.setArguments(bundleToFragment);
-                        fragmentTransaction.add(R.id.questions_content,fragment);
-                        mQuestionFragments.add(fragment);
-                        break;
+                QuestionFragment questionFragment=QuestionFragmentFactory.get(childQuestion.getType());
+                if(questionFragment!=null){
+                    Bundle bundleToFragment=new Bundle();
+                    bundleToFragment.putSerializable("data",childQuestion);
+                    bundleToFragment.putBoolean("isComplete",false);
+                    questionFragment.setArguments(bundleToFragment);
+                    fragmentTransaction.add(R.id.questions_content,questionFragment);
+                    mQuestionFragments.add(questionFragment);
                 }
             }
             fragmentTransaction.commit();
