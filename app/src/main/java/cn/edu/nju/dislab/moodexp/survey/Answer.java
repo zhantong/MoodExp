@@ -9,7 +9,6 @@ import java.io.Serializable;
  */
 
 public class Answer implements Serializable {
-    @Expose
     private String questionTitle;
 
     @Expose
@@ -36,6 +35,9 @@ public class Answer implements Serializable {
     }
     public int getQuestionId(){
         return questionId;
+    }
+    public boolean isAnswered(){
+        return answer!=null;
     }
     @Override
     public String toString() {

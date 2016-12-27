@@ -20,6 +20,7 @@ import cn.edu.nju.dislab.moodexp.R;
 
 public class MultiQuestionsFragment extends QuestionFragment {
     List<QuestionFragment> mQuestionFragments;
+    private Button mButtonNext;
 
     @Nullable
     @Override
@@ -32,8 +33,8 @@ public class MultiQuestionsFragment extends QuestionFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Button buttonNext = (Button) mView.findViewById(R.id.btn_next_question);
-        buttonNext.setOnClickListener(new View.OnClickListener() {
+        mButtonNext = (Button) mView.findViewById(R.id.btn_next_question);
+        mButtonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mQuestionFragments!=null){
@@ -44,6 +45,16 @@ public class MultiQuestionsFragment extends QuestionFragment {
                 ((SurveyActivity) getActivity()).nextPage();
             }
         });
+        mButtonNext.setEnabled(false);
+
+        OnChangedListener onChangedListener=new OnChangedListener() {
+            @Override
+            public void onChanged() {
+                if(checkAnswered()){
+                    mButtonNext.setEnabled(true);
+                }
+            }
+        };
 
         Question question=(Question)getArguments().getSerializable("data");
 
@@ -59,11 +70,20 @@ public class MultiQuestionsFragment extends QuestionFragment {
                     bundleToFragment.putSerializable("data",childQuestion);
                     bundleToFragment.putBoolean("isComplete",false);
                     questionFragment.setArguments(bundleToFragment);
+                    questionFragment.setOnChangedListener(onChangedListener);
                     fragmentTransaction.add(R.id.questions_content,questionFragment);
                     mQuestionFragments.add(questionFragment);
                 }
             }
             fragmentTransaction.commit();
         }
+    }
+    private boolean checkAnswered(){
+        for(QuestionFragment questionFragment:mQuestionFragments){
+            if(!questionFragment.getAnswer().isAnswered()){
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -12,14 +12,21 @@ import cn.edu.nju.dislab.moodexp.survey.Question;
  */
 
 public class Survey implements Serializable {
-    @SerializedName("intro_message")
-    private String introMessage;
+    @SerializedName("id")
+    private int id;
 
-    @SerializedName("finish_message")
-    private String finishMessage;
+    @SerializedName("session")
+    private String session;
 
     @SerializedName("questions")
     private List<Question> questions;
+
+    public int getId(){
+        return id;
+    }
+    public String getSession(){
+        return session;
+    }
 
     List<Question> getQuestions(){
         return questions;
@@ -28,9 +35,9 @@ public class Survey implements Serializable {
     public String toString() {
         StringBuilder builder=new StringBuilder();
         builder.append("Survey:\n");
-        builder.append("intro_message: "+introMessage+"\n");
-        builder.append("finish_message: "+finishMessage+"\n");
         if(questions!=null) {
+            builder.append("id: "+id+"\n");
+            builder.append("session: "+session+"\n");
             builder.append("questions:\n--------\n");
             builder.append(questions.toString() + "\n");
             builder.append("--------\n");

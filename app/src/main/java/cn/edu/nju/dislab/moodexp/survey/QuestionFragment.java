@@ -17,10 +17,14 @@ import cn.edu.nju.dislab.moodexp.R;
 public class QuestionFragment extends Fragment {
     protected Answer mAnswer=new Answer();
     protected OnSubmitAnswerListener mCallback;
+    protected OnChangedListener mOnChangedListener;
     protected boolean mIsComplete=true;
     protected View mView;
     public Answer getAnswer(){
         return mAnswer;
+    }
+    public void setOnChangedListener(OnChangedListener onChangedListener){
+        mOnChangedListener=onChangedListener;
     }
     @Override
     public void onAttach(Activity activity) {

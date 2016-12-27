@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -23,6 +24,7 @@ public class SurveyActivity extends AppCompatActivity implements OnSubmitAnswerL
     private static final String TAG="SurveyActivity";
     private ViewPager mViewPager;
     private Map<Integer,Answer> answerMap;
+    private Survey mSurvey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,17 +35,36 @@ public class SurveyActivity extends AppCompatActivity implements OnSubmitAnswerL
         if(bundle==null){
             return;
         }
-        Survey survey=new Gson().fromJson(bundle.getString("survey"),Survey.class);
+        mSurvey=new Gson().fromJson(bundle.getString("survey"),Survey.class);
+        Log.i(TAG,mSurvey.toString());
 
         List<QuestionFragment> questionFragments=new ArrayList<>();
 
-        for(Question question:survey.getQuestions()){
+        for(Question question:mSurvey.getQuestions()){
+            if(question.getType().equals("Start")){
+                StartFragment startFragment=new StartFragment();
+                Bundle bundleToFragment = new Bundle();
+                bundleToFragment.putSerializable("data", question);
+                startFragment.setArguments(bundleToFragment);
+                questionFragments.add(startFragment);
+            }
+        }
+        for(Question question:mSurvey.getQuestions()){
             QuestionFragment questionFragment= QuestionFragmentFactory.get(question.getType());
             if(questionFragment!=null) {
                 Bundle bundleToFragment = new Bundle();
                 bundleToFragment.putSerializable("data", question);
                 questionFragment.setArguments(bundleToFragment);
                 questionFragments.add(questionFragment);
+            }
+        }
+        for(Question question:mSurvey.getQuestions()){
+            if(question.getType().equals("Finish")){
+                FinishFragment finishFragment=new FinishFragment();
+                Bundle bundleToFragment = new Bundle();
+                bundleToFragment.putSerializable("data", question);
+                finishFragment.setArguments(bundleToFragment);
+                questionFragments.add(finishFragment);
             }
         }
         mViewPager=(ViewPager)findViewById(R.id.view_pager);
@@ -62,7 +83,9 @@ public class SurveyActivity extends AppCompatActivity implements OnSubmitAnswerL
     }
     public void onSurveyFinished(){
         Intent intent=new Intent();
-        intent.putExtra("answers",new Gson().toJson(answerMap));
+        List<Answer> answers=new ArrayList<>(answerMap.values());
+        SurveyAnswer surveyAnswer=new SurveyAnswer(mSurvey.getId(),mSurvey.getSession(),answers);
+        intent.putExtra("answer",new Gson().toJson(surveyAnswer));
         setResult(Activity.RESULT_OK,intent);
         finish();
     }

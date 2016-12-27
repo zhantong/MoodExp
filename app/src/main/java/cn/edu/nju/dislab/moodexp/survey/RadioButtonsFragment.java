@@ -71,6 +71,9 @@ public class RadioButtonsFragment extends QuestionFragment {
                     RadioButton radioButton= (RadioButton)mView.findViewById(checkedId);
                     mAnswer.setAnswer(radioButton.getText().toString());
                     mAnswer.setId((int)radioButton.getTag());
+                    if(mOnChangedListener!=null){
+                        mOnChangedListener.onChanged();
+                    }
                 }
             });
         }else{
