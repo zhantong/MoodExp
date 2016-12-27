@@ -30,15 +30,15 @@ public class HttpAPI {
 
     public void testHttpRequest() {
         boolean resultBoolean;
-        JsonElement resultJson;
+        JsonObject resultJson;
 
         if (false) {
-            resultBoolean = register("一班", "我", "150001", "13888888888");
-            if (resultBoolean) {
+            resultJson = register("一班", "我", "150001", "13888888888");
+            if (resultJson.get("status").getAsBoolean()) {
                 Log.d(TAG, "success");
             }
-            resultBoolean = register("二班", "你", "150003", "18666666666");
-            if (resultBoolean) {
+            resultJson = register("二班", "你", "150003", "18666666666");
+            if (resultJson.get("status").getAsBoolean()) {
                 Log.d(TAG, "success");
             }
         }
@@ -73,9 +73,9 @@ public class HttpAPI {
         }
 
         if (false) {
-            resultJson = statistic();
-            if (resultJson != null) {
-                JsonArray students = resultJson.getAsJsonArray();
+            JsonElement result = statistic();
+            if (result != null) {
+                JsonArray students = result.getAsJsonArray();
                 for (Iterator<JsonElement> it = students.iterator(); it.hasNext(); ) {
                     JsonObject student = it.next().getAsJsonObject();
                     Log.d(TAG, "name: " + student.get("name").getAsString());
@@ -172,7 +172,7 @@ public class HttpAPI {
         }
     }
 
-    public static boolean register(String class_name, String name, String id, String phone) {
+    public static JsonObject register(String class_name, String name, String id, String phone) {
         Map<String, String> params = new HashMap<>();
         params.put("class", class_name);
         params.put("name", name);
@@ -183,10 +183,10 @@ public class HttpAPI {
         try {
             JsonElement element = request.getReturnJson(HOST, PORT, "register", params);
             JsonObject result = element.getAsJsonObject();
-            return result.get("status").getAsBoolean();
+            return result;
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

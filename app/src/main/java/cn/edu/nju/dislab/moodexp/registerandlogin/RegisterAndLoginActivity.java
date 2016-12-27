@@ -16,7 +16,7 @@ import cn.edu.nju.dislab.moodexp.R;
  * Created by zhantong on 2016/12/24.
  */
 
-public class RegisterAndLoginActivity extends Activity implements LoginFragment.OnLoginSuccessListener{
+public class RegisterAndLoginActivity extends Activity implements LoginFragment.OnLoginSuccessListener,RegisterFragment.OnRegisterSuccessListener {
     private static final String TAG="RegisterAndLogin";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,23 +32,37 @@ public class RegisterAndLoginActivity extends Activity implements LoginFragment.
                 FragmentTransaction transaction=fragmentManager.beginTransaction();
                 Fragment fragment=null;
                 switch (checkedId){
-                    case 1:
+                    case R.id.radioButton_register:
                         fragment=new RegisterFragment();
                         break;
-                    case 2:
+                    case R.id.radioButton_login:
                         fragment=new LoginFragment();
                         break;
+                }
+                if(fragment==null){
+                    Log.i(TAG,"null fragment "+checkedId+" "+R.id.btn_register+" "+R.id.btn_login);
                 }
                 transaction.replace(R.id.content,fragment);
                 transaction.commit();
             }
         });
-        ((RadioButton)radioGroup.getChildAt(0)).setEnabled(false);
+        radioGroup.getChildAt(0).setEnabled(true);
         ((RadioButton)radioGroup.getChildAt(1)).setChecked(true);
     }
 
     @Override
     public void onLoginSuccess(String studentId, String studentName, String studentClass, String studentPhone) {
+        Intent intent=new Intent();
+        intent.putExtra("id",studentId);
+        intent.putExtra("name",studentName);
+        intent.putExtra("class",studentClass);
+        intent.putExtra("phone",studentPhone);
+        setResult(Activity.RESULT_OK,intent);
+        finish();
+    }
+
+    @Override
+    public void onRegisterSuccess(String studentId, String studentName, String studentClass, String studentPhone) {
         Intent intent=new Intent();
         intent.putExtra("id",studentId);
         intent.putExtra("name",studentName);

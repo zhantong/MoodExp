@@ -21,9 +21,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <RadioButton
+            android:id="@+id/radioButton_register"
             style="@style/tab"
             android:text="@string/register" />
         <RadioButton
+            android:id="@+id/radioButton_login"
             style="@style/tab"
             android:text="@string/login"/>
     </RadioGroup>

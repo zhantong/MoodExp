@@ -26,9 +26,11 @@ public class CheckUpdate extends AsyncTask<Void,Void,JsonObject> {
     }
     @Override
     protected void onPreExecute() {
-        mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setMessage("正在检查...");
-        mProgressDialog.show();
+        if(mIsShowNoUpdateNotification) {
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setMessage("正在检查...");
+            mProgressDialog.show();
+        }
     }
     @Override
     protected JsonObject doInBackground(Void... params) {
@@ -40,7 +42,9 @@ public class CheckUpdate extends AsyncTask<Void,Void,JsonObject> {
 
     @Override
     protected void onPostExecute(JsonObject result) {
-        mProgressDialog.dismiss();
+        if(mIsShowNoUpdateNotification) {
+            mProgressDialog.dismiss();
+        }
         if(result==null){
             if(mIsShowNoUpdateNotification) {
                 Toast.makeText(mContext, "未知错误，请检查网络连接是否正常", Toast.LENGTH_SHORT).show();

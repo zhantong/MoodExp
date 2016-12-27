@@ -292,7 +292,7 @@ public class MainActivity extends Activity {
                                     writableDb.insertWithOnConflict(DbHelper.UserTable.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                                 }
                                 MainApplication.getUserId(true);
-                                startActivity(new Intent(getBaseContext(),RegisterAndLoginActivity.class));
+                                checkRegisterAndLogin();
                             }
                         }).show();
                 return true;
