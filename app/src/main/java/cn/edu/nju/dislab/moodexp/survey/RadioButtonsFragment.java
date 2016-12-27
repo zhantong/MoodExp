@@ -62,7 +62,7 @@ public class RadioButtonsFragment extends QuestionFragment {
                 RadioButton radioButton=new RadioButton(context);
                 radioButton.setText(choice.getDescription());
                 radioButton.setTag(choice.getId());
-                radioButton.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                radioButton.setLayoutParams(new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT,1.0f));
                 mRadioGroupChoices.addView(radioButton);
             }
             mRadioGroupChoices.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {

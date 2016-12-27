@@ -11,10 +11,10 @@ import android.widget.ScrollView;
 import cn.edu.nju.dislab.moodexp.R;
 
 /**
- * Created by zhantong on 2016/12/26.
+ * Created by zhantong on 2016/12/27.
  */
 
-public class FinishFragment extends QuestionFragment {
+public class StartFragment extends QuestionFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -37,11 +37,11 @@ public class FinishFragment extends QuestionFragment {
         super.onActivityCreated(savedInstanceState);
 
         Button buttonFinish = (Button) mView.findViewById(R.id.btn_next_question);
-        buttonFinish.setText("完成");
+        buttonFinish.setText("开始");
         buttonFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((SurveyActivity) getActivity()).onSurveyFinished();
+                ((SurveyActivity) getActivity()).nextPage();
             }
         });
     }

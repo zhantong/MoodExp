@@ -38,4 +38,6 @@
     <string name="do_survey">填写问卷</string>
     <string name="permission_intro_page">权限设置引导</string>
     <string name="check_update">检查更新</string>
+    <string name="main_title">大学生情绪问卷调查</string>
+    <string name="view_history">查看历史</string>
 </resources>

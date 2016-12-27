@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.BaseColumns;
@@ -129,7 +130,8 @@ public class ScheduledService extends Service implements Runnable{
                         }
                         break;
                     case "upload":
-                        if (!isNetworkConnected()) {
+                        if (!isWifiConnected()) {
+                            Log.i(TAG,"no wifi connection");
                             continue;
                         }
                         final String userId = MainApplication.getUserId();
@@ -344,6 +346,10 @@ public class ScheduledService extends Service implements Runnable{
     }
     public static boolean isNetworkConnected(){
         return ((ConnectivityManager)MainApplication.getContext().getSystemService(CONNECTIVITY_SERVICE)).getActiveNetworkInfo()!=null;
+    }
+    public static boolean isWifiConnected(){
+        NetworkInfo activeNetwork=((ConnectivityManager)MainApplication.getContext().getSystemService(CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        return (activeNetwork!=null)&&(activeNetwork.getType()==ConnectivityManager.TYPE_WIFI);
     }
 
     @Override

@@ -21,6 +21,8 @@ public class QuestionFragmentFactory {
                 return new SingleLineFragment();
             case "Finish":
                 return new FinishFragment();
+            case "Start":
+                return new StartFragment();
             default:
                 return null;
         }
