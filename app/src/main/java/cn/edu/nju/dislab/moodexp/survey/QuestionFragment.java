@@ -20,6 +20,7 @@ public class QuestionFragment extends Fragment {
     protected OnChangedListener mOnChangedListener;
     protected boolean mIsComplete=true;
     protected View mView;
+    protected boolean mIsLast=false;
     public Answer getAnswer(){
         return mAnswer;
     }
@@ -50,6 +51,9 @@ public class QuestionFragment extends Fragment {
                     ((SurveyActivity) getActivity()).nextPage();
                 }
             });
+            if(mIsLast){
+                buttonNext.setText("完成");
+            }
         }
 
         TextView textViewTitle=(TextView)mView.findViewById(R.id.txt_title);
@@ -71,5 +75,8 @@ public class QuestionFragment extends Fragment {
         }else{
             textViewDescription.setVisibility(View.GONE);
         }
+    }
+    public void setIsLast(boolean isLast){
+        mIsLast=isLast;
     }
 }

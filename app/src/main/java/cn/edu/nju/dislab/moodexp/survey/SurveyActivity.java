@@ -58,8 +58,10 @@ public class SurveyActivity extends AppCompatActivity implements OnSubmitAnswerL
                 questionFragments.add(questionFragment);
             }
         }
+        boolean isFinishFragmentExists=false;
         for(Question question:mSurvey.getQuestions()){
             if(question.getType().equals("Finish")){
+                isFinishFragmentExists=true;
                 FinishFragment finishFragment=new FinishFragment();
                 Bundle bundleToFragment = new Bundle();
                 bundleToFragment.putSerializable("data", question);
@@ -67,14 +69,20 @@ public class SurveyActivity extends AppCompatActivity implements OnSubmitAnswerL
                 questionFragments.add(finishFragment);
             }
         }
+        if(!isFinishFragmentExists){
+            questionFragments.get(questionFragments.size()-1).setIsLast(true);
+        }
         mViewPager=(ViewPager)findViewById(R.id.view_pager);
         QuestionFragmentAdapter questionFragmentAdapter=new QuestionFragmentAdapter(getSupportFragmentManager(),questionFragments);
         mViewPager.setAdapter(questionFragmentAdapter);
-
         answerMap=new HashMap<>();
     }
     public void nextPage(){
-        mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
+        if(mViewPager.getCurrentItem()==mViewPager.getAdapter().getCount()-1){
+            onSurveyFinished();
+        }else {
+            mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
+        }
     }
 
     @Override
