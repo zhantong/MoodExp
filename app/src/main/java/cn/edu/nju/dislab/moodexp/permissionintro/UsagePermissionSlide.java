@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import agency.tango.materialintroscreen.SlideFragment;
 import cn.edu.nju.dislab.moodexp.MainApplication;
@@ -27,12 +28,22 @@ public class UsagePermissionSlide extends SlideFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.usage_permission_slide,container,false);
+
+        TextView textViewTitle=(TextView)view.findViewById(R.id.textView_title);
+        TextView textViewMessage=(TextView)view.findViewById(R.id.textView_message);
+        String title=getApplicationName() + " 需要查看系统统计信息";
+        textViewTitle.setText(title);
+        String textButton="现在设置";
+        String message=getApplicationName() + " 需要分析应用的使用情况。\n\n" +
+                "请点击『"+textButton+"』，"+
+                "请点击『确定』，在弹出的『查看使用情况』列表中，将 " + getApplicationName() + " 对应的开关打开。";
+        textViewMessage.setText(message);
+
         Button button=(Button)view.findViewById(R.id.button_permission_slide);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                usageStatsCheck();
-                //canMoveFurther=true;
+                startActivity(new Intent().setAction(Settings.ACTION_USAGE_ACCESS_SETTINGS));
             }
         });
         return view;
@@ -54,23 +65,5 @@ public class UsagePermissionSlide extends SlideFragment {
     @Override
     public int buttonsColor() {
         return R.color.colorAccent;
-    }
-
-    private void usageStatsCheck(){
-        if(!MainApplication.isUsageStatsGranted()) {
-            new AlertDialog.Builder(getContext())
-                    .setCancelable(true)
-                    .setTitle(getApplicationName() + " 需要查看系统统计信息")
-                    .setMessage(getApplicationName() + " 需要分析应用的使用情况。\n\n" +
-                            "请点击『确定』，在弹出的『查看使用情况』列表中，将 " + getApplicationName() + " 对应的开关打开。")
-                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            startActivity(new Intent().setAction(Settings.ACTION_USAGE_ACCESS_SETTINGS));
-                        }
-                    })
-                    .setNegativeButton("取消",null)
-                    .show();
-        }
     }
 }

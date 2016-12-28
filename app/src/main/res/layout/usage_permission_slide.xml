@@ -11,6 +11,7 @@
     android:paddingTop="@dimen/activity_vertical_margin">
 
     <TextView
+        android:id="@+id/textView_title"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,6 +22,7 @@
 
 
     <TextView
+        android:id="@+id/textView_message"
         android:layout_weight="10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
