@@ -23,10 +23,8 @@ import java.util.Map;
 
 public class HttpAPI {
     private static final String TAG = "MoodExp";
-/*    private static final String HOST = "114.212.80.16";
-    private static final int PORT = 9000;*/
-private static final String HOST = "192.168.1.2";
-    private static final int PORT = 5000;
+    private static final String HOST = "114.212.80.16";
+    private static final int PORT = 9000;
 
 
 

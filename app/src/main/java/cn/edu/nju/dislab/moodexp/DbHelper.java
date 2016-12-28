@@ -147,6 +147,33 @@ public class DbHelper extends SQLiteOpenHelper {
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
+        if(true){
+            ContentValues valuesSchedule = new ContentValues();
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 6);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "notification");
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, 1482832800000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 24*60*60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
+            db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
+        }
+        if(true){
+            ContentValues valuesSchedule = new ContentValues();
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 7);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "notification");
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, 1482850800000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 24*60*60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
+            db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
+        }
+        if(true){
+            ContentValues valuesSchedule = new ContentValues();
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 8);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "notification");
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, 1482868800000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 24*60*60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
+            db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
+        }
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

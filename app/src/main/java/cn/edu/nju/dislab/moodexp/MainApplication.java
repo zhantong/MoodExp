@@ -37,7 +37,9 @@ public class MainApplication extends Application {
         YunBaManager.setXMRegister("2882303761517536019","5531753647019");
         YunBaManager.start(getApplicationContext());
 
-        YunBaManager.subscribe(getApplicationContext(), new String[]{"debug"}, new IMqttActionListener() {
+        YunBaManager.setAlias(getApplicationContext(),getUserId(),null);
+        String topic="user";
+        YunBaManager.subscribe(getApplicationContext(), new String[]{topic}, new IMqttActionListener() {
 
             @Override
             public void onSuccess(IMqttToken arg0) {
@@ -85,6 +87,7 @@ public class MainApplication extends Application {
                     userId = cursor.getString(cursor.getColumnIndexOrThrow(DbHelper.UserTable.COLUMN_NAME_VALUE));
                 }
             }
+            YunBaManager.setAlias(getContext(),userId,null);
         }
         return userId;
     }

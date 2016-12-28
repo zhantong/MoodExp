@@ -1,7 +1,12 @@
 package cn.edu.nju.dislab.moodexp;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -17,9 +22,12 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -97,7 +105,7 @@ public class ScheduledService extends Service implements Runnable{
                 }
                 long level = cursorSchedule.getLong(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_LEVEL));
                 String type = cursorSchedule.getString(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_TYPE));
-                int interval = cursorSchedule.getInt(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_INTERVAL));
+                long interval = cursorSchedule.getLong(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_INTERVAL));
                 String[] actions = new Gson().fromJson(cursorSchedule.getString(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_ACTIONS)), String[].class);
                 Log.i(TAG,"level: "+level+" type: "+type+" interval: "+interval);
 
@@ -109,7 +117,7 @@ public class ScheduledService extends Service implements Runnable{
                                 cursorCollectDb.moveToFirst();
                                 collectDbName = cursorCollectDb.getString(cursorCollectDb.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
                             } else {
-                                continue;
+                                break;
                             }
                         }
                         CollectorDbHelper collectorDbHelper = new CollectorDbHelper(collectDbName);
@@ -128,11 +136,13 @@ public class ScheduledService extends Service implements Runnable{
                                 e.printStackTrace();
                             }
                         }
+                        collectorDb.close();
+                        collectorDbHelper.close();
                         break;
                     case "upload":
                         if (!isWifiConnected()) {
                             Log.i(TAG,"no wifi connection");
-                            continue;
+                            break;
                         }
                         final String userId = MainApplication.getUserId();
                         final String version = MainApplication.getVersionName();
@@ -187,6 +197,7 @@ public class ScheduledService extends Service implements Runnable{
                         }
                         break;
                     case "heartBeat":
+                        writeHeartBeatToDb();
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -206,6 +217,32 @@ public class ScheduledService extends Service implements Runnable{
                                 }
                             }
                         }
+                        break;
+                    case "notification":
+                        if(currentTime-nextFireTime>60*60*1000){
+                            Log.i(TAG,"time gone too long, no notification");
+                            break;
+                        }
+                        Context notificationContext=MainApplication.getContext();
+                        Notification.Builder builder=new Notification.Builder(notificationContext)
+                                .setDefaults(Notification.DEFAULT_ALL)
+                                .setPriority(Notification.PRIORITY_MAX)
+                                .setAutoCancel(true)
+                                .setSmallIcon(R.drawable.icon)
+                                .setContentTitle("您现在心情如何呢?")
+                                .setContentText("快来告诉我你的心情吧!");
+                        Intent resultIntent=new Intent(notificationContext,MainActivity.class);
+                        TaskStackBuilder stackBuilder = TaskStackBuilder.create(notificationContext);
+                        stackBuilder.addParentStack(MainActivity.class);
+                        stackBuilder.addNextIntent(resultIntent);
+                        PendingIntent resultPendingIntent =
+                                stackBuilder.getPendingIntent(
+                                        0,
+                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                );
+                        builder.setContentIntent(resultPendingIntent);
+                        NotificationManager notificationManager=(NotificationManager)notificationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                        notificationManager.notify(new Random().nextInt(),builder.build());
                 }
                 if(interval>0) {
                     while (nextFireTime < System.currentTimeMillis()) {
@@ -222,6 +259,38 @@ public class ScheduledService extends Service implements Runnable{
             }
         }
         Log.i(TAG,"running at thread "+Thread.currentThread().getId());
+    }
+    private void writeHeartBeatToDb(){
+        class HeartBeatTable implements BaseColumns {
+            static final String TABLE_NAME = "heart_beat";
+            static final String COLUMN_NAME_TIME = "time";
+            static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+        }
+        String collectDbName;
+        try(Cursor cursorCollectDb = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ?", new String[]{"1"}, null, null, null)) {
+            if (cursorCollectDb.getCount() > 0) {
+                cursorCollectDb.moveToFirst();
+                collectDbName = cursorCollectDb.getString(cursorCollectDb.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
+            } else {
+                Log.i(TAG,"no collect database available");
+                return;
+            }
+        }
+        CollectorDbHelper collectorDbHelper = new CollectorDbHelper(collectDbName);
+        final SQLiteDatabase db = collectorDbHelper.getWritableDatabase();
+        String SQL_CREATE_TABLE =
+                "CREATE TABLE IF NOT EXISTS " + HeartBeatTable.TABLE_NAME + " (" +
+                        HeartBeatTable._ID + " INTEGER PRIMARY KEY," +
+                        HeartBeatTable.COLUMN_NAME_TIME + " TEXT," +
+                        HeartBeatTable.COLUMN_NAME_TIMESTAMP + " INTEGER)";
+        db.execSQL(SQL_CREATE_TABLE);
+        ContentValues values = new ContentValues();
+        String time=new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+        values.put(HeartBeatTable.COLUMN_NAME_TIME, time);
+        values.put(HeartBeatTable.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
+        db.insert(HeartBeatTable.TABLE_NAME, null, values);
+        db.close();
+        collectorDbHelper.close();
     }
     private Thread getCollectorThread(final String type,final SQLiteDatabase db){
         return new Thread(new Runnable() {
