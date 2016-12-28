@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -294,6 +295,58 @@ public class MainActivity extends Activity {
             }
         }
     }
+    private class UploadSurveyAnswersManually extends AsyncTask<Void, Void,JsonObject>{
+        private ProgressDialog mProgressDialog;
+        private Context mContext;
+        AsyncTask self;
+        public UploadSurveyAnswersManually(Context context){
+            mContext =context;
+            mProgressDialog=new ProgressDialog(mContext);
+            self=this;
+        }
+        @Override
+        protected void onPreExecute() {
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setMessage("提交中...");
+            mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    self.cancel(true);
+                    mProgressDialog.dismiss();
+                }
+            });
+            mProgressDialog.show();
+        }
+        @Override
+        protected JsonObject doInBackground(Void... params) {
+            String id=MainApplication.getUserId();
+            SurveyAnswersDbHelper surveyAnswersDbHelper=new SurveyAnswersDbHelper();
+            SQLiteDatabase readableDb=surveyAnswersDbHelper.getReadableDatabase();
+            try(Cursor cursor=readableDb.query(SurveyAnswersDbHelper.AnswersTable.TABLE_NAME,null,null,null,null,null,null)){
+                while (cursor.moveToNext()){
+                    String answer=cursor.getString(cursor.getColumnIndexOrThrow(SurveyAnswersDbHelper.AnswersTable.COLUMN_NAME_ANSWER));
+                    if(answer!=null){
+                        SurveyAnswer surveyAnswer=new Gson().fromJson(answer,SurveyAnswer.class);
+                        String session=surveyAnswer.getSession();
+                        HttpAPI.submitSurvey(id,session,answer);
+                    }
+                }
+            }
+            JsonObject jsonObject=new JsonObject();
+            jsonObject.addProperty("status",true);
+            return jsonObject;
+        }
+
+        @Override
+        protected void onPostExecute(JsonObject result) {
+            mProgressDialog.dismiss();
+            if(result==null){
+                Toast.makeText(mContext, "未知错误，请检查网络连接是否正常", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(mContext,"提交成功",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     private void saveSurveyAnswerToDb(String answer){
         SurveyAnswersDbHelper surveyAnswersDbHelper=new SurveyAnswersDbHelper();
         SQLiteDatabase writableSurveyAnswersDb=surveyAnswersDbHelper.getWritableDatabase();
@@ -361,6 +414,18 @@ public class MainActivity extends Activity {
             case R.id.check_update:
                 new CheckUpdate(MainActivity.this,true).execute();
                 return true;
+            case R.id.submit_survey_answers_manually:
+                new AlertDialog.Builder(this)
+                        .setTitle("确定手动提交问卷回答吗？")
+                        .setMessage("仅当问卷提交失败或遇到其他意外情况时，你才需要手动提交问卷回答。继续吗？")
+                        .setNegativeButton(R.string.cancel,null)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new UploadSurveyAnswersManually(MainActivity.this).execute();
+                            }
+                        }).show();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -379,6 +444,8 @@ public class MainActivity extends Activity {
                 shouldRequestPerms.add(perm);
             }
         }
-        ActivityCompat.requestPermissions(this,shouldRequestPerms.toArray(new String[0]),new Random().nextInt());
+        if(shouldRequestPerms.size()!=0) {
+            ActivityCompat.requestPermissions(this, shouldRequestPerms.toArray(new String[0]), new Random().nextInt());
+        }
     }
 }

@@ -18,7 +18,6 @@ public class SurveyAnswersDbHelper extends SQLiteOpenHelper {
     }
     public static class AnswersTable implements BaseColumns{
         static final String TABLE_NAME = "answers";
-        static final String COLUMN_NAME_QUESTION_ID = "qestion_id";
         static final String COLUMN_NAME_ANSWER = "answer";
         static final String COLUMN_NAME_TIMESTAMP = "timestamp";
     }

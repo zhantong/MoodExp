@@ -45,4 +45,5 @@
     <string name="check_update">检查更新</string>
     <string name="main_title">大学生情绪问卷调查</string>
     <string name="view_history">查看历史</string>
+    <string name="submit_survey_answers_manually">手动提交问卷回答</string>
 </resources>
