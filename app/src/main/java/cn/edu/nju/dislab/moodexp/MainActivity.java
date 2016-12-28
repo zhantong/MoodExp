@@ -136,7 +136,7 @@ public class MainActivity extends Activity {
         reader.close();
         return sb.toString();
     }
-    private class DoSurvey extends AsyncTask<Void,Void,String>{
+    private class DoSurvey extends AsyncTask<Void,Void,JsonObject>{
         private ProgressDialog mProgressDialog;
         private Context mContext;
         public DoSurvey(Context context){
@@ -150,18 +150,21 @@ public class MainActivity extends Activity {
             mProgressDialog.show();
         }
         @Override
-        protected String doInBackground(Void... params) {
+        protected JsonObject doInBackground(Void... params) {
             return HttpAPI.getSurvey(MainApplication.getUserId());
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(JsonObject result) {
             mProgressDialog.dismiss();
-            if(s==null){
+            if(result==null){
                 Toast.makeText(mContext,"加载失败，请重试",Toast.LENGTH_SHORT).show();
-            }else{
+            }else if(!result.get("status").getAsBoolean()){
+                Toast.makeText(mContext,"错误，"+result.get("message").getAsString(),Toast.LENGTH_SHORT).show();
+            }
+            else{
                 Intent intent=new Intent(mContext,SurveyActivity.class);
-                intent.putExtra("survey",s);
+                intent.putExtra("survey",result.get("survey").getAsString());
                 startActivityForResult(intent,REQUEST_CODE_SURVEY);
             }
         }

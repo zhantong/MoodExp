@@ -136,8 +136,6 @@ public class ScheduledService extends Service implements Runnable{
                                 e.printStackTrace();
                             }
                         }
-                        collectorDb.close();
-                        collectorDbHelper.close();
                         break;
                     case "upload":
                         if (!isWifiConnected()) {
