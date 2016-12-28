@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -16,6 +17,8 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,7 +36,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import cn.edu.nju.dislab.moodexp.httputils.HttpAPI;
 import cn.edu.nju.dislab.moodexp.permissionintro.PermissionIntroActivity;
@@ -63,6 +69,7 @@ public class MainActivity extends Activity {
             if(MainApplication.getUserId().isEmpty()) {
                 checkRegisterAndLogin();
             }
+            checkAndRequestPermission();
             startScheduledService();
             new CheckUpdate(MainActivity.this,false).execute();
         }
@@ -197,6 +204,7 @@ public class MainActivity extends Activity {
             if(MainApplication.getUserId().isEmpty()) {
                 checkRegisterAndLogin();
             }
+            checkAndRequestPermission();
             startScheduledService();
             new CheckUpdate(MainActivity.this,false).execute();
         }
@@ -356,5 +364,21 @@ public class MainActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+    private void checkAndRequestPermission(){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return;
+        }
+        String[] PERMS=new String[]{android.Manifest.permission.READ_CONTACTS,
+                android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.RECORD_AUDIO,android.Manifest.permission.READ_PHONE_STATE,android.Manifest.permission.READ_CALL_LOG,
+                android.Manifest.permission.READ_SMS,android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.READ_EXTERNAL_STORAGE};
+        List<String> shouldRequestPerms=new ArrayList<>();
+        for(String perm:PERMS){
+            if(!(ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED)){
+                shouldRequestPerms.add(perm);
+            }
+        }
+        ActivityCompat.requestPermissions(this,shouldRequestPerms.toArray(new String[0]),new Random().nextInt());
     }
 }
