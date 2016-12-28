@@ -79,5 +79,8 @@ public class RadioButtonsFragment extends QuestionFragment {
         }else{
             mRadioGroupChoices.setVisibility(View.GONE);
         }
+        if(mScale!=1.0f){
+            Scale.scaleViewAndChildren(mView,mScale,0);
+        }
     }
 }

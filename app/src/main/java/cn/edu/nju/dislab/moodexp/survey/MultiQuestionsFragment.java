@@ -71,6 +71,7 @@ public class MultiQuestionsFragment extends QuestionFragment {
                     bundleToFragment.putBoolean("isComplete",false);
                     questionFragment.setArguments(bundleToFragment);
                     questionFragment.setOnChangedListener(onChangedListener);
+                    questionFragment.setScale(0.6f);
                     fragmentTransaction.add(R.id.questions_content,questionFragment);
                     mQuestionFragments.add(questionFragment);
                 }

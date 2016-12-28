@@ -21,11 +21,15 @@ public class QuestionFragment extends Fragment {
     protected boolean mIsComplete=true;
     protected View mView;
     protected boolean mIsLast=false;
+    protected float mScale=1.0f;
     public Answer getAnswer(){
         return mAnswer;
     }
     public void setOnChangedListener(OnChangedListener onChangedListener){
         mOnChangedListener=onChangedListener;
+    }
+    public void setScale(float scale){
+        mScale=scale;
     }
     @Override
     public void onAttach(Activity activity) {
