@@ -1,17 +1,21 @@
 <resources>
     <string name="app_name">MoodExp</string>
     <string name="terms_and_notification">安装条款与用户须知</string>
-    <string name="terms_and_notification_hint_1">本应用主要用于收集用户数据.\n该数据将用于预测用户情绪的研究工作.\n
-        本应用应当每天10am,5pm,10pm三次提醒用户记录心情。但可能由于被管理软件清理而不能发出提醒。\n
-        如果发生这样的情况，希望用户能够主动记录心情数据。但两次记录数据间隔不得低于五小时。\n
-        用户在提交心情记录时，会上传这段时间收集的数据到服务器，大约100k。因此请保证提交心情记录时网络畅通。如果当前因网络不畅等原因上传失败，数据会保留到下次一同上传。\n
-        当你记录了60次数据，将得到我们提供的精美礼品。
+    <string name="terms_and_notification_hint">
+        1. 本应用主要用于情绪问卷调查研究。应用会收集手机传感器信息，GPS经纬度信息，环境声音分贝值，屏幕点亮熄灭时间，各个应用使用时间，通讯录和通话/短信记录中姓名和号码的随机哈希值等信息。所有信息经过匿名和加密处理，不会记录用户短信和通话的内容。
+        \n
+        \n
+        2. 本应用会在每天10：00,15：00,20：00提醒用户提交情绪问卷。有时候APP会被手机管理软件清理而不能弹出提醒，则用户可以自行打开APP提交问卷，注意两次提交问卷的时间间隔不得少于五小时。
+        \n
+        \n
+        3. 志愿者累积提交问卷次数达到30次/60次，可获赠相应纪念品。
+        \n
+        \n
+        4. 所收集的数据会在WiFi环境下上传，所消耗的通信流量较少，耗电量也较低。
+        \n
+        \n
+        5. 我们承诺所收集数据仅用于情绪问卷调查研究目的，不用作他用途。
     </string>
-        <string name="terms_and_notification_hint_2">本应用收集的数据如下：\n加速度传感器数据;\n陀螺仪(角速度)数据;\n电子罗盘(磁力)数据;\n
-        光传感器数据;\nGPS经纬度信息;\n数据声音分贝值;\n屏幕点亮熄灭;\n
-        各个应用使用时间;\n通讯录中姓名的哈希值与号码的哈希值;\n通话记录中号码的哈希值与通话时间;\n
-        短信记录中号码的哈希值与短信时间;\n用户提供的心情标签;\nWifi的ssid,bssid,rssi。\n\n
-        我们承诺收集数据仅用于跟随其后的情绪模型训练的研究，不用作他用。研究结束后即进行销毁。</string>
     <string name="skip">跳过</string>
     <string name="done">完成</string>
     <string name="background_and_boot_permission">后台与自启动权限</string>
@@ -24,6 +28,7 @@
     <string name="register">注册</string>
     <string name="login">登录</string>
     <string name="student_id">学号</string>
+    <string name="student_id_or_user_id">学号／用户名</string>
     <string name="name">姓名</string>
     <string name="mail">邮箱</string>
     <string name="phone_number">手机号</string>

@@ -11,15 +11,10 @@ import android.provider.BaseColumns;
 
 public class SurveyAnswersDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
+    public static final String DATABASE_NAME = "SurveyAnswers.db";
 
-    public SurveyAnswersDbHelper(String name){
-        this(MainApplication.getContext(), name, null, DATABASE_VERSION);
-    }
-    public static class InfoTable implements BaseColumns{
-        static final String TABLE_NAME = "info";
-        static final String COLUMN_NAME_KEY = "key";
-        static final String COLUMN_NAME_VALUE = "value";
-        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    public SurveyAnswersDbHelper(){
+        this(MainApplication.getContext(), DATABASE_NAME, null, DATABASE_VERSION);
     }
     public static class AnswersTable implements BaseColumns{
         static final String TABLE_NAME = "answers";
@@ -27,14 +22,9 @@ public class SurveyAnswersDbHelper extends SQLiteOpenHelper {
         static final String COLUMN_NAME_ANSWER = "answer";
         static final String COLUMN_NAME_TIMESTAMP = "timestamp";
     }
-    private static final String SQL_CREATE_TABLE_INFO=
-            "CREATE TABLE "+ InfoTable.TABLE_NAME+" ("+
-                    InfoTable.COLUMN_NAME_KEY+" TEXT PRIMARY KEY,"+
-                    InfoTable.COLUMN_NAME_VALUE+" TEXT,"+
-                    InfoTable.COLUMN_NAME_TIMESTAMP+" INTEGER)";
     private static final String SQL_CREATE_TABLE_ANSWERS=
             "CREATE TABLE "+ AnswersTable.TABLE_NAME+" ("+
-                    AnswersTable.COLUMN_NAME_QUESTION_ID+" INTEGER PRIMARY KEY,"+
+                    AnswersTable._ID+" INTEGER PRIMARY KEY,"+
                     AnswersTable.COLUMN_NAME_ANSWER+" TEXT,"+
                     AnswersTable.COLUMN_NAME_TIMESTAMP+" INTEGER)";
     public SurveyAnswersDbHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -43,7 +33,6 @@ public class SurveyAnswersDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_TABLE_INFO);
         db.execSQL(SQL_CREATE_TABLE_ANSWERS);
     }
 

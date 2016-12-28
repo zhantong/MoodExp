@@ -17,7 +17,7 @@
         android:gravity="center"
         android:textColor="@color/black"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        android:text="@string/background_and_boot_permission" />
+        android:text="@string/privacy_permission" />
 
 
     <TextView
@@ -26,19 +26,6 @@
         android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:text="@string/background_and_boot_permission_hint" />
-    <LinearLayout
-        android:layout_weight="4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
-        <Button
-            android:text="@string/setting_now"
-            android:id="@+id/button_permission_slide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center" />
-    </LinearLayout>
-
+        android:text="@string/privacy_permission_hint" />
 
 </agency.tango.materialintroscreen.parallax.ParallaxLinearLayout>

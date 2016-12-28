@@ -52,7 +52,7 @@ public class BackgroundPermissionSlide extends SlideFragment{
     }
     @Override
     public int backgroundColor() {
-        return R.color.colorPrimary;
+        return R.color.lightGrey;
     }
 
     @Override

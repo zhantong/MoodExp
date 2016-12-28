@@ -23,8 +23,10 @@ import java.util.Map;
 
 public class HttpAPI {
     private static final String TAG = "MoodExp";
-    private static final String HOST = "114.212.80.16";
-    private static final int PORT = 9000;
+/*    private static final String HOST = "114.212.80.16";
+    private static final int PORT = 9000;*/
+private static final String HOST = "192.168.1.2";
+    private static final int PORT = 5000;
 
 
 
@@ -372,6 +374,36 @@ public class HttpAPI {
                 return result.get("survey").getAsString();
             }
             return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static JsonObject submitSurvey(String id,String session,String answer){
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+        params.put("session", session);
+        params.put("answer", answer);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.postReturnJson(HOST, PORT, "submitSurvey", params,null);
+            JsonObject result = element.getAsJsonObject();
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static JsonObject getSurveyStat(String id){
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "surveyStat", params);
+            JsonObject result = element.getAsJsonObject();
+            return result;
         } catch (IOException e) {
             e.printStackTrace();
             return null;

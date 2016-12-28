@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
@@ -39,6 +40,7 @@ import cn.edu.nju.dislab.moodexp.permissionintro.PermissionIntroActivity;
 import cn.edu.nju.dislab.moodexp.registerandlogin.RegisterAndLoginActivity;
 import cn.edu.nju.dislab.moodexp.survey.Answer;
 import cn.edu.nju.dislab.moodexp.survey.SurveyActivity;
+import cn.edu.nju.dislab.moodexp.survey.SurveyAnswer;
 
 public class MainActivity extends Activity {
     private static final String TAG="MainActivity";
@@ -72,6 +74,50 @@ public class MainActivity extends Activity {
                 new DoSurvey(MainActivity.this).execute();
             }
         });
+
+        Button buttonViewHistory=(Button)findViewById(R.id.btn_view_history);
+        buttonViewHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new GetSurveyHistory(MainActivity.this).execute();
+            }
+        });
+    }
+    private class GetSurveyHistory extends AsyncTask<Void,Void,JsonObject> {
+        private ProgressDialog mProgressDialog;
+        private Context mContext;
+        public GetSurveyHistory(Context context){
+            mContext =context;
+            mProgressDialog=new ProgressDialog(mContext);
+        }
+        @Override
+        protected void onPreExecute() {
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setMessage("正在加载...");
+            mProgressDialog.show();
+        }
+        @Override
+        protected JsonObject doInBackground(Void... params) {
+            String id=MainApplication.getUserId();
+            JsonObject result= HttpAPI.getSurveyStat(id);
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(JsonObject result) {
+            mProgressDialog.dismiss();
+            if(result==null) {
+                Toast.makeText(mContext, "未知错误，请检查网络连接是否正常", Toast.LENGTH_SHORT).show();
+            } else{
+                String countHasSubmit=result.get("count").getAsString();
+                String countShouldSubmit=result.get("max_count").getAsString();
+                new AlertDialog.Builder(mContext)
+                        .setTitle("提交历史")
+                        .setMessage("当前已提交 "+countHasSubmit+" 次，还需提交 "+countShouldSubmit+" 次。")
+                        .setPositiveButton("确定", null)
+                        .show();
+            }
+        }
     }
 
     @Override
@@ -153,10 +199,9 @@ public class MainActivity extends Activity {
         }
         if(requestCode==REQUEST_CODE_SURVEY){
             if(resultCode==Activity.RESULT_OK){
-                Map<Integer,Answer> answerMap=new Gson().fromJson(data.getExtras().getString("answers"), new TypeToken<Map<Integer,Answer>>(){}.getType());
-                saveSurvryAnswersToDb(answerMap);
-                Toast.makeText(this,"问卷已提交",Toast.LENGTH_SHORT).show();
-                startService(new Intent(this,ScheduledService.class));
+                String surveyAnswer=data.getExtras().getString("answer");
+                saveSurveyAnswerToDb(surveyAnswer);
+                new UploadSurveyAnswer(MainActivity.this).execute(surveyAnswer);
             }
         }
         if(requestCode==REQUEST_CODE_REGISTER_AND_LOGIN){
@@ -203,51 +248,57 @@ public class MainActivity extends Activity {
             }
         }
     }
-    private void saveSurvryAnswersToDb(Map<Integer,Answer> answerMap){
-        String surveyAnswersDbName=System.currentTimeMillis()+".db";
-        SurveyAnswersDbHelper surveyAnswersDbHelper=new SurveyAnswersDbHelper(surveyAnswersDbName);
-        SQLiteDatabase writableSurveyAnswersDb=surveyAnswersDbHelper.getWritableDatabase();
-        Gson gson=new Gson();
-        for(Map.Entry<Integer,Answer> entry:answerMap.entrySet()){
-            int questionId=entry.getKey();
-            String answer=gson.toJson(entry.getValue());
-            ContentValues contentValues=new ContentValues();
-            contentValues.put(SurveyAnswersDbHelper.AnswersTable.COLUMN_NAME_QUESTION_ID,questionId);
-            contentValues.put(SurveyAnswersDbHelper.AnswersTable.COLUMN_NAME_ANSWER,answer);
-            contentValues.put(SurveyAnswersDbHelper.AnswersTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
-            writableSurveyAnswersDb.insertWithOnConflict(SurveyAnswersDbHelper.AnswersTable.TABLE_NAME,null,contentValues,SQLiteDatabase.CONFLICT_REPLACE);
+    private class UploadSurveyAnswer extends AsyncTask<String, Void,JsonObject>{
+        private ProgressDialog mProgressDialog;
+        private Context mContext;
+        public UploadSurveyAnswer(Context context){
+            mContext =context;
+            mProgressDialog=new ProgressDialog(mContext);
         }
+        @Override
+        protected void onPreExecute() {
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setMessage("提交中...");
+            mProgressDialog.show();
+        }
+        @Override
+        protected JsonObject doInBackground(String... params) {
+            String id=MainApplication.getUserId();
+            String answer=params[0];
+            SurveyAnswer surveyAnswer=new Gson().fromJson(answer,SurveyAnswer.class);
+            String session=surveyAnswer.getSession();
+            JsonObject result=HttpAPI.submitSurvey(id,session,answer);
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(JsonObject result) {
+            mProgressDialog.dismiss();
+            if(result==null){
+                Toast.makeText(mContext, "未知错误，请检查网络连接是否正常", Toast.LENGTH_SHORT).show();
+            }else if(!result.get("status").getAsBoolean()){
+                Toast.makeText(mContext, "错误："+result.get("message"), Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(mContext,"问卷已提交",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    private void saveSurveyAnswerToDb(String answer){
+        SurveyAnswersDbHelper surveyAnswersDbHelper=new SurveyAnswersDbHelper();
+        SQLiteDatabase writableSurveyAnswersDb=surveyAnswersDbHelper.getWritableDatabase();
+        ContentValues contentValues=new ContentValues();
+        contentValues.put(SurveyAnswersDbHelper.AnswersTable.COLUMN_NAME_ANSWER,answer);
+        writableSurveyAnswersDb.insert(SurveyAnswersDbHelper.AnswersTable.TABLE_NAME,null,contentValues);
         writableSurveyAnswersDb.close();
         surveyAnswersDbHelper.close();
-
-        DbHelper dbHelper=new DbHelper();
-        SQLiteDatabase writableDb=dbHelper.getWritableDatabase();
-        if(true) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(DbHelper.CollectDbTable.COLUMN_NAME_NAME, surveyAnswersDbName);
-            contentValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_USING, 0);
-            contentValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED, 0);
-            contentValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_DELETED, 0);
-            contentValues.put(DbHelper.CollectDbTable.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
-            writableDb.insertWithOnConflict(DbHelper.CollectDbTable.TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
-        }
-
-        if(true){
-            ContentValues valuesSchedule = new ContentValues();
-            valuesSchedule.put(DbHelper.ScheduleTable.COLUMN_NAME_LEVEL, System.currentTimeMillis());
-            valuesSchedule.put(DbHelper.ScheduleTable.COLUMN_NAME_TYPE, "upload");
-            valuesSchedule.put(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
-            valuesSchedule.put(DbHelper.ScheduleTable.COLUMN_NAME_INTERVAL, 0);
-            valuesSchedule.put(DbHelper.ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
-            writableDb.insert(DbHelper.ScheduleTable.TABLE_NAME, null, valuesSchedule);
-        }
-        writableDb.close();
-        dbHelper.close();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case R.id.first_time_intro_page:
+                startActivity(new Intent(this,FirstTimeIntroActivity.class));
+                return true;
             case R.id.about:
                 startActivity(new Intent(this,AboutActivity.class));
                 return true;

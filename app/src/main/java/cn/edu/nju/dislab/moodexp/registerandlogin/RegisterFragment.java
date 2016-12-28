@@ -7,10 +7,13 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,30 +32,67 @@ public class RegisterFragment extends Fragment {
     }
     private View mView;
     private OnRegisterSuccessListener mCallback;
+    private EditText mEditTextId;
+    private EditText mEditTextName;
+    private EditText mEditTextPhone;
+    private Button mButtonRegister;
 
+    private TextWatcher mTextWatcher=new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            checkEmptyValues();
+        }
+    };
+    private void checkEmptyValues(){
+        String id=mEditTextId.getText().toString();
+        String name=mEditTextName.getText().toString();
+        String phone=mEditTextPhone.getText().toString();
+        if(id.equals("")||name.equals("")||phone.equals("")){
+            mButtonRegister.setEnabled(false);
+        }else{
+            mButtonRegister.setEnabled(true);
+        }
+    }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView=inflater.inflate(R.layout.register_fragment,container,false);
 
 
-        Button buttonLogin=(Button)mView.findViewById(R.id.btn_register);
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
+        mButtonRegister=(Button)mView.findViewById(R.id.btn_register);
+        mButtonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 register();
             }
         });
 
+        mEditTextId=(EditText)mView.findViewById(R.id.text_id);
+        mEditTextName=(EditText)mView.findViewById(R.id.text_name);
+        mEditTextPhone=(EditText)mView.findViewById(R.id.text_phone);
+
+        mEditTextId.addTextChangedListener(mTextWatcher);
+        mEditTextName.addTextChangedListener(mTextWatcher);
+        mEditTextPhone.addTextChangedListener(mTextWatcher);
+
+        checkEmptyValues();
         return mView;
     }
     private void register(){
-        TextView textViewId=(TextView)mView.findViewById(R.id.text_id);
-        final String id=textViewId.getText().toString();
-        TextView textViewName=(TextView)mView.findViewById(R.id.text_name);
-        final String name=textViewName.getText().toString();
-        TextView textViewPhone=(TextView)mView.findViewById(R.id.text_phone);
-        final String phone=textViewPhone.getText().toString();
+
+        final String id=mEditTextId.getText().toString();
+        final String name=mEditTextName.getText().toString();
+        final String phone=mEditTextPhone.getText().toString();
         AsyncTask registerTask=new RegisterTask(getActivity()).execute(id,name,phone);
     }
     private class RegisterTask extends AsyncTask<String,Object,JsonObject>{

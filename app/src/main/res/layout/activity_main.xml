@@ -15,15 +15,19 @@
     <LinearLayout
         android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="64dp"
+        android:orientation="horizontal">
         <ImageView
-            android:src="@drawable/ruc_logo"
+            android:layout_weight="1"
+            android:src="@drawable/nju_and_ruc_logo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="fitXY"
             android:adjustViewBounds="true"/>
     </LinearLayout>
     <LinearLayout
+        android:layout_weight="2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -32,14 +36,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="30sp"
-            android:paddingTop="24dp"
-            android:paddingBottom="24dp"
             android:text="@string/main_title"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="32dp"
         android:orientation="horizontal">
         <Button
             android:layout_weight="1"

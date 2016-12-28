@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,7 +94,8 @@ public class SurveyActivity extends AppCompatActivity implements OnSubmitAnswerL
         Intent intent=new Intent();
         List<Answer> answers=new ArrayList<>(answerMap.values());
         SurveyAnswer surveyAnswer=new SurveyAnswer(mSurvey.getId(),mSurvey.getSession(),answers);
-        intent.putExtra("answer",new Gson().toJson(surveyAnswer));
+        Gson gson=new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        intent.putExtra("answer",gson.toJson(surveyAnswer));
         setResult(Activity.RESULT_OK,intent);
         finish();
     }

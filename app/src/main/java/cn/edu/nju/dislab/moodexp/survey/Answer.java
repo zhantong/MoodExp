@@ -1,6 +1,7 @@
 package cn.edu.nju.dislab.moodexp.survey;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
@@ -11,12 +12,15 @@ import java.io.Serializable;
 public class Answer implements Serializable {
     private String questionTitle;
 
+    @SerializedName("question_id")
     @Expose
     private int questionId;
 
+    @SerializedName("answer")
     @Expose
     private String answer;
 
+    @SerializedName("id")
     @Expose
     private int id;
 

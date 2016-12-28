@@ -8,10 +8,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +34,8 @@ public class LoginFragment extends Fragment {
     }
     private View mView;
     private OnLoginSuccessListener mCallback;
+    private EditText mEditTextId;
+    private Button mButtonLogin;
 
     @Nullable
     @Override
@@ -38,15 +43,41 @@ public class LoginFragment extends Fragment {
         mView=inflater.inflate(R.layout.login_fragment,container,false);
 
 
-        Button buttonLogin=(Button)mView.findViewById(R.id.btn_login);
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
+        mButtonLogin=(Button)mView.findViewById(R.id.btn_login);
+        mButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 login();
             }
         });
 
+        mEditTextId=(EditText)mView.findViewById(R.id.text_id);
+        mEditTextId.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                checkEmptyValues();
+            }
+        });
+        checkEmptyValues();
         return mView;
+    }
+    private void checkEmptyValues(){
+        String id=mEditTextId.getText().toString();
+        if(id.equals("")){
+            mButtonLogin.setEnabled(false);
+        }else{
+            mButtonLogin.setEnabled(true);
+        }
     }
     private void login(){
         TextView textViewId=(TextView)mView.findViewById(R.id.text_id);
@@ -79,7 +110,7 @@ public class LoginFragment extends Fragment {
             if(studentInfo==null){
                 Toast.makeText(getActivity(),"未知错误，请检查网络连接是否正常",Toast.LENGTH_SHORT).show();
             }else if(!studentInfo.get("status").getAsBoolean()){
-                Toast.makeText(getActivity(),"登录失败",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"登录失败，"+studentInfo.get("message").getAsString(),Toast.LENGTH_SHORT).show();
             }else{
 
                 String studentId=studentInfo.get("id").getAsString();

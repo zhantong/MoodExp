@@ -48,7 +48,7 @@ public class UsagePermissionSlide extends SlideFragment {
     }
     @Override
     public int backgroundColor() {
-        return R.color.colorPrimary;
+        return R.color.lightGrey;
     }
 
     @Override
