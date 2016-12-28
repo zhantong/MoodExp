@@ -70,7 +70,6 @@ public class MainActivity extends Activity {
             if(MainApplication.getUserId().isEmpty()) {
                 checkRegisterAndLogin();
             }
-            checkAndRequestPermission();
             startScheduledService();
             new CheckUpdate(MainActivity.this,false).execute();
         }
@@ -201,13 +200,10 @@ public class MainActivity extends Activity {
             SharedPreferences.Editor editor=preferences.edit();
             editor.putBoolean("firstStart",false);
             editor.apply();
-
+            new FirstTimeRunPermissionIssure().execute();
             if(MainApplication.getUserId().isEmpty()) {
                 checkRegisterAndLogin();
             }
-            checkAndRequestPermission();
-            startScheduledService();
-            new CheckUpdate(MainActivity.this,false).execute();
         }
         if(requestCode==REQUEST_CODE_SURVEY){
             if(resultCode==Activity.RESULT_OK){
@@ -258,6 +254,19 @@ public class MainActivity extends Activity {
                     Toast.makeText(this, "欢迎你，" +studentName+"。",Toast.LENGTH_SHORT).show();
                 }
             }
+        }
+    }
+    private class FirstTimeRunPermissionIssure extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected Void doInBackground(Void... params) {
+            checkAndRequestPermission();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            startScheduledService();
+            new CheckUpdate(MainActivity.this,false).execute();
         }
     }
     private class UploadSurveyAnswer extends AsyncTask<String, Void,JsonObject>{
@@ -435,20 +444,30 @@ public class MainActivity extends Activity {
     }
     private void checkAndRequestPermission(){
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return;
-        }
-        String[] PERMS=new String[]{android.Manifest.permission.READ_CONTACTS,
-                android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                android.Manifest.permission.RECORD_AUDIO,android.Manifest.permission.READ_PHONE_STATE,android.Manifest.permission.READ_CALL_LOG,
-                android.Manifest.permission.READ_SMS,android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.READ_EXTERNAL_STORAGE};
-        List<String> shouldRequestPerms=new ArrayList<>();
-        for(String perm:PERMS){
-            if(!(ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED)){
-                shouldRequestPerms.add(perm);
+            final String[] collectors=new String[]{"Screen","CallLog","Phone","Sms","Contact","Audio","Location","Wifi","Sensors","ForegroundApp","RunningApp"};
+            for(String collector:collectors){
+                Thread thread=ScheduledService.getCollectorThread(collector,null);
+                thread.start();
+                try {
+                    thread.join(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        if(shouldRequestPerms.size()!=0) {
-            ActivityCompat.requestPermissions(this, shouldRequestPerms.toArray(new String[0]), new Random().nextInt());
+        }else {
+            String[] PERMS = new String[]{android.Manifest.permission.READ_CONTACTS,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                    android.Manifest.permission.RECORD_AUDIO, android.Manifest.permission.READ_PHONE_STATE, android.Manifest.permission.READ_CALL_LOG,
+                    android.Manifest.permission.READ_SMS, android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE};
+            List<String> shouldRequestPerms = new ArrayList<>();
+            for (String perm : PERMS) {
+                if (!(ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED)) {
+                    shouldRequestPerms.add(perm);
+                }
+            }
+            if (shouldRequestPerms.size() != 0) {
+                ActivityCompat.requestPermissions(this, shouldRequestPerms.toArray(new String[0]), new Random().nextInt());
+            }
         }
     }
 }

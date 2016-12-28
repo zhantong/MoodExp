@@ -290,7 +290,7 @@ public class ScheduledService extends Service implements Runnable{
         db.close();
         collectorDbHelper.close();
     }
-    private Thread getCollectorThread(final String type,final SQLiteDatabase db){
+    public static Thread getCollectorThread(final String type,final SQLiteDatabase db){
         return new Thread(new Runnable() {
             @Override
             public void run() {
@@ -300,7 +300,9 @@ public class ScheduledService extends Service implements Runnable{
                         if(audioCollector.collect()==Collector.COLLECT_SUCCESS){
                             AudioData result=audioCollector.getResult();
                             if(result!=null){
-                                result.toDb(db);
+                                if(db!=null) {
+                                    result.toDb(db);
+                                }
                                 Log.i(TAG, result.toString());
                             }
                         }
@@ -310,7 +312,9 @@ public class ScheduledService extends Service implements Runnable{
                         if(callLogCollector.collect()==Collector.COLLECT_SUCCESS){
                             CallLogData result=callLogCollector.getResult();
                             if(result!=null){
-                                result.toDb(db);
+                                if(db!=null) {
+                                    result.toDb(db);
+                                }
                                 Log.i(TAG, result.toString());
                             }
                         }
@@ -320,7 +324,9 @@ public class ScheduledService extends Service implements Runnable{
                         if(contactCollector.collect()==Collector.COLLECT_SUCCESS){
                             ContactData result=contactCollector.getResult();
                             if(result!=null){
-                                result.toDb(db);
+                                if(db!=null) {
+                                    result.toDb(db);
+                                }
                                 Log.i(TAG, result.toString());
                             }
                         }
@@ -330,7 +336,9 @@ public class ScheduledService extends Service implements Runnable{
                         if(foregroundAppCollector.collect()==Collector.COLLECT_SUCCESS){
                             ForegroundAppData result=foregroundAppCollector.getResult();
                             if(result!=null){
-                                result.toDb(db);
+                                if(db!=null) {
+                                    result.toDb(db);
+                                }
                                 Log.i(TAG, result.toString());
                             }
                         }
@@ -340,7 +348,9 @@ public class ScheduledService extends Service implements Runnable{
                         if(locationCollector.collect()==Collector.COLLECT_SUCCESS){
                             LocationData result=locationCollector.getResult();
                             if(result!=null){
-                                result.toDb(db);
+                                if(db!=null) {
+                                    result.toDb(db);
+                                }
                                 Log.i(TAG, result.toString());
                             }
                         }
@@ -350,7 +360,9 @@ public class ScheduledService extends Service implements Runnable{
                         if(phoneCollector.collect()==Collector.COLLECT_SUCCESS){
                             PhoneData result=phoneCollector.getResult();
                             if(result!=null){
-                                result.toDb(db);
+                                if(db!=null) {
+                                    result.toDb(db);
+                                }
                                 Log.i(TAG, result.toString());
                             }
                         }
@@ -360,7 +372,9 @@ public class ScheduledService extends Service implements Runnable{
                         if(runningAppCollector.collect()==Collector.COLLECT_SUCCESS){
                             RunningAppData result=runningAppCollector.getResult();
                             if(result!=null){
-                                result.toDb(db);
+                                if(db!=null) {
+                                    result.toDb(db);
+                                }
                                 Log.i(TAG, result.toString());
                             }
                         }
@@ -370,7 +384,9 @@ public class ScheduledService extends Service implements Runnable{
                         if(screenCollector.collect()==Collector.COLLECT_SUCCESS){
                             ScreenData result=screenCollector.getResult();
                             if(result!=null){
-                                result.toDb(db);
+                                if(db!=null) {
+                                    result.toDb(db);
+                                }
                                 Log.i(TAG, result.toString());
                             }
                         }
@@ -382,7 +398,9 @@ public class ScheduledService extends Service implements Runnable{
                         if(sensorsCollector.collect()==Collector.COLLECT_SUCCESS){
                             SensorsData result=sensorsCollector.getResult();
                             if(result!=null){
-                                result.toDb(db);
+                                if(db!=null) {
+                                    result.toDb(db);
+                                }
                                 Log.i(TAG, result.toString());
                             }
                         }
@@ -392,7 +410,9 @@ public class ScheduledService extends Service implements Runnable{
                         if(smsCollector.collect()==Collector.COLLECT_SUCCESS){
                             SmsData result=smsCollector.getResult();
                             if(result!=null){
-                                result.toDb(db);
+                                if(db!=null) {
+                                    result.toDb(db);
+                                }
                                 Log.i(TAG, result.toString());
                             }
                         }
@@ -402,7 +422,9 @@ public class ScheduledService extends Service implements Runnable{
                         if(wifiCollector.collect()==Collector.COLLECT_SUCCESS){
                             WifiData result=wifiCollector.getResult();
                             if(result!=null){
-                                result.toDb(db);
+                                if(db!=null) {
+                                    result.toDb(db);
+                                }
                                 Log.i(TAG, result.toString());
                             }
                         }
