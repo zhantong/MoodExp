@@ -360,7 +360,7 @@ public class HttpAPI {
             return false;
         }
     }
-    public static String getSurvey(String id){
+    public static JsonObject getSurvey(String id){
         Map<String, String> params = new HashMap<>();
         params.put("id", id);
 
@@ -368,10 +368,7 @@ public class HttpAPI {
         try {
             JsonElement element = request.getReturnJson(HOST, PORT, "survey", params);
             JsonObject result = element.getAsJsonObject();
-            if (result.get("status").getAsBoolean()) {
-                return result.get("survey").getAsString();
-            }
-            return null;
+            return result;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -400,6 +397,21 @@ public class HttpAPI {
         HttpRequest request = new HttpRequest();
         try {
             JsonElement element = request.getReturnJson(HOST, PORT, "surveyStat", params);
+            JsonObject result = element.getAsJsonObject();
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static JsonObject feedback(String id,String feedback){
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+        params.put("feedback", feedback);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "feedback", params);
             JsonObject result = element.getAsJsonObject();
             return result;
         } catch (IOException e) {

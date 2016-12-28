@@ -10,6 +10,8 @@
         android:title="@string/check_update"/>
     <item android:id="@+id/submit_survey_answers_manually"
         android:title="@string/submit_survey_answers_manually"/>
+    <item android:id="@+id/feedback"
+        android:title="@string/feedback"/>
     <item android:id="@+id/about"
         android:title="@string/about"/>
 </menu>

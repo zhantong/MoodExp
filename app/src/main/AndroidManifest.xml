@@ -66,6 +66,8 @@
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
         <activity android:name=".AboutActivity"
             android:parentActivityName=".MainActivity"/>
+        <activity android:name=".FeedbackActivity"
+            android:parentActivityName=".MainActivity"/>
         <activity android:name=".survey.SurveyActivity"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
 

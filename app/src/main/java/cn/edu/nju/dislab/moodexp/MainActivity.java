@@ -363,6 +363,9 @@ public class MainActivity extends Activity {
             case R.id.first_time_intro_page:
                 startActivity(new Intent(this,FirstTimeIntroActivity.class));
                 return true;
+            case R.id.feedback:
+                startActivity(new Intent(this,FeedbackActivity.class));
+                return true;
             case R.id.about:
                 startActivity(new Intent(this,AboutActivity.class));
                 return true;
