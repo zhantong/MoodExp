@@ -7,6 +7,8 @@ import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.List;
+
 import cn.edu.nju.dislab.moodexp.EasyPermissions;
 import cn.edu.nju.dislab.moodexp.MainApplication;
 
@@ -33,52 +35,72 @@ public class ForegroundAppCollector {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             mUsageStatsManager = (UsageStatsManager) mContext.getSystemService(Context.USAGE_STATS_SERVICE);
             Log.i(TAG, "using UsageStatsManager");
-        } else {
-            mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-            Log.i(TAG, "using ActivityManager");
         }
-
+        mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        Log.i(TAG, "using ActivityManager");
     }
 
     public int collect() {
+        result=new ForegroundAppData();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             if (!EasyPermissions.hasPermissions(PERMISSIONS_EG_L)) {
-                return Collector.NO_PERMISSION;
-            }
-            long INTERVAL = 10 * 1000;
-            long currentTimeMillis = System.currentTimeMillis();
-            UsageEvents usageEvents = mUsageStatsManager.queryEvents(currentTimeMillis - INTERVAL, currentTimeMillis + INTERVAL);
-            UsageEvents.Event event = new UsageEvents.Event();
-            String foregroundApp = null;
-            long latestTime = 0;
-            while (usageEvents.hasNextEvent()) {
-                usageEvents.getNextEvent(event);
-                long time = event.getTimeStamp();
-                if (event.getEventType() == UsageEvents.Event.MOVE_TO_FOREGROUND && time > latestTime) {
-                    latestTime = time;
-                    foregroundApp = event.getPackageName();
+                Log.i(TAG,"no usage stat permission");
+            }else {
+                long INTERVAL = 10 * 1000;
+                long currentTimeMillis = System.currentTimeMillis();
+                UsageEvents usageEvents=null;
+                try {
+                    usageEvents = mUsageStatsManager.queryEvents(currentTimeMillis - INTERVAL, currentTimeMillis + INTERVAL);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                if(usageEvents!=null) {
+                    UsageEvents.Event event = new UsageEvents.Event();
+                    String foregroundApp = null;
+                    long latestTime = 0;
+                    while (usageEvents.hasNextEvent()) {
+                        usageEvents.getNextEvent(event);
+                        long time = event.getTimeStamp();
+                        if (event.getEventType() == UsageEvents.Event.MOVE_TO_FOREGROUND && time > latestTime) {
+                            latestTime = time;
+                            foregroundApp = event.getPackageName();
+                        }
+                    }
+                    if (foregroundApp == null) {
+                        Log.i(TAG, "no foreground app");
+                    } else {
+                        result.put(foregroundApp, "UsageStats", System.currentTimeMillis());
+                    }
                 }
             }
-            if (foregroundApp == null) {
-                Log.i(TAG, "no foreground app");
-                return Collector.COLLECT_FAILED;
-            }
-            result = new ForegroundAppData(foregroundApp, System.currentTimeMillis());
-        } else {
-            ActivityManager.RunningTaskInfo foregroundTaskInfo;
-            try {
-                foregroundTaskInfo = mActivityManager.getRunningTasks(1).get(0);
-            } catch (Exception e) {
-                Log.i(TAG, "error when getting foregroundTaskInfo");
-                e.printStackTrace();
-                return Collector.NO_PERMISSION;
-            }
-            if (foregroundTaskInfo == null) {
-                Log.i(TAG, "null foregroundTaskInfo");
-                return Collector.COLLECT_FAILED;
-            }
+        }
+        ActivityManager.RunningTaskInfo foregroundTaskInfo=null;
+        try {
+            foregroundTaskInfo = mActivityManager.getRunningTasks(1).get(0);
+        } catch (Exception e) {
+            Log.i(TAG, "error when getting foregroundTaskInfo");
+            e.printStackTrace();
+        }
+        if (foregroundTaskInfo == null) {
+            Log.i(TAG, "null foregroundTaskInfo");
+        }else {
             String foregroundApp = foregroundTaskInfo.baseActivity.getPackageName();
-            result = new ForegroundAppData(foregroundApp, System.currentTimeMillis());
+            result.put(foregroundApp,"RunningTasks", System.currentTimeMillis());
+        }
+        List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfos=null;
+        try {
+            runningAppProcessInfos = mActivityManager.getRunningAppProcesses();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(runningAppProcessInfos==null){
+            Log.i(TAG, "null runningAppProcessInfos");
+        }else{
+            for(ActivityManager.RunningAppProcessInfo runningAppProcessInfo:runningAppProcessInfos){
+                if(runningAppProcessInfo.importance== ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND){
+                    result.put(runningAppProcessInfo.processName,"RunningAppProcesses",System.currentTimeMillis());
+                }
+            }
         }
         return Collector.COLLECT_SUCCESS;
     }

@@ -34,45 +34,73 @@ public class RunningAppCollector {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             mUsageStatsManager = (UsageStatsManager) mContext.getSystemService(Context.USAGE_STATS_SERVICE);
             Log.i(TAG, "using UsageStatsManager");
-        } else {
-            mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-            Log.i(TAG, "using ActivityManager");
         }
+        mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        Log.i(TAG, "using ActivityManager");
     }
 
     public int collect() {
         result = new RunningAppData();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             if (!EasyPermissions.hasPermissions(PERMISSIONS_EG_L)) {
-                return Collector.NO_PERMISSION;
+                Log.i(TAG,"no usage stat permission");
             }
             long INTERVAL = 30 * 60 * 1000;
             long currentTimeMillis = System.currentTimeMillis();
-            List<UsageStats> usageStatses = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, currentTimeMillis - INTERVAL, currentTimeMillis + INTERVAL);
-            if (usageStatses == null || usageStatses.isEmpty()) {
-                return Collector.COLLECT_FAILED;
-            }
-            for (UsageStats usageStats : usageStatses) {
-                result.put(usageStats.getPackageName(), System.currentTimeMillis());
-            }
-        } else {
-            List<ActivityManager.RunningTaskInfo> runningTaskInfos;
+            List<UsageStats> usageStatses=null;
             try {
-                runningTaskInfos = mActivityManager.getRunningTasks(Integer.MAX_VALUE);
-            } catch (Exception e) {
-                Log.i(TAG, "error when getting runningTaskInfos");
+                usageStatses = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, currentTimeMillis - INTERVAL, currentTimeMillis + INTERVAL);
+            }catch (Exception e){
                 e.printStackTrace();
-                return Collector.NO_PERMISSION;
             }
-            if (runningTaskInfos == null) {
-                Log.i(TAG, "null runningTaskInfos");
-                return Collector.NO_PERMISSION;
+            if (usageStatses == null || usageStatses.isEmpty()) {
+                Log.i(TAG, "null usageStatses");
+            }else {
+                for (UsageStats usageStats : usageStatses) {
+                    result.put(usageStats.getPackageName(),"UsageStats", System.currentTimeMillis());
+                }
             }
-            if (runningTaskInfos.isEmpty()) {
-                return Collector.COLLECT_FAILED;
-            }
+        }
+        List<ActivityManager.RunningTaskInfo> runningTaskInfos=null;
+        try {
+            runningTaskInfos = mActivityManager.getRunningTasks(Integer.MAX_VALUE);
+        } catch (Exception e) {
+            Log.i(TAG, "error when getting runningTaskInfos");
+            e.printStackTrace();
+        }
+        if (runningTaskInfos == null) {
+            Log.i(TAG, "null runningTaskInfos");
+        }else {
             for (ActivityManager.RunningTaskInfo runningTaskInfo : runningTaskInfos) {
-                result.put(runningTaskInfo.baseActivity.getPackageName(), System.currentTimeMillis());
+                result.put(runningTaskInfo.baseActivity.getPackageName(),"RunningTasks", System.currentTimeMillis());
+            }
+        }
+        List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfos=null;
+        try {
+            runningAppProcessInfos = mActivityManager.getRunningAppProcesses();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(runningAppProcessInfos==null){
+            Log.i(TAG, "null runningAppProcessInfos");
+        }else{
+            for(ActivityManager.RunningAppProcessInfo runningAppProcessInfo:runningAppProcessInfos){
+                if(runningAppProcessInfo.importance== ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND){
+                    result.put(runningAppProcessInfo.processName,"RunningAppProcesses",System.currentTimeMillis());
+                }
+            }
+        }
+        List<ActivityManager.RunningServiceInfo> runningServiceInfos=null;
+        try {
+            runningServiceInfos = mActivityManager.getRunningServices(Integer.MAX_VALUE);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(runningServiceInfos==null){
+            Log.i(TAG,"null runningServiceInfos");
+        }else{
+            for(ActivityManager.RunningServiceInfo runningServiceInfo:runningServiceInfos){
+                result.put(runningServiceInfo.process,"RunningService",System.currentTimeMillis());
             }
         }
         return Collector.COLLECT_SUCCESS;
