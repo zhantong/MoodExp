@@ -23,6 +23,7 @@ import static cn.edu.nju.dislab.moodexp.permissionintro.IntentWrapper.getApplica
  */
 
 public class UsagePermissionSlide extends SlideFragment {
+    private int mCount=0;
     //private boolean canMoveFurther=false;
     @Nullable
     @Override
@@ -31,7 +32,7 @@ public class UsagePermissionSlide extends SlideFragment {
 
         TextView textViewTitle=(TextView)view.findViewById(R.id.textView_title);
         TextView textViewMessage=(TextView)view.findViewById(R.id.textView_message);
-        String title=getApplicationName() + " 需要查看系统统计信息";
+        String title="第 "+mCount+" 步\n"+"设置 "+ getApplicationName() + " 的统计信息权限";
         textViewTitle.setText(title);
         String textButton="现在设置";
         String message=getApplicationName() + " 需要分析应用的使用情况。\n\n" +
@@ -47,6 +48,9 @@ public class UsagePermissionSlide extends SlideFragment {
             }
         });
         return view;
+    }
+    public void setCount(int count){
+        mCount=count;
     }
 
 /*    @Override

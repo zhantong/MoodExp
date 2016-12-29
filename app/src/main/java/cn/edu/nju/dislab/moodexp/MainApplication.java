@@ -57,6 +57,18 @@ public class MainApplication extends Application {
         return mContext;
     }
 
+    public static boolean isUsageStatsExists(){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
+            PackageManager packageManager = mContext.getPackageManager();
+            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+            List<ResolveInfo> list = packageManager.queryIntentActivities(intent,
+                    PackageManager.MATCH_DEFAULT_ONLY);
+            if(list.size()>0){
+                return true;
+            }
+        }
+        return false;
+    }
     public static boolean isUsageStatsGranted(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
             PackageManager packageManager = mContext.getPackageManager();
