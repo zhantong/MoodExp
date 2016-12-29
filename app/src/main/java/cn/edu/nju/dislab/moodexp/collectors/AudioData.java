@@ -12,6 +12,17 @@ import java.util.List;
  */
 
 public class AudioData {
+    class AudioTable implements BaseColumns {
+        static final String TABLE_NAME = "audio";
+        static final String COLUMN_NAME_AMPLITUDE = "amplitude";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    }
+    static String SQL_CREATE_TABLE_AUDIO =
+            "CREATE TABLE IF NOT EXISTS " + AudioTable.TABLE_NAME + " (" +
+                    AudioTable._ID + " INTEGER PRIMARY KEY," +
+                    AudioTable.COLUMN_NAME_AMPLITUDE + " REAL," +
+                    AudioTable.COLUMN_NAME_TIMESTAMP + " INTEGER)";
+
     private List<Audio> audios;
 
     private class Audio {
@@ -36,24 +47,21 @@ public class AudioData {
     public void put(long timestamp, double amplitude) {
         audios.add(new Audio(timestamp, amplitude));
     }
-
-    public void toDb(SQLiteDatabase db) {
-        class Table implements BaseColumns {
-            static final String TABLE_NAME = "audio";
-            static final String COLUMN_NAME_AMPLITUDE = "amplitude";
-            static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    public static void DbInit(SQLiteDatabase db){
+        if(db!=null){
+            db.execSQL(SQL_CREATE_TABLE_AUDIO);
         }
-        String SQL_CREATE_TABLE =
-                "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                        Table._ID + " INTEGER PRIMARY KEY," +
-                        Table.COLUMN_NAME_AMPLITUDE + " REAL," +
-                        Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
-        db.execSQL(SQL_CREATE_TABLE);
+    }
+    public void toDb(SQLiteDatabase db) {
+        if(db==null){
+            return;
+        }
+        db.execSQL(SQL_CREATE_TABLE_AUDIO);
         for (Audio audio : audios) {
             ContentValues values = new ContentValues();
-            values.put(Table.COLUMN_NAME_AMPLITUDE, audio.amplitude);
-            values.put(Table.COLUMN_NAME_TIMESTAMP, audio.timestamp);
-            db.insert(Table.TABLE_NAME, null, values);
+            values.put(AudioTable.COLUMN_NAME_AMPLITUDE, audio.amplitude);
+            values.put(AudioTable.COLUMN_NAME_TIMESTAMP, audio.timestamp);
+            db.insert(AudioTable.TABLE_NAME, null, values);
         }
     }
 

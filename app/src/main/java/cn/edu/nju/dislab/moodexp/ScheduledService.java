@@ -315,10 +315,13 @@ public class ScheduledService extends Service implements Runnable{
         return new Thread(new Runnable() {
             @Override
             public void run() {
+                int status=-1;
                 switch (type){
                     case "Audio":
+                        AudioData.DbInit(db);
                         AudioCollector audioCollector=new AudioCollector();
-                        if(audioCollector.collect()==Collector.COLLECT_SUCCESS){
+                        status=audioCollector.collect();
+                        if(status==Collector.COLLECT_SUCCESS){
                             AudioData result=audioCollector.getResult();
                             if(result!=null){
                                 if(db!=null) {
@@ -329,8 +332,10 @@ public class ScheduledService extends Service implements Runnable{
                         }
                         break;
                     case "CallLog":
+                        CallLogData.DbInit(db);
                         CallLogCollector callLogCollector=new CallLogCollector();
-                        if(callLogCollector.collect()==Collector.COLLECT_SUCCESS){
+                        status=callLogCollector.collect();
+                        if(status==Collector.COLLECT_SUCCESS){
                             CallLogData result=callLogCollector.getResult();
                             if(result!=null){
                                 if(db!=null) {
@@ -341,8 +346,10 @@ public class ScheduledService extends Service implements Runnable{
                         }
                         break;
                     case "Contact":
+                        ContactData.DbInit(db);
                         ContactCollector contactCollector=new ContactCollector();
-                        if(contactCollector.collect()==Collector.COLLECT_SUCCESS){
+                        status=contactCollector.collect();
+                        if(status==Collector.COLLECT_SUCCESS){
                             ContactData result=contactCollector.getResult();
                             if(result!=null){
                                 if(db!=null) {
@@ -353,8 +360,10 @@ public class ScheduledService extends Service implements Runnable{
                         }
                         break;
                     case "ForegroundApp":
+                        ForegroundAppData.DbInit(db);
                         ForegroundAppCollector foregroundAppCollector=new ForegroundAppCollector();
-                        if(foregroundAppCollector.collect()==Collector.COLLECT_SUCCESS){
+                        status=foregroundAppCollector.collect();
+                        if(status==Collector.COLLECT_SUCCESS){
                             ForegroundAppData result=foregroundAppCollector.getResult();
                             if(result!=null){
                                 if(db!=null) {
@@ -365,8 +374,10 @@ public class ScheduledService extends Service implements Runnable{
                         }
                         break;
                     case "Location":
+                        LocationData.DbInit(db);
                         LocationCollector locationCollector=new LocationCollector();
-                        if(locationCollector.collect()==Collector.COLLECT_SUCCESS){
+                        status=locationCollector.collect();
+                        if(status==Collector.COLLECT_SUCCESS){
                             LocationData result=locationCollector.getResult();
                             if(result!=null){
                                 if(db!=null) {
@@ -377,8 +388,10 @@ public class ScheduledService extends Service implements Runnable{
                         }
                         break;
                     case "Phone":
+                        PhoneData.DbInit(db);
                         PhoneCollector phoneCollector=new PhoneCollector();
-                        if(phoneCollector.collect()==Collector.COLLECT_SUCCESS){
+                        status=phoneCollector.collect();
+                        if(status==Collector.COLLECT_SUCCESS){
                             PhoneData result=phoneCollector.getResult();
                             if(result!=null){
                                 if(db!=null) {
@@ -389,8 +402,10 @@ public class ScheduledService extends Service implements Runnable{
                         }
                         break;
                     case "RunningApp":
+                        RunningAppData.DbInit(db);
                         RunningAppCollector runningAppCollector=new RunningAppCollector();
-                        if(runningAppCollector.collect()==Collector.COLLECT_SUCCESS){
+                        status=runningAppCollector.collect();
+                        if(status==Collector.COLLECT_SUCCESS){
                             RunningAppData result=runningAppCollector.getResult();
                             if(result!=null){
                                 if(db!=null) {
@@ -401,8 +416,10 @@ public class ScheduledService extends Service implements Runnable{
                         }
                         break;
                     case "Screen":
+                        ScreenData.DbInit(db);
                         ScreenCollector screenCollector=new ScreenCollector();
-                        if(screenCollector.collect()==Collector.COLLECT_SUCCESS){
+                        status=screenCollector.collect();
+                        if(status==Collector.COLLECT_SUCCESS){
                             ScreenData result=screenCollector.getResult();
                             if(result!=null){
                                 if(db!=null) {
@@ -413,10 +430,12 @@ public class ScheduledService extends Service implements Runnable{
                         }
                         break;
                     case "Sensors":
+                        SensorsData.DbInit(db);
                         int[] typeSensors = new int[]{Sensor.TYPE_GYROSCOPE, Sensor.TYPE_MAGNETIC_FIELD, Sensor.TYPE_LIGHT, Sensor.TYPE_ACCELEROMETER};
                         long[] maxTimes = new long[]{100000000, 100000000, 100000000, 100000000};
                         SensorsCollector sensorsCollector=new SensorsCollector(typeSensors,maxTimes);
-                        if(sensorsCollector.collect()==Collector.COLLECT_SUCCESS){
+                        status=sensorsCollector.collect();
+                        if(status==Collector.COLLECT_SUCCESS){
                             SensorsData result=sensorsCollector.getResult();
                             if(result!=null){
                                 if(db!=null) {
@@ -427,8 +446,10 @@ public class ScheduledService extends Service implements Runnable{
                         }
                         break;
                     case "Sms":
+                        SmsData.DbInit(db);
                         SmsCollector smsCollector=new SmsCollector();
-                        if(smsCollector.collect()==Collector.COLLECT_SUCCESS){
+                        status=smsCollector.collect();
+                        if(status==Collector.COLLECT_SUCCESS){
                             SmsData result=smsCollector.getResult();
                             if(result!=null){
                                 if(db!=null) {
@@ -439,8 +460,10 @@ public class ScheduledService extends Service implements Runnable{
                         }
                         break;
                     case "Wifi":
+                        WifiData.DbInit(db);
                         WifiCollector wifiCollector=new WifiCollector();
-                        if(wifiCollector.collect()==Collector.COLLECT_SUCCESS){
+                        status=wifiCollector.collect();
+                        if(status==Collector.COLLECT_SUCCESS){
                             WifiData result=wifiCollector.getResult();
                             if(result!=null){
                                 if(db!=null) {
@@ -450,6 +473,13 @@ public class ScheduledService extends Service implements Runnable{
                             }
                         }
                         break;
+                }
+                if(db!=null) {
+                    ContentValues contentValues=new ContentValues();
+                    contentValues.put(CollectorDbHelper.StatusTable.COLUMN_NAME_TYPE,type);
+                    contentValues.put(CollectorDbHelper.StatusTable.COLUMN_NAME_STATUS,status);
+                    contentValues.put(CollectorDbHelper.StatusTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
+                    db.insert(CollectorDbHelper.StatusTable.TABLE_NAME, null, contentValues);
                 }
             }
         });

@@ -9,6 +9,16 @@ import android.provider.BaseColumns;
  */
 
 public class ForegroundAppData {
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "foreground_app";
+        static final String COLUMN_NAME_PACKAGE_NAME = "package_name";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    }
+    static String SQL_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
+                    Table._ID + " INTEGER PRIMARY KEY," +
+                    Table.COLUMN_NAME_PACKAGE_NAME + " TEXT," +
+                    Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
     private String packageName;
     private long timestamp;
 
@@ -16,18 +26,15 @@ public class ForegroundAppData {
         this.packageName = packageName;
         this.timestamp = timestamp;
     }
-
-    public void toDb(SQLiteDatabase db) {
-        class Table implements BaseColumns {
-            static final String TABLE_NAME = "foreground_app";
-            static final String COLUMN_NAME_PACKAGE_NAME = "package_name";
-            static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    public static void DbInit(SQLiteDatabase db){
+        if(db!=null){
+            db.execSQL(SQL_CREATE_TABLE);
         }
-        String SQL_CREATE_TABLE =
-                "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                        Table._ID + " INTEGER PRIMARY KEY," +
-                        Table.COLUMN_NAME_PACKAGE_NAME + " TEXT," +
-                        Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
+    }
+    public void toDb(SQLiteDatabase db) {
+        if(db==null){
+            return;
+        }
         db.execSQL(SQL_CREATE_TABLE);
         ContentValues values = new ContentValues();
         values.put(Table.COLUMN_NAME_PACKAGE_NAME, packageName);

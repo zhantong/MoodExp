@@ -9,6 +9,16 @@ import android.provider.BaseColumns;
  */
 
 public class ScreenData {
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "screen";
+        static final String COLUMN_NAME_IS_SCREEN_ON = "is_screen_on";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    }
+    static String SQL_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
+                    Table._ID + " INTEGER PRIMARY KEY," +
+                    Table.COLUMN_NAME_IS_SCREEN_ON + " INTEGER," +
+                    Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
     private boolean isScreenOn;
     private long timestamp;
 
@@ -16,18 +26,15 @@ public class ScreenData {
         this.isScreenOn = isScreenOn;
         this.timestamp = timestamp;
     }
-
-    public void toDb(SQLiteDatabase db) {
-        class Table implements BaseColumns {
-            static final String TABLE_NAME = "screen";
-            static final String COLUMN_NAME_IS_SCREEN_ON = "is_screen_on";
-            static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    public static void DbInit(SQLiteDatabase db){
+        if(db!=null){
+            db.execSQL(SQL_CREATE_TABLE);
         }
-        String SQL_CREATE_TABLE =
-                "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                        Table._ID + " INTEGER PRIMARY KEY," +
-                        Table.COLUMN_NAME_IS_SCREEN_ON + " INTEGER," +
-                        Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
+    }
+    public void toDb(SQLiteDatabase db) {
+        if(db==null){
+            return;
+        }
         db.execSQL(SQL_CREATE_TABLE);
         ContentValues values = new ContentValues();
         values.put(Table.COLUMN_NAME_IS_SCREEN_ON, isScreenOn ? 1 : 0);

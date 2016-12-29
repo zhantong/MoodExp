@@ -12,6 +12,16 @@ import java.util.List;
  */
 
 public class RunningAppData {
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "running_app";
+        static final String COLUMN_NAME_PACKAGE_NAME = "package_name";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    }
+    static String SQL_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
+                    Table._ID + " INTEGER PRIMARY KEY," +
+                    Table.COLUMN_NAME_PACKAGE_NAME + " TEXT," +
+                    Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
     private List<RunningApp> runningApps;
 
     private class RunningApp {
@@ -37,18 +47,16 @@ public class RunningAppData {
     public void put(String packageName, long timestamp) {
         runningApps.add(new RunningApp(packageName, timestamp));
     }
-
-    public void toDb(SQLiteDatabase db) {
-        class Table implements BaseColumns {
-            static final String TABLE_NAME = "running_app";
-            static final String COLUMN_NAME_PACKAGE_NAME = "package_name";
-            static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    public static void DbInit(SQLiteDatabase db){
+        if(db!=null){
+            db.execSQL(SQL_CREATE_TABLE);
         }
-        String SQL_CREATE_TABLE =
-                "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                        Table._ID + " INTEGER PRIMARY KEY," +
-                        Table.COLUMN_NAME_PACKAGE_NAME + " TEXT," +
-                        Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
+    }
+    public void toDb(SQLiteDatabase db) {
+        if(db==null){
+            return;
+        }
+
         db.execSQL(SQL_CREATE_TABLE);
         for (RunningApp runningApp : runningApps) {
             ContentValues values = new ContentValues();

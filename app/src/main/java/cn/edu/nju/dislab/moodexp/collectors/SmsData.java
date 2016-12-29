@@ -12,6 +12,21 @@ import java.util.List;
  */
 
 public class SmsData {
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "sms";
+        static final String COLUMN_NAME_ADDRESS = "address";
+        static final String COLUMN_NAME_TYPE = "type";
+        static final String COLUMN_NAME_DATE = "date";
+        static final String COLUMN_NAME_PERSON = "person";
+    }
+    static String SQL_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
+                    Table.COLUMN_NAME_ADDRESS + " INTEGER," +
+                    Table.COLUMN_NAME_TYPE + " TEXT," +
+                    Table.COLUMN_NAME_DATE + " TEXT," +
+                    Table.COLUMN_NAME_PERSON + " INTEGER," +
+                    "PRIMARY KEY (" +Table.COLUMN_NAME_DATE + ")" +
+                    ")";
     private List<Sms> smses;
 
     private class Sms {
@@ -41,23 +56,15 @@ public class SmsData {
     public void put(String address, String type, String date, String person) {
         smses.add(new Sms(address, type, date, person));
     }
-
-    public void toDb(SQLiteDatabase db) {
-        class Table implements BaseColumns {
-            static final String TABLE_NAME = "sms";
-            static final String COLUMN_NAME_ADDRESS = "address";
-            static final String COLUMN_NAME_TYPE = "type";
-            static final String COLUMN_NAME_DATE = "date";
-            static final String COLUMN_NAME_PERSON = "person";
+    public static void DbInit(SQLiteDatabase db){
+        if(db!=null){
+            db.execSQL(SQL_CREATE_TABLE);
         }
-        String SQL_CREATE_TABLE =
-                "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                        Table.COLUMN_NAME_ADDRESS + " INTEGER," +
-                        Table.COLUMN_NAME_TYPE + " TEXT," +
-                        Table.COLUMN_NAME_DATE + " TEXT," +
-                        Table.COLUMN_NAME_PERSON + " INTEGER," +
-                        "PRIMARY KEY (" +Table.COLUMN_NAME_DATE + ")" +
-                        ")";
+    }
+    public void toDb(SQLiteDatabase db) {
+        if(db==null){
+            return;
+        }
         db.execSQL(SQL_CREATE_TABLE);
         for (Sms sms : smses) {
             ContentValues values = new ContentValues();

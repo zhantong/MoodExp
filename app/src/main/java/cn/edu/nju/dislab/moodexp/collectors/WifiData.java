@@ -13,6 +13,20 @@ import java.util.List;
  */
 
 public class WifiData {
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "wifi";
+        static final String COLUMN_NAME_BSSID = "bssid";
+        static final String COLUMN_NAME_SSID = "ssid";
+        static final String COLUMN_NAME_LEVEL = "level";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    }
+    static String SQL_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
+                    Table._ID + " INTEGER PRIMARY KEY," +
+                    Table.COLUMN_NAME_BSSID + " TEXT," +
+                    Table.COLUMN_NAME_SSID + " TEXT," +
+                    Table.COLUMN_NAME_LEVEL + " INTEGER," +
+                    Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
     private List<ScanResult> scanResults;
 
     public WifiData() {
@@ -22,22 +36,15 @@ public class WifiData {
     public void put(List<ScanResult> scanResults) {
         this.scanResults = scanResults;
     }
-
-    public void toDb(SQLiteDatabase db) {
-        class Table implements BaseColumns {
-            static final String TABLE_NAME = "wifi";
-            static final String COLUMN_NAME_BSSID = "bssid";
-            static final String COLUMN_NAME_SSID = "ssid";
-            static final String COLUMN_NAME_LEVEL = "level";
-            static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    public static void DbInit(SQLiteDatabase db){
+        if(db!=null){
+            db.execSQL(SQL_CREATE_TABLE);
         }
-        String SQL_CREATE_TABLE =
-                "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                        Table._ID + " INTEGER PRIMARY KEY," +
-                        Table.COLUMN_NAME_BSSID + " TEXT," +
-                        Table.COLUMN_NAME_SSID + " TEXT," +
-                        Table.COLUMN_NAME_LEVEL + " INTEGER," +
-                        Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
+    }
+    public void toDb(SQLiteDatabase db) {
+        if(db==null){
+            return;
+        }
         db.execSQL(SQL_CREATE_TABLE);
         for (ScanResult scanResult : scanResults) {
             ContentValues values = new ContentValues();

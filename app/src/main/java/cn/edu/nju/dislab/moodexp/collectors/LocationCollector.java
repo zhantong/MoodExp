@@ -49,8 +49,8 @@ public class LocationCollector {
         }
         AMapLocationClientOption locationClientOption = new AMapLocationClientOption();
         locationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        //locationClientOption.setOnceLocation(true);
-        locationClientOption.setOnceLocationLatest(true);
+        locationClientOption.setOnceLocation(true);
+        //locationClientOption.setOnceLocationLatest(true);
         locationClientOption.setHttpTimeOut(6000);
         locationClientOption.setLocationCacheEnable(false);
 

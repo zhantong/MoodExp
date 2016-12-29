@@ -12,6 +12,17 @@ import java.util.List;
  */
 
 public class ContactData {
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "contact";
+        static final String COLUMN_NAME_NAME = "name";
+        static final String COLUMN_NAME_NUMBER = "number";
+    }
+    static String SQL_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
+                    Table.COLUMN_NAME_NAME + " INTEGER," +
+                    Table.COLUMN_NAME_NUMBER + " INTEGER," +
+                    "PRIMARY KEY (" + Table.COLUMN_NAME_NAME + ", " + Table.COLUMN_NAME_NUMBER + ")" +
+                    ")";
     private List<Contact> contacts;
 
     private class Contact {
@@ -36,19 +47,15 @@ public class ContactData {
     public void put(String name, String number) {
         contacts.add(new Contact(name, number));
     }
-
-    public void toDb(SQLiteDatabase db) {
-        class Table implements BaseColumns {
-            static final String TABLE_NAME = "contact";
-            static final String COLUMN_NAME_NAME = "name";
-            static final String COLUMN_NAME_NUMBER = "number";
+    public static void DbInit(SQLiteDatabase db){
+        if(db!=null){
+            db.execSQL(SQL_CREATE_TABLE);
         }
-        String SQL_CREATE_TABLE =
-                "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                        Table.COLUMN_NAME_NAME + " INTEGER," +
-                        Table.COLUMN_NAME_NUMBER + " INTEGER," +
-                        "PRIMARY KEY (" + Table.COLUMN_NAME_NAME + ", " + Table.COLUMN_NAME_NUMBER + ")" +
-                        ")";
+    }
+    public void toDb(SQLiteDatabase db) {
+        if(db==null){
+            return;
+        }
         db.execSQL(SQL_CREATE_TABLE);
         for (Contact contact : contacts) {
             ContentValues values = new ContentValues();

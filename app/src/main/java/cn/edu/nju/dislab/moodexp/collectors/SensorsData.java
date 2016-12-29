@@ -14,6 +14,22 @@ import java.util.Map;
  */
 
 public class SensorsData {
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "sensors";
+        static final String COLUMN_NAME_TYPE = "type";
+        static final String COLUMN_NAME_VALUE_0 = "value_0";
+        static final String COLUMN_NAME_VALUE_1 = "value_1";
+        static final String COLUMN_NAME_VALUE_2 = "value_2";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    }
+    static String SQL_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
+                    Table._ID + " INTEGER PRIMARY KEY," +
+                    Table.COLUMN_NAME_TYPE + " INTEGER," +
+                    Table.COLUMN_NAME_VALUE_0 + " REAL," +
+                    Table.COLUMN_NAME_VALUE_1 + " REAL," +
+                    Table.COLUMN_NAME_VALUE_2 + " REAL," +
+                    Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
     private Map<Integer, ArrayList<Sensor>> sensors;
 
     private class Sensor {
@@ -41,24 +57,15 @@ public class SensorsData {
         }
         sensors.get(type).add(new Sensor(timestamp, values));
     }
-
-    public void toDb(SQLiteDatabase db) {
-        class Table implements BaseColumns {
-            static final String TABLE_NAME = "sensors";
-            static final String COLUMN_NAME_TYPE = "type";
-            static final String COLUMN_NAME_VALUE_0 = "value_0";
-            static final String COLUMN_NAME_VALUE_1 = "value_1";
-            static final String COLUMN_NAME_VALUE_2 = "value_2";
-            static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    public static void DbInit(SQLiteDatabase db){
+        if(db!=null){
+            db.execSQL(SQL_CREATE_TABLE);
         }
-        String SQL_CREATE_TABLE =
-                "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                        Table._ID + " INTEGER PRIMARY KEY," +
-                        Table.COLUMN_NAME_TYPE + " INTEGER," +
-                        Table.COLUMN_NAME_VALUE_0 + " REAL," +
-                        Table.COLUMN_NAME_VALUE_1 + " REAL," +
-                        Table.COLUMN_NAME_VALUE_2 + " REAL," +
-                        Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
+    }
+    public void toDb(SQLiteDatabase db) {
+        if(db==null){
+            return;
+        }
         db.execSQL(SQL_CREATE_TABLE);
         for (Map.Entry<Integer, ArrayList<Sensor>> entry : sensors.entrySet()) {
             int type = entry.getKey();

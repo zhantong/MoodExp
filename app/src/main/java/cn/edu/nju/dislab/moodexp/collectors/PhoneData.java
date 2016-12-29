@@ -12,6 +12,15 @@ import java.util.Map;
  */
 
 public class PhoneData {
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "phone";
+        static final String COLUMN_NAME_NAME = "name";
+        static final String COLUMN_NAME_VALUE = "value";
+    }
+    static String SQL_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
+                    Table.COLUMN_NAME_NAME + " TEXT PRIMARY KEY," +
+                    Table.COLUMN_NAME_VALUE + " TEXT)";
     private Map<String, String> data;
 
     public PhoneData() {
@@ -21,17 +30,15 @@ public class PhoneData {
     public void put(String key, String value) {
         data.put(key, value);
     }
-
-    public void toDb(SQLiteDatabase db) {
-        class Table implements BaseColumns {
-            static final String TABLE_NAME = "phone";
-            static final String COLUMN_NAME_NAME = "name";
-            static final String COLUMN_NAME_VALUE = "value";
+    public static void DbInit(SQLiteDatabase db){
+        if(db!=null){
+            db.execSQL(SQL_CREATE_TABLE);
         }
-        String SQL_CREATE_TABLE =
-                "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                        Table.COLUMN_NAME_NAME + " TEXT PRIMARY KEY," +
-                        Table.COLUMN_NAME_VALUE + " TEXT)";
+    }
+    public void toDb(SQLiteDatabase db) {
+        if(db==null){
+            return;
+        }
         db.execSQL(SQL_CREATE_TABLE);
         for (Map.Entry<String, String> entry : data.entrySet()) {
             ContentValues values = new ContentValues();
