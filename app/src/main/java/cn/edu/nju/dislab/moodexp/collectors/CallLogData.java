@@ -52,16 +52,16 @@ public class CallLogData {
         }
         String SQL_CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                        Table.COLUMN_NAME_NUMBER + " TEXT," +
+                        Table.COLUMN_NAME_NUMBER + " INTEGER," +
                         Table.COLUMN_NAME_TYPE + " TEXT," +
                         Table.COLUMN_NAME_DATE + " TEXT," +
                         Table.COLUMN_NAME_DURATION + " TEXT," +
-                        "PRIMARY KEY (" + Table.COLUMN_NAME_NUMBER + ", " + Table.COLUMN_NAME_DATE + ")" +
+                        "PRIMARY KEY (" +Table.COLUMN_NAME_DATE + ")" +
                         ")";
         db.execSQL(SQL_CREATE_TABLE);
         for (CallLog callLog : callLogs) {
             ContentValues values = new ContentValues();
-            values.put(Table.COLUMN_NAME_NUMBER, callLog.number);
+            values.put(Table.COLUMN_NAME_NUMBER, callLog.number==null?null:callLog.number.hashCode());
             values.put(Table.COLUMN_NAME_TYPE, callLog.type);
             values.put(Table.COLUMN_NAME_DATE, callLog.date);
             values.put(Table.COLUMN_NAME_DURATION, callLog.duration);

@@ -85,7 +85,7 @@ public class SensorsCollector {
             if (sensor != null) {
                 mIsDone.put(typeSensor, false);
                 sensors.add(sensor);
-                mSensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+                mSensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
             } else {
                 Log.i(TAG, "sensor " + typeSensor + " not exists");
             }

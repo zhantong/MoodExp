@@ -45,15 +45,15 @@ public class ContactData {
         }
         String SQL_CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                        Table.COLUMN_NAME_NAME + " TEXT," +
-                        Table.COLUMN_NAME_NUMBER + " TEXT," +
+                        Table.COLUMN_NAME_NAME + " INTEGER," +
+                        Table.COLUMN_NAME_NUMBER + " INTEGER," +
                         "PRIMARY KEY (" + Table.COLUMN_NAME_NAME + ", " + Table.COLUMN_NAME_NUMBER + ")" +
                         ")";
         db.execSQL(SQL_CREATE_TABLE);
         for (Contact contact : contacts) {
             ContentValues values = new ContentValues();
-            values.put(Table.COLUMN_NAME_NAME, contact.name);
-            values.put(Table.COLUMN_NAME_NUMBER, contact.number);
+            values.put(Table.COLUMN_NAME_NAME, contact.name==null?null:contact.name.hashCode());
+            values.put(Table.COLUMN_NAME_NUMBER, contact.number==null?null:contact.number.hashCode());
             db.insertWithOnConflict(Table.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         }
     }

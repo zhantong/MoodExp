@@ -36,7 +36,7 @@ public class SmsCollector {
         }
         Cursor cursor;
         try {
-            cursor = mContentResolver.query(Telephony.Sms.Inbox.CONTENT_URI, null, null, null, null);
+            cursor = mContentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null);
         } catch (Exception e) {
             e.printStackTrace();
             return Collector.NO_PERMISSION;
