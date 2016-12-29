@@ -16,7 +16,7 @@ public class AudioCollector {
     private static final String TAG = "AudioCollector";
     private static final String[] PERMISSIONS = {Manifest.permission.RECORD_AUDIO};
     private static final int POLL_INTERVAL = 100;
-    private static final int MAX_TICKS = 15;
+    private static final int MAX_TICKS = 50;
     private Handler mHandler;
     private MediaRecorder mRecorder;
     private int mTickCount;

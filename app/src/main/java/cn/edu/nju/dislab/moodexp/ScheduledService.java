@@ -89,7 +89,7 @@ public class ScheduledService extends Service implements Runnable{
         mWakeLock.acquire();
         mScheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         Log.i(TAG,"setting schedule");
-        mScheduledExecutorService.scheduleAtFixedRate(this,0,5, TimeUnit.SECONDS);
+        mScheduledExecutorService.scheduleAtFixedRate(this,0,60, TimeUnit.SECONDS);
     }
 
     @Override
@@ -432,7 +432,7 @@ public class ScheduledService extends Service implements Runnable{
                     case "Sensors":
                         SensorsData.DbInit(db);
                         int[] typeSensors = new int[]{Sensor.TYPE_GYROSCOPE, Sensor.TYPE_MAGNETIC_FIELD, Sensor.TYPE_LIGHT, Sensor.TYPE_ACCELEROMETER};
-                        long[] maxTimes = new long[]{100000000, 100000000, 100000000, 100000000};
+                        long[] maxTimes = new long[]{5000000000L, 5000000000L, 5000000000L, 5000000000L};
                         SensorsCollector sensorsCollector=new SensorsCollector(typeSensors,maxTimes);
                         status=sensorsCollector.collect();
                         if(status==Collector.COLLECT_SUCCESS){

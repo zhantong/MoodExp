@@ -107,38 +107,56 @@ public class DbHelper extends SQLiteOpenHelper {
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 1);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "collect");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 10 * 1000);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{"CallLog", "Contact","Audio","ForegroundApp","Location","Phone","RunningApp","Screen","Sensors","Sms","Wifi"}));
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{"ForegroundApp","Screen"}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
         if(true) {
             ContentValues valuesSchedule = new ContentValues();
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 2);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "heartBeat");
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "collect");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 30 * 1000);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 5*60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{"Audio","Location","RunningApp","Sensors","Wifi"}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
         if(true) {
             ContentValues valuesSchedule = new ContentValues();
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 3);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "newDb");
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "collect");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 2*60 * 1000);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 5*24*60*60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{"CallLog", "Contact","Phone","Sms"}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
         if(true) {
             ContentValues valuesSchedule = new ContentValues();
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 4);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "upload");
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "heartBeat");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 2*60 * 1000);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 10*60 * 1000L);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
         if(true) {
+            ContentValues valuesSchedule = new ContentValues();
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 5);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "newDb");
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 60*60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
+            db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
+        }
+        if(true) {
+            ContentValues valuesSchedule = new ContentValues();
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 6);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "upload");
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 60*60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
+            db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
+        }
+/*        if(true) {
             ContentValues valuesSchedule = new ContentValues();
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 5);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "cleanUp");
@@ -146,10 +164,10 @@ public class DbHelper extends SQLiteOpenHelper {
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 4*60 * 1000);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
-        }
+        }*/
         if(true){
             ContentValues valuesSchedule = new ContentValues();
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 6);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 7);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "notification");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, 1482832800000L);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 24*60*60 * 1000L);
@@ -158,7 +176,7 @@ public class DbHelper extends SQLiteOpenHelper {
         }
         if(true){
             ContentValues valuesSchedule = new ContentValues();
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 7);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 8);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "notification");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, 1482850800000L);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 24*60*60 * 1000L);
@@ -167,7 +185,7 @@ public class DbHelper extends SQLiteOpenHelper {
         }
         if(true){
             ContentValues valuesSchedule = new ContentValues();
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 8);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 9);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "notification");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, 1482868800000L);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 24*60*60 * 1000L);
