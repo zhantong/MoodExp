@@ -49,8 +49,8 @@ public class LocationCollector {
         }
         AMapLocationClientOption locationClientOption = new AMapLocationClientOption();
         locationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        locationClientOption.setOnceLocation(true);
-        //locationClientOption.setOnceLocationLatest(true);
+        //locationClientOption.setOnceLocation(true);
+        locationClientOption.setOnceLocationLatest(true);
         locationClientOption.setHttpTimeOut(6000);
         locationClientOption.setLocationCacheEnable(false);
 
@@ -69,7 +69,7 @@ public class LocationCollector {
         mLocationClient.unRegisterLocationListener(mLocationListener);
         mLocationClient.stopLocation();
         mLocationClient.onDestroy();
-        if (result == null || result.getLocation().getErrorCode() != 0) {
+        if (result == null) {
             return Collector.COLLECT_FAILED;
         }
         return Collector.COLLECT_SUCCESS;

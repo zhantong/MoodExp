@@ -29,6 +29,8 @@ public class LocationData {
         static final String COLUMN_NAME_FLOOR = "floor";
         static final String COLUMN_NAME_TIME = "time";
         static final String COLUMN_NAME_AOI = "aoi";
+        static final String COLUMN_NAME_ERROR_CODE = "error_code";
+        static final String COLUMN_NAME_ERROR_INFO = "error_info";
     }
     static String SQL_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
@@ -48,7 +50,9 @@ public class LocationData {
                     Table.COLUMN_NAME_BUILDING_ID + " TEXT," +
                     Table.COLUMN_NAME_FLOOR + " TEXT," +
                     Table.COLUMN_NAME_TIME + " INTEGER," +
-                    Table.COLUMN_NAME_AOI + " TEXT)";
+                    Table.COLUMN_NAME_AOI + " TEXT,"+
+                    Table.COLUMN_NAME_ERROR_CODE + " INTEGER,"+
+                    Table.COLUMN_NAME_ERROR_INFO + " TEXT)";
     private AMapLocation aMapLocation;
 
     public LocationData(AMapLocation aMapLocation) {
@@ -68,24 +72,31 @@ public class LocationData {
             return;
         }
         db.execSQL(SQL_CREATE_TABLE);
-        ContentValues values = new ContentValues();
-        values.put(Table.COLUMN_NAME_TYPE, aMapLocation.getLocationType());
-        values.put(Table.COLUMN_NAME_LATITUDE, aMapLocation.getLatitude());
-        values.put(Table.COLUMN_NAME_LONGITUDE, aMapLocation.getLongitude());
-        values.put(Table.COLUMN_NAME_ACCURACY, aMapLocation.getAccuracy());
-        values.put(Table.COLUMN_NAME_COUNTRY, aMapLocation.getCountry());
-        values.put(Table.COLUMN_NAME_PROVINCE, aMapLocation.getProvince());
-        values.put(Table.COLUMN_NAME_CITY, aMapLocation.getCity());
-        values.put(Table.COLUMN_NAME_DISTRICT, aMapLocation.getDistrict());
-        values.put(Table.COLUMN_NAME_STREET, aMapLocation.getStreet());
-        values.put(Table.COLUMN_NAME_STREET_NUMBER, aMapLocation.getStreetNum());
-        values.put(Table.COLUMN_NAME_CITY_CODE, aMapLocation.getCityCode());
-        values.put(Table.COLUMN_NAME_ADDRESS_CODE, aMapLocation.getAdCode());
-        values.put(Table.COLUMN_NAME_BUILDING_ID, aMapLocation.getBuildingId());
-        values.put(Table.COLUMN_NAME_FLOOR, aMapLocation.getFloor());
-        values.put(Table.COLUMN_NAME_TIME, aMapLocation.getTime());
-        values.put(Table.COLUMN_NAME_AOI, aMapLocation.getAoiName());
-        db.insert(Table.TABLE_NAME, null, values);
+        if(aMapLocation.getErrorCode()==0) {
+            ContentValues values = new ContentValues();
+            values.put(Table.COLUMN_NAME_TYPE, aMapLocation.getLocationType());
+            values.put(Table.COLUMN_NAME_LATITUDE, aMapLocation.getLatitude());
+            values.put(Table.COLUMN_NAME_LONGITUDE, aMapLocation.getLongitude());
+            values.put(Table.COLUMN_NAME_ACCURACY, aMapLocation.getAccuracy());
+            values.put(Table.COLUMN_NAME_COUNTRY, aMapLocation.getCountry());
+            values.put(Table.COLUMN_NAME_PROVINCE, aMapLocation.getProvince());
+            values.put(Table.COLUMN_NAME_CITY, aMapLocation.getCity());
+            values.put(Table.COLUMN_NAME_DISTRICT, aMapLocation.getDistrict());
+            values.put(Table.COLUMN_NAME_STREET, aMapLocation.getStreet());
+            values.put(Table.COLUMN_NAME_STREET_NUMBER, aMapLocation.getStreetNum());
+            values.put(Table.COLUMN_NAME_CITY_CODE, aMapLocation.getCityCode());
+            values.put(Table.COLUMN_NAME_ADDRESS_CODE, aMapLocation.getAdCode());
+            values.put(Table.COLUMN_NAME_BUILDING_ID, aMapLocation.getBuildingId());
+            values.put(Table.COLUMN_NAME_FLOOR, aMapLocation.getFloor());
+            values.put(Table.COLUMN_NAME_TIME, aMapLocation.getTime());
+            values.put(Table.COLUMN_NAME_AOI, aMapLocation.getAoiName());
+            db.insert(Table.TABLE_NAME, null, values);
+        }else{
+            ContentValues values = new ContentValues();
+            values.put(Table.COLUMN_NAME_ERROR_CODE,aMapLocation.getErrorCode());
+            values.put(Table.COLUMN_NAME_ERROR_INFO,aMapLocation.getErrorInfo());
+            db.insert(Table.TABLE_NAME, null, values);
+        }
     }
 
     @Override
