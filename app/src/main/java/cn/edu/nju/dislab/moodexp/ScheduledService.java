@@ -22,6 +22,9 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +34,7 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.GZIPOutputStream;
 
 import cn.edu.nju.dislab.moodexp.collectors.AudioCollector;
 import cn.edu.nju.dislab.moodexp.collectors.AudioData;
@@ -96,6 +100,10 @@ public class ScheduledService extends Service implements Runnable{
     @Override
     public void run() {
         Log.i(TAG,"running started");
+        String id=MainApplication.getUserId();
+        if(id==null||id.equals("")){
+            return;
+        }
         try(Cursor cursorSchedule=readableDatabase.query(DbHelper.ScheduleTable.TABLE_NAME,null,DbHelper.ScheduleTable.COLUMN_NAME_IS_ENABLED+" = ?",new String[]{"1"},null,null,null)) {
             while (cursorSchedule.moveToNext()) {
                 long nextFireTime = cursorSchedule.getLong(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME));
@@ -153,11 +161,24 @@ public class ScheduledService extends Service implements Runnable{
                                     @Override
                                     public void run() {
                                         File dbPath = getDatabasePath(dbName);
-                                        boolean isUploadSuccess = HttpAPI.upload(dbPath.getAbsolutePath(), userId, 0, version);
+                                        File tempDir=MainApplication.getContext().getCacheDir();
+                                        File gzipFile=new File(tempDir,dbPath.getName()+".gz");
+                                        Log.i(dbPath.getAbsolutePath(),gzipFile.getAbsolutePath());
+                                        boolean result=gzip(dbPath.getAbsolutePath(),gzipFile.getAbsolutePath());
+                                        String uploadFilePath;
+                                        if(result){
+                                            uploadFilePath=gzipFile.getAbsolutePath();
+                                        }else{
+                                            uploadFilePath=dbPath.getAbsolutePath();
+                                        }
+                                        boolean isUploadSuccess = HttpAPI.upload(uploadFilePath, userId, 0, version);
                                         if (isUploadSuccess) {
                                             ContentValues updateValues = new ContentValues();
                                             updateValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED, 1);
                                             writableDatabase.update(DbHelper.CollectDbTable.TABLE_NAME, updateValues, DbHelper.CollectDbTable.COLUMN_NAME_NAME + " = ?", new String[]{dbName});
+                                        }
+                                        if(gzipFile.exists()){
+                                            gzipFile.delete();
                                         }
                                     }
                                 }).start();
@@ -439,6 +460,25 @@ public class ScheduledService extends Service implements Runnable{
     public static boolean isWifiConnected(){
         NetworkInfo activeNetwork=((ConnectivityManager)MainApplication.getContext().getSystemService(CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         return (activeNetwork!=null)&&(activeNetwork.getType()==ConnectivityManager.TYPE_WIFI);
+    }
+    public static boolean gzip(String inputFilePath,String outputFilePath){
+        byte[] buffer=new byte[1024];
+        try{
+            GZIPOutputStream gzos=new GZIPOutputStream(new FileOutputStream(outputFilePath));
+            FileInputStream fis=new FileInputStream(inputFilePath);
+            int length;
+            while((length=fis.read(buffer))>0){
+                gzos.write(buffer,0,length);
+            }
+            fis.close();
+
+            gzos.finish();
+            gzos.close();
+        }catch (IOException e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     @Override
