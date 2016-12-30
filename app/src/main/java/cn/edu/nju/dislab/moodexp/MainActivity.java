@@ -31,7 +31,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,13 +38,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import cn.edu.nju.dislab.moodexp.httputils.HttpAPI;
 import cn.edu.nju.dislab.moodexp.permissionintro.PermissionIntroActivity;
 import cn.edu.nju.dislab.moodexp.registerandlogin.RegisterAndLoginActivity;
-import cn.edu.nju.dislab.moodexp.survey.Answer;
 import cn.edu.nju.dislab.moodexp.survey.SurveyActivity;
 import cn.edu.nju.dislab.moodexp.survey.SurveyAnswer;
 
@@ -106,22 +103,29 @@ public class MainActivity extends Activity {
         @Override
         protected JsonObject doInBackground(Void... params) {
             String id=MainApplication.getUserId();
-            JsonObject result= HttpAPI.getSurveyStat(id);
+            JsonObject result= HttpAPI.getSurveyCount(id);
             return result;
         }
 
         @Override
-        protected void onPostExecute(JsonObject result) {
+        protected void onPostExecute(final JsonObject result) {
             mProgressDialog.dismiss();
             if(result==null) {
                 Toast.makeText(mContext, "未知错误，请检查网络连接是否正常", Toast.LENGTH_SHORT).show();
             } else{
-                String countHasSubmit=result.get("count").getAsString();
-                String countShouldSubmit=result.get("max_count").getAsString();
                 new AlertDialog.Builder(mContext)
                         .setTitle("提交历史")
-                        .setMessage("当前已提交 "+countHasSubmit+" 次，还需提交 "+countShouldSubmit+" 次。")
-                        .setPositiveButton("确定", null)
+                        .setMessage(result.get("message").getAsString()+"\n\n如需转跳浏览器中查看详细历史信息，请点击『确定』。")
+                        .setNegativeButton("取消",null)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String url=result.get("url").getAsString();
+                                Intent intent=new Intent(Intent.ACTION_VIEW);
+                                intent.setData(Uri.parse(url));
+                                startActivity(intent);
+                            }
+                        })
                         .show();
             }
         }

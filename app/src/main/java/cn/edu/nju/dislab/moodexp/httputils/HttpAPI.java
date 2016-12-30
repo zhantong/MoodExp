@@ -390,13 +390,13 @@ public class HttpAPI {
             return null;
         }
     }
-    public static JsonObject getSurveyStat(String id){
+    public static JsonObject getSurveyCount(String id){
         Map<String, String> params = new HashMap<>();
         params.put("id", id);
 
         HttpRequest request = new HttpRequest();
         try {
-            JsonElement element = request.getReturnJson(HOST, PORT, "surveyStat", params);
+            JsonElement element = request.getReturnJson(HOST, PORT, "surveyCount", params);
             JsonObject result = element.getAsJsonObject();
             return result;
         } catch (IOException e) {

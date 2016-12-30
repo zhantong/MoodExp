@@ -5,10 +5,10 @@
         1. 本应用主要用于情绪问卷调查研究。应用会收集手机传感器信息，GPS经纬度信息，环境声音分贝值，屏幕点亮熄灭时间，各个应用使用时间，通讯录和通话/短信记录中姓名和号码的随机哈希值等信息。所有信息经过匿名和加密处理，不会记录用户短信和通话的内容。
         \n
         \n
-        2. 本应用会在每天10：00,15：00,20：00提醒用户提交情绪问卷。有时候APP会被手机管理软件清理而不能弹出提醒，则用户可以自行打开APP提交问卷，注意两次提交问卷的时间间隔不得少于五小时。
+        2. 本应用会在每天10:00，15:00，20:00提醒用户提交情绪问卷。有时候APP会被手机管理软件清理而不能弹出提醒，则用户可以自行打开APP提交问卷，注意两次提交问卷的时间间隔不得少于五小时。
         \n
         \n
-        3. 志愿者累积提交问卷次数达到30次/60次，可获赠相应纪念品。
+        3. 志愿者累积提交问卷次数达到30次／60次，可获赠相应纪念品。
         \n
         \n
         4. 所收集的数据会在WiFi环境下上传，所消耗的通信流量较少，耗电量也较低。
@@ -21,8 +21,8 @@
     <string name="background_and_boot_permission">后台与自启动权限</string>
     <string name="background_and_boot_permission_hint">应用需要后台运行与自动启动权限，请在弹出的提示框中点击设置。</string>
     <string name="setting_now">现在设置</string>
-    <string name="privacy_permission">隐私权限</string>
-    <string name="privacy_permission_hint">由于系统限制，应用在运行中可能需要用户的权限许可；请在当应用申请权限时，选择默认允许。</string>
+    <string name="privacy_permission">应用权限</string>
+    <string name="privacy_permission_hint">应用在运行中需要申请定位、使用录音机、查看联系人等权限，请在弹出的权限申请中选择『默认允许』。</string>
     <string name="usage_permission">使用情况权限</string>
     <string name="usage_permission_hint">应用需要分析设备的使用情况，请在弹出的提示框中点击设置。</string>
     <string name="register">注册</string>
