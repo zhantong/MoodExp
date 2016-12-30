@@ -85,6 +85,9 @@ public class DownloadAndInstallAPK extends AsyncTask<String,Integer,Boolean> {
                 return false;
             }
             downloadedFile=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"MoodExp.apk");
+            if(downloadedFile.exists()){
+                downloadedFile.delete();
+            }
             BufferedSink sink=Okio.buffer(Okio.sink(downloadedFile));
             sink.writeAll(response.body().source());
             sink.close();

@@ -1,13 +1,21 @@
 package cn.edu.nju.dislab.moodexp;
 
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
+
+import java.io.File;
 
 import cn.edu.nju.dislab.moodexp.httputils.HttpAPI;
 
@@ -67,7 +75,34 @@ public class CheckUpdate extends AsyncTask<Void,Void,JsonObject> {
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            new DownloadAndInstallAPK(mContext).execute(latestUrl);
+                            String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/";
+                            String fileName = "MoodExp.apk";
+                            destination += fileName;
+                            final Uri uri = Uri.parse("file://" + destination);
+
+                            File file = new File(destination);
+                            if(file.exists()){
+                                file.delete();
+                            }
+                            DownloadManager.Request request=new DownloadManager.Request(Uri.parse(latestUrl));
+                            request.setDescription("正在下载MoodExp最新版");
+                            request.setTitle("MoodExp");
+                            request.setDestinationUri(uri);
+                            final DownloadManager manager = (DownloadManager) MainApplication.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+                            final long downloadId = manager.enqueue(request);
+                            BroadcastReceiver onComplete = new BroadcastReceiver() {
+                                public void onReceive(Context ctxt, Intent intent) {
+                                    Intent install = new Intent(Intent.ACTION_VIEW);
+                                    install.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    install.setDataAndType(uri,
+                                            "application/vnd.android.package-archive");
+                                    install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    ctxt.startActivity(install);
+
+                                    ctxt.unregisterReceiver(this);
+                                }
+                            };
+                            mContext.registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
                         }
                     })
                     .show();
