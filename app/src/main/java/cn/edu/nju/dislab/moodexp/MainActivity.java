@@ -368,6 +368,14 @@ public class MainActivity extends Activity {
         writableSurveyAnswersDb.insert(SurveyAnswersDbHelper.AnswersTable.TABLE_NAME,null,contentValues);
         writableSurveyAnswersDb.close();
         surveyAnswersDbHelper.close();
+
+        DbHelper dbHelper=new DbHelper();
+        SQLiteDatabase writableDb=dbHelper.getWritableDatabase();
+        ContentValues updateValues=new ContentValues();
+        updateValues.put(DbHelper.MetaTable.COLUMN_NAME_INTEGER_VALUE,System.currentTimeMillis());
+        writableDb.update(DbHelper.MetaTable.TABLE_NAME,updateValues,DbHelper.MetaTable.COLUMN_NAME_KEY+" = ?",new String[]{"last_survey"});
+        writableDb.close();
+        dbHelper.close();
     }
 
     @Override

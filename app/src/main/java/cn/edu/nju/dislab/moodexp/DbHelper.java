@@ -42,6 +42,13 @@ public class DbHelper extends SQLiteOpenHelper {
         static final String COLUMN_NAME_VALUE = "value";
         static final String COLUMN_NAME_TIMESTAMP = "timestamp";
     }
+    public static class MetaTable implements BaseColumns{
+        static final String TABLE_NAME = "meta";
+        static final String COLUMN_NAME_KEY = "key";
+        static final String COLUMN_NAME_TEXT_VALUE = "text_value";
+        static final String COLUMN_NAME_INTEGER_VALUE = "integer_value";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    }
     private static final String SQL_CREATE_TABLE_SCHEDULE=
             "CREATE TABLE "+ ScheduleTable.TABLE_NAME+" ("+
                     ScheduleTable.COLUMN_NAME_LEVEL+" INTEGER PRIMARY KEY,"+
@@ -62,7 +69,13 @@ public class DbHelper extends SQLiteOpenHelper {
                     UserTable.COLUMN_NAME_KEY+" TEXT PRIMARY KEY,"+
                     UserTable.COLUMN_NAME_VALUE+" TEXT,"+
                     UserTable.COLUMN_NAME_TIMESTAMP+" INTEGER)";
-
+    private static final String SQL_CREATE_TABLE_META=
+            "CREATE TABLE "+ MetaTable.TABLE_NAME+" ("+
+                    MetaTable._ID + " INTEGER PRIMARY KEY," +
+                    MetaTable.COLUMN_NAME_KEY+" TEXT,"+
+                    MetaTable.COLUMN_NAME_TEXT_VALUE+" TEXT DEFAULT '',"+
+                    MetaTable.COLUMN_NAME_INTEGER_VALUE+" INTEGER DEFAULT 0,"+
+                    MetaTable.COLUMN_NAME_TIMESTAMP+" INTEGER)";
 
     public DbHelper() {
         this(MainApplication.getContext(), DATABASE_NAME, null, DATABASE_VERSION);
@@ -81,6 +94,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TABLE_SCHEDULE);
         db.execSQL(SQL_CREATE_TABLE_COLLECT_DB);
         db.execSQL(SQL_CREATE_TABLE_USER);
+        db.execSQL(SQL_CREATE_TABLE_META);
 
         /*
         ContentValues userName=new ContentValues();
@@ -169,28 +183,22 @@ public class DbHelper extends SQLiteOpenHelper {
             ContentValues valuesSchedule = new ContentValues();
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 7);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "notification");
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, 1482832800000L);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 24*60*60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 60*60 * 1000L);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
         if(true){
-            ContentValues valuesSchedule = new ContentValues();
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 8);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "notification");
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, 1482850800000L);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 24*60*60 * 1000L);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
-            db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
+            ContentValues values=new ContentValues();
+            values.put(MetaTable.COLUMN_NAME_KEY,"last_notification");
+            values.put(MetaTable.COLUMN_NAME_INTEGER_VALUE,System.currentTimeMillis());
+            db.insert(MetaTable.TABLE_NAME,null,values);
         }
         if(true){
-            ContentValues valuesSchedule = new ContentValues();
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 9);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "notification");
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, 1482868800000L);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 24*60*60 * 1000L);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
-            db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
+            ContentValues values=new ContentValues();
+            values.put(MetaTable.COLUMN_NAME_KEY,"last_survey");
+            values.put(MetaTable.COLUMN_NAME_INTEGER_VALUE,System.currentTimeMillis());
+            db.insert(MetaTable.TABLE_NAME,null,values);
         }
     }
     @Override

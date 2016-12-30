@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -238,10 +239,35 @@ public class ScheduledService extends Service implements Runnable{
                         }
                         break;
                     case "notification":
-                        if(currentTime-nextFireTime>60*60*1000){
-                            Log.i(TAG,"time gone too long, no notification");
+                        Calendar calendar=Calendar.getInstance();
+                        int hour=calendar.get(Calendar.HOUR_OF_DAY);
+                        if(hour<9||hour>21){
                             break;
                         }
+                        long lastNotification=0;
+                        try(Cursor cursorLastNotification=readableDatabase.query(DbHelper.MetaTable.TABLE_NAME,new String[]{"MAX("+ DbHelper.MetaTable.COLUMN_NAME_INTEGER_VALUE+") AS MAX"},DbHelper.MetaTable.COLUMN_NAME_KEY+" = ? OR "+DbHelper.MetaTable.COLUMN_NAME_KEY+" = ?",new String[]{"last_notification","last_survey"},null,null,null)){
+                            if (cursorLastNotification.getCount() > 0) {
+                                cursorLastNotification.moveToFirst();
+                                lastNotification = cursorLastNotification.getLong(cursorLastNotification.getColumnIndex("MAX"));
+                            } else {
+                                if(true){
+                                    ContentValues values=new ContentValues();
+                                    values.put(DbHelper.MetaTable.COLUMN_NAME_KEY,"last_notification");
+                                    values.put(DbHelper.MetaTable.COLUMN_NAME_INTEGER_VALUE,System.currentTimeMillis());
+                                    writableDatabase.insertWithOnConflict(DbHelper.MetaTable.TABLE_NAME,null,values,SQLiteDatabase.CONFLICT_IGNORE);
+                                }
+                                if(true){
+                                    ContentValues values=new ContentValues();
+                                    values.put(DbHelper.MetaTable.COLUMN_NAME_KEY,"last_survey");
+                                    values.put(DbHelper.MetaTable.COLUMN_NAME_INTEGER_VALUE,System.currentTimeMillis());
+                                    writableDatabase.insertWithOnConflict(DbHelper.MetaTable.TABLE_NAME,null,values,SQLiteDatabase.CONFLICT_IGNORE);
+                                }
+                            }
+                        }
+                        if(lastNotification==0||currentTime-lastNotification<5*60*60*1000){
+                            break;
+                        }
+
                         Context notificationContext=MainApplication.getContext();
                         Notification.Builder builder=new Notification.Builder(notificationContext)
                                 .setDefaults(Notification.DEFAULT_ALL)
@@ -262,6 +288,11 @@ public class ScheduledService extends Service implements Runnable{
                         builder.setContentIntent(resultPendingIntent);
                         NotificationManager notificationManager=(NotificationManager)notificationContext.getSystemService(Context.NOTIFICATION_SERVICE);
                         notificationManager.notify(new Random().nextInt(),builder.build());
+
+                        ContentValues updateValues=new ContentValues();
+                        updateValues.put(DbHelper.MetaTable.COLUMN_NAME_INTEGER_VALUE,System.currentTimeMillis());
+                        writableDatabase.update(DbHelper.MetaTable.TABLE_NAME,updateValues,DbHelper.MetaTable.COLUMN_NAME_KEY+" = ?",new String[]{"last_notification"});
+                        break;
                 }
                 if(interval>0) {
                     while (nextFireTime < System.currentTimeMillis()) {
