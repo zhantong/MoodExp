@@ -223,6 +223,10 @@ public class MainActivity extends Activity {
                 String studentClass=data.getStringExtra("class");
                 String studentPhone=data.getStringExtra("phone");
 
+                SharedPreferences.Editor editor=preferences.edit();
+                editor.putString("id",studentId);
+                editor.apply();
+
                 DbHelper dbHelper=new DbHelper();
                 SQLiteDatabase writableDb=dbHelper.getWritableDatabase();
                 if(studentId!=null){

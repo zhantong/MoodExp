@@ -7,8 +7,8 @@ android {
         applicationId "cn.edu.nju.dislab.moodexp"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 5
-        versionName "4.0.3"
+        versionCode 6
+        versionName "4.0.4b1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -38,4 +38,6 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.2'
 
     compile 'agency.tango.android:material-intro-screen:0.0.5'
+
+    compile 'ch.acra:acra:4.9.0'
 }

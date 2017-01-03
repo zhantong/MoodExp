@@ -11,6 +11,10 @@ import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 
+import org.acra.ACRA;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
+import org.acra.sender.HttpSender;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 
@@ -21,6 +25,13 @@ import io.yunba.android.manager.YunBaManager;
 /**
  * Created by zhantong on 2016/12/21.
  */
+@ReportsCrashes(
+        formUri = "http://114.212.80.16:9000/crashReport",
+        reportType = HttpSender.Type.JSON,
+        httpMethod = HttpSender.Method.POST,
+        mode = ReportingInteractionMode.TOAST,
+        resToastText = R.string.crash_report
+)
 
 public class MainApplication extends Application {
     private static final String TAG="MainApplication";
@@ -113,5 +124,12 @@ public class MainApplication extends Application {
             }
         }
         return versionName;
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+
+        ACRA.init(this);
     }
 }
