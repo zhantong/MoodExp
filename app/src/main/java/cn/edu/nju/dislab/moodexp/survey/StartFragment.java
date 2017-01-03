@@ -18,13 +18,13 @@ public class StartFragment extends QuestionFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View childView=inflater.inflate(R.layout.start_and_finish,container,false);
+        View childView = inflater.inflate(R.layout.start_and_finish, container, false);
 
-        Bundle arguments=getArguments();
-        if(arguments!=null&&arguments.containsKey("isComplete")&&(!arguments.getBoolean("isComplete"))){
-            mIsComplete=false;
-            mView=childView;
-        }else {
+        Bundle arguments = getArguments();
+        if (arguments != null && arguments.containsKey("isComplete") && (!arguments.getBoolean("isComplete"))) {
+            mIsComplete = false;
+            mView = childView;
+        } else {
             mView = inflater.inflate(R.layout.fragment_question, container, false);
             ScrollView scrollViewContent = (ScrollView) mView.findViewById(R.id.content);
             scrollViewContent.addView(childView);

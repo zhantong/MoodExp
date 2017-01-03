@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by zhantong on 2016/12/26.
  */
 
-public class Choice implements Serializable{
+public class Choice implements Serializable {
     @SerializedName("id")
     @Expose
     private int id;
@@ -18,16 +18,16 @@ public class Choice implements Serializable{
     @Expose
     private String description;
 
-    public int getId(){
+    public int getId() {
         return id;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return description;
     }
 
     @Override
     public String toString() {
-        return "id: "+id+" description: "+description;
+        return "id: " + id + " description: " + description;
     }
 }

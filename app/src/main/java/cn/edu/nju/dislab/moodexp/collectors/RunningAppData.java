@@ -12,12 +12,6 @@ import java.util.List;
  */
 
 public class RunningAppData {
-    class Table implements BaseColumns {
-        static final String TABLE_NAME = "running_app";
-        static final String COLUMN_NAME_PACKAGE_NAME = "package_name";
-        static final String COLUMN_NAME_TYPE = "type";
-        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
-    }
     static String SQL_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
                     Table._ID + " INTEGER PRIMARY KEY," +
@@ -26,38 +20,22 @@ public class RunningAppData {
                     Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
     private List<RunningApp> runningApps;
 
-    private class RunningApp {
-        public String packageName;
-        public String type;
-        public long timestamp;
-
-        public RunningApp(String packageName,String type, long timestamp) {
-            this.packageName = packageName;
-            this.type=type;
-            this.timestamp = timestamp;
-        }
-
-        @Override
-        public String toString() {
-            return timestamp + " " + packageName+" "+type;
-        }
-    }
-
-
     public RunningAppData() {
         runningApps = new ArrayList<>();
     }
 
-    public void put(String packageName,String type, long timestamp) {
-        runningApps.add(new RunningApp(packageName,type, timestamp));
-    }
-    public static void DbInit(SQLiteDatabase db){
-        if(db!=null){
+    public static void DbInit(SQLiteDatabase db) {
+        if (db != null) {
             db.execSQL(SQL_CREATE_TABLE);
         }
     }
+
+    public void put(String packageName, String type, long timestamp) {
+        runningApps.add(new RunningApp(packageName, type, timestamp));
+    }
+
     public void toDb(SQLiteDatabase db) {
-        if(db==null){
+        if (db == null) {
             return;
         }
 
@@ -74,5 +52,29 @@ public class RunningAppData {
     @Override
     public String toString() {
         return runningApps.toString();
+    }
+
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "running_app";
+        static final String COLUMN_NAME_PACKAGE_NAME = "package_name";
+        static final String COLUMN_NAME_TYPE = "type";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    }
+
+    private class RunningApp {
+        public String packageName;
+        public String type;
+        public long timestamp;
+
+        public RunningApp(String packageName, String type, long timestamp) {
+            this.packageName = packageName;
+            this.type = type;
+            this.timestamp = timestamp;
+        }
+
+        @Override
+        public String toString() {
+            return timestamp + " " + packageName + " " + type;
+        }
     }
 }

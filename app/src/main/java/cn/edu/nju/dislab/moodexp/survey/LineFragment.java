@@ -16,16 +16,17 @@ import cn.edu.nju.dislab.moodexp.R;
 
 public class LineFragment extends QuestionFragment {
     EditText mEditTextAnswer;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View childView=inflater.inflate(R.layout.line,container,false);
+        View childView = inflater.inflate(R.layout.line, container, false);
 
-        Bundle arguments=getArguments();
-        if(arguments!=null&&arguments.containsKey("isComplete")&&(!arguments.getBoolean("isComplete"))){
-            mIsComplete=false;
-            mView=childView;
-        }else {
+        Bundle arguments = getArguments();
+        if (arguments != null && arguments.containsKey("isComplete") && (!arguments.getBoolean("isComplete"))) {
+            mIsComplete = false;
+            mView = childView;
+        } else {
             mView = inflater.inflate(R.layout.fragment_question, container, false);
             ScrollView scrollViewContent = (ScrollView) mView.findViewById(R.id.content);
             scrollViewContent.addView(childView);
@@ -37,10 +38,11 @@ public class LineFragment extends QuestionFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mEditTextAnswer=(EditText)mView.findViewById(R.id.editText_answer);
+        mEditTextAnswer = (EditText) mView.findViewById(R.id.editText_answer);
     }
+
     @Override
-    public Answer getAnswer(){
+    public Answer getAnswer() {
         mAnswer.setAnswer(mEditTextAnswer.getText().toString());
         return mAnswer;
     }

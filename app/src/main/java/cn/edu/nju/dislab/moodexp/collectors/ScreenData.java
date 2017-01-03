@@ -9,11 +9,6 @@ import android.provider.BaseColumns;
  */
 
 public class ScreenData {
-    class Table implements BaseColumns {
-        static final String TABLE_NAME = "screen";
-        static final String COLUMN_NAME_IS_SCREEN_ON = "is_screen_on";
-        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
-    }
     static String SQL_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
                     Table._ID + " INTEGER PRIMARY KEY," +
@@ -26,13 +21,15 @@ public class ScreenData {
         this.isScreenOn = isScreenOn;
         this.timestamp = timestamp;
     }
-    public static void DbInit(SQLiteDatabase db){
-        if(db!=null){
+
+    public static void DbInit(SQLiteDatabase db) {
+        if (db != null) {
             db.execSQL(SQL_CREATE_TABLE);
         }
     }
+
     public void toDb(SQLiteDatabase db) {
-        if(db==null){
+        if (db == null) {
             return;
         }
         db.execSQL(SQL_CREATE_TABLE);
@@ -45,5 +42,11 @@ public class ScreenData {
     @Override
     public String toString() {
         return timestamp + " " + isScreenOn;
+    }
+
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "screen";
+        static final String COLUMN_NAME_IS_SCREEN_ON = "is_screen_on";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
     }
 }

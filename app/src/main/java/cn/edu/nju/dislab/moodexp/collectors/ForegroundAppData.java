@@ -12,53 +12,34 @@ import java.util.List;
  */
 
 public class ForegroundAppData {
-    class Table implements BaseColumns {
-        static final String TABLE_NAME = "foreground_app";
-        static final String COLUMN_NAME_PACKAGE_NAME = "package_name";
-        static final String COLUMN_NAME_TYPE = "type";
-        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
-    }
     static String SQL_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
                     Table._ID + " INTEGER PRIMARY KEY," +
                     Table.COLUMN_NAME_PACKAGE_NAME + " TEXT," +
                     Table.COLUMN_NAME_TYPE + " TEXT," +
                     Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
-    private class ForegroundApp{
-        public String packageName;
-        public String type;
-        public long timestamp;
-
-        public ForegroundApp(String packageName,String type,long timestamp){
-            this.packageName=packageName;
-            this.type=type;
-            this.timestamp=timestamp;
-        }
-        @Override
-        public String toString() {
-            return timestamp + " " + packageName+" "+type;
-        }
-    }
     private List<ForegroundApp> foregroundApps;
 
-
     public ForegroundAppData() {
-        foregroundApps=new ArrayList<>();
+        foregroundApps = new ArrayList<>();
     }
-    public void put(String packageName,String type, long timestamp){
-        foregroundApps.add(new ForegroundApp(packageName,type,timestamp));
-    }
-    public static void DbInit(SQLiteDatabase db){
-        if(db!=null){
+
+    public static void DbInit(SQLiteDatabase db) {
+        if (db != null) {
             db.execSQL(SQL_CREATE_TABLE);
         }
     }
+
+    public void put(String packageName, String type, long timestamp) {
+        foregroundApps.add(new ForegroundApp(packageName, type, timestamp));
+    }
+
     public void toDb(SQLiteDatabase db) {
-        if(db==null){
+        if (db == null) {
             return;
         }
         db.execSQL(SQL_CREATE_TABLE);
-        for(ForegroundApp foregroundApp:foregroundApps) {
+        for (ForegroundApp foregroundApp : foregroundApps) {
             ContentValues values = new ContentValues();
             values.put(Table.COLUMN_NAME_PACKAGE_NAME, foregroundApp.packageName);
             values.put(Table.COLUMN_NAME_TYPE, foregroundApp.type);
@@ -70,5 +51,29 @@ public class ForegroundAppData {
     @Override
     public String toString() {
         return foregroundApps.toString();
+    }
+
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "foreground_app";
+        static final String COLUMN_NAME_PACKAGE_NAME = "package_name";
+        static final String COLUMN_NAME_TYPE = "type";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    }
+
+    private class ForegroundApp {
+        public String packageName;
+        public String type;
+        public long timestamp;
+
+        public ForegroundApp(String packageName, String type, long timestamp) {
+            this.packageName = packageName;
+            this.type = type;
+            this.timestamp = timestamp;
+        }
+
+        @Override
+        public String toString() {
+            return timestamp + " " + packageName + " " + type;
+        }
     }
 }

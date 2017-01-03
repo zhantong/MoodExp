@@ -11,6 +11,80 @@ import com.amap.api.location.AMapLocation;
  */
 
 public class LocationData {
+    static String SQL_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
+                    Table._ID + " INTEGER PRIMARY KEY," +
+                    Table.COLUMN_NAME_TYPE + " INTEGER," +
+                    Table.COLUMN_NAME_LATITUDE + " REAL," +
+                    Table.COLUMN_NAME_LONGITUDE + " REAL," +
+                    Table.COLUMN_NAME_ACCURACY + " REAL," +
+                    Table.COLUMN_NAME_COUNTRY + " TEXT," +
+                    Table.COLUMN_NAME_PROVINCE + " TEXT," +
+                    Table.COLUMN_NAME_CITY + " TEXT," +
+                    Table.COLUMN_NAME_DISTRICT + " TEXT," +
+                    Table.COLUMN_NAME_STREET + " TEXT," +
+                    Table.COLUMN_NAME_STREET_NUMBER + " TEXT," +
+                    Table.COLUMN_NAME_CITY_CODE + " TEXT," +
+                    Table.COLUMN_NAME_ADDRESS_CODE + " TEXT," +
+                    Table.COLUMN_NAME_BUILDING_ID + " TEXT," +
+                    Table.COLUMN_NAME_FLOOR + " TEXT," +
+                    Table.COLUMN_NAME_TIME + " INTEGER," +
+                    Table.COLUMN_NAME_AOI + " TEXT," +
+                    Table.COLUMN_NAME_ERROR_CODE + " INTEGER," +
+                    Table.COLUMN_NAME_ERROR_INFO + " TEXT)";
+    private AMapLocation aMapLocation;
+
+    public LocationData(AMapLocation aMapLocation) {
+        this.aMapLocation = aMapLocation;
+    }
+
+    public static void DbInit(SQLiteDatabase db) {
+        if (db != null) {
+            db.execSQL(SQL_CREATE_TABLE);
+        }
+    }
+
+    public AMapLocation getLocation() {
+        return aMapLocation;
+    }
+
+    public void toDb(SQLiteDatabase db) {
+        if (db == null) {
+            return;
+        }
+        db.execSQL(SQL_CREATE_TABLE);
+        if (aMapLocation.getErrorCode() == 0) {
+            ContentValues values = new ContentValues();
+            values.put(Table.COLUMN_NAME_TYPE, aMapLocation.getLocationType());
+            values.put(Table.COLUMN_NAME_LATITUDE, aMapLocation.getLatitude());
+            values.put(Table.COLUMN_NAME_LONGITUDE, aMapLocation.getLongitude());
+            values.put(Table.COLUMN_NAME_ACCURACY, aMapLocation.getAccuracy());
+            values.put(Table.COLUMN_NAME_COUNTRY, aMapLocation.getCountry());
+            values.put(Table.COLUMN_NAME_PROVINCE, aMapLocation.getProvince());
+            values.put(Table.COLUMN_NAME_CITY, aMapLocation.getCity());
+            values.put(Table.COLUMN_NAME_DISTRICT, aMapLocation.getDistrict());
+            values.put(Table.COLUMN_NAME_STREET, aMapLocation.getStreet());
+            values.put(Table.COLUMN_NAME_STREET_NUMBER, aMapLocation.getStreetNum());
+            values.put(Table.COLUMN_NAME_CITY_CODE, aMapLocation.getCityCode());
+            values.put(Table.COLUMN_NAME_ADDRESS_CODE, aMapLocation.getAdCode());
+            values.put(Table.COLUMN_NAME_BUILDING_ID, aMapLocation.getBuildingId());
+            values.put(Table.COLUMN_NAME_FLOOR, aMapLocation.getFloor());
+            values.put(Table.COLUMN_NAME_TIME, aMapLocation.getTime());
+            values.put(Table.COLUMN_NAME_AOI, aMapLocation.getAoiName());
+            db.insert(Table.TABLE_NAME, null, values);
+        } else {
+            ContentValues values = new ContentValues();
+            values.put(Table.COLUMN_NAME_ERROR_CODE, aMapLocation.getErrorCode());
+            values.put(Table.COLUMN_NAME_ERROR_INFO, aMapLocation.getErrorInfo());
+            db.insert(Table.TABLE_NAME, null, values);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return aMapLocation.toString();
+    }
+
     class Table implements BaseColumns {
         static final String TABLE_NAME = "location";
         static final String COLUMN_NAME_TYPE = "type";
@@ -31,76 +105,5 @@ public class LocationData {
         static final String COLUMN_NAME_AOI = "aoi";
         static final String COLUMN_NAME_ERROR_CODE = "error_code";
         static final String COLUMN_NAME_ERROR_INFO = "error_info";
-    }
-    static String SQL_CREATE_TABLE =
-            "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
-                    Table._ID + " INTEGER PRIMARY KEY," +
-                    Table.COLUMN_NAME_TYPE + " INTEGER," +
-                    Table.COLUMN_NAME_LATITUDE + " REAL," +
-                    Table.COLUMN_NAME_LONGITUDE + " REAL," +
-                    Table.COLUMN_NAME_ACCURACY + " REAL," +
-                    Table.COLUMN_NAME_COUNTRY + " TEXT," +
-                    Table.COLUMN_NAME_PROVINCE + " TEXT," +
-                    Table.COLUMN_NAME_CITY + " TEXT," +
-                    Table.COLUMN_NAME_DISTRICT + " TEXT," +
-                    Table.COLUMN_NAME_STREET + " TEXT," +
-                    Table.COLUMN_NAME_STREET_NUMBER + " TEXT," +
-                    Table.COLUMN_NAME_CITY_CODE + " TEXT," +
-                    Table.COLUMN_NAME_ADDRESS_CODE + " TEXT," +
-                    Table.COLUMN_NAME_BUILDING_ID + " TEXT," +
-                    Table.COLUMN_NAME_FLOOR + " TEXT," +
-                    Table.COLUMN_NAME_TIME + " INTEGER," +
-                    Table.COLUMN_NAME_AOI + " TEXT,"+
-                    Table.COLUMN_NAME_ERROR_CODE + " INTEGER,"+
-                    Table.COLUMN_NAME_ERROR_INFO + " TEXT)";
-    private AMapLocation aMapLocation;
-
-    public LocationData(AMapLocation aMapLocation) {
-        this.aMapLocation = aMapLocation;
-    }
-
-    public AMapLocation getLocation() {
-        return aMapLocation;
-    }
-    public static void DbInit(SQLiteDatabase db){
-        if(db!=null){
-            db.execSQL(SQL_CREATE_TABLE);
-        }
-    }
-    public void toDb(SQLiteDatabase db) {
-        if(db==null){
-            return;
-        }
-        db.execSQL(SQL_CREATE_TABLE);
-        if(aMapLocation.getErrorCode()==0) {
-            ContentValues values = new ContentValues();
-            values.put(Table.COLUMN_NAME_TYPE, aMapLocation.getLocationType());
-            values.put(Table.COLUMN_NAME_LATITUDE, aMapLocation.getLatitude());
-            values.put(Table.COLUMN_NAME_LONGITUDE, aMapLocation.getLongitude());
-            values.put(Table.COLUMN_NAME_ACCURACY, aMapLocation.getAccuracy());
-            values.put(Table.COLUMN_NAME_COUNTRY, aMapLocation.getCountry());
-            values.put(Table.COLUMN_NAME_PROVINCE, aMapLocation.getProvince());
-            values.put(Table.COLUMN_NAME_CITY, aMapLocation.getCity());
-            values.put(Table.COLUMN_NAME_DISTRICT, aMapLocation.getDistrict());
-            values.put(Table.COLUMN_NAME_STREET, aMapLocation.getStreet());
-            values.put(Table.COLUMN_NAME_STREET_NUMBER, aMapLocation.getStreetNum());
-            values.put(Table.COLUMN_NAME_CITY_CODE, aMapLocation.getCityCode());
-            values.put(Table.COLUMN_NAME_ADDRESS_CODE, aMapLocation.getAdCode());
-            values.put(Table.COLUMN_NAME_BUILDING_ID, aMapLocation.getBuildingId());
-            values.put(Table.COLUMN_NAME_FLOOR, aMapLocation.getFloor());
-            values.put(Table.COLUMN_NAME_TIME, aMapLocation.getTime());
-            values.put(Table.COLUMN_NAME_AOI, aMapLocation.getAoiName());
-            db.insert(Table.TABLE_NAME, null, values);
-        }else{
-            ContentValues values = new ContentValues();
-            values.put(Table.COLUMN_NAME_ERROR_CODE,aMapLocation.getErrorCode());
-            values.put(Table.COLUMN_NAME_ERROR_INFO,aMapLocation.getErrorInfo());
-            db.insert(Table.TABLE_NAME, null, values);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return aMapLocation.toString();
     }
 }

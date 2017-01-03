@@ -14,7 +14,7 @@ public class AboutActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about);
 
-        TextView textViewVersionName=(TextView)findViewById(R.id.txt_version_name);
-        textViewVersionName.setText(getString(R.string.display_version_name,MainApplication.getVersionName()));
+        TextView textViewVersionName = (TextView) findViewById(R.id.txt_version_name);
+        textViewVersionName.setText(getString(R.string.display_version_name, MainApplication.getVersionName()));
     }
 }

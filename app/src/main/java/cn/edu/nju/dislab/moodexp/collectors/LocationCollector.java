@@ -19,9 +19,9 @@ import cn.edu.nju.dislab.moodexp.MainApplication;
 public class LocationCollector {
     private static final String TAG = "LocationCollector";
     private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE};
+    private final Object LOCK = new Object();
     private AMapLocationClient mLocationClient = null;
     private Context mContext;
-    private final Object LOCK = new Object();
     private LocationData result;
     private AMapLocationListener mLocationListener = new AMapLocationListener() {
         @Override
@@ -41,6 +41,10 @@ public class LocationCollector {
         mContext = context;
         mLocationClient = new AMapLocationClient(mContext);
         mLocationClient.setLocationListener(mLocationListener);
+    }
+
+    public static String[] getPermissions() {
+        return PERMISSIONS;
     }
 
     public int collect() {
@@ -77,9 +81,5 @@ public class LocationCollector {
 
     public LocationData getResult() {
         return result;
-    }
-
-    public static String[] getPermissions() {
-        return PERMISSIONS;
     }
 }

@@ -25,7 +25,7 @@ public class MultiQuestionsFragment extends QuestionFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView=inflater.inflate(R.layout.fragment_multi_questions,container,false);
+        mView = inflater.inflate(R.layout.fragment_multi_questions, container, false);
         return mView;
     }
 
@@ -37,8 +37,8 @@ public class MultiQuestionsFragment extends QuestionFragment {
         mButtonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mQuestionFragments!=null){
-                    for(QuestionFragment questionFragment:mQuestionFragments){
+                if (mQuestionFragments != null) {
+                    for (QuestionFragment questionFragment : mQuestionFragments) {
                         mCallback.onSubmitAnswer(questionFragment.getAnswer());
                     }
                 }
@@ -47,41 +47,42 @@ public class MultiQuestionsFragment extends QuestionFragment {
         });
         mButtonNext.setEnabled(false);
 
-        OnChangedListener onChangedListener=new OnChangedListener() {
+        OnChangedListener onChangedListener = new OnChangedListener() {
             @Override
             public void onChanged() {
-                if(checkAnswered()){
+                if (checkAnswered()) {
                     mButtonNext.setEnabled(true);
                 }
             }
         };
 
-        Question question=(Question)getArguments().getSerializable("data");
+        Question question = (Question) getArguments().getSerializable("data");
 
-        List<Question> questions=question.getQuestions();
-        if(questions!=null){
-            FragmentManager fragmentManager= getChildFragmentManager();
-            FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-            mQuestionFragments=new ArrayList<>();
-            for(Question childQuestion:questions){
-                QuestionFragment questionFragment= QuestionFragmentFactory.get(childQuestion.getType());
-                if(questionFragment!=null){
-                    Bundle bundleToFragment=new Bundle();
-                    bundleToFragment.putSerializable("data",childQuestion);
-                    bundleToFragment.putBoolean("isComplete",false);
+        List<Question> questions = question.getQuestions();
+        if (questions != null) {
+            FragmentManager fragmentManager = getChildFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            mQuestionFragments = new ArrayList<>();
+            for (Question childQuestion : questions) {
+                QuestionFragment questionFragment = QuestionFragmentFactory.get(childQuestion.getType());
+                if (questionFragment != null) {
+                    Bundle bundleToFragment = new Bundle();
+                    bundleToFragment.putSerializable("data", childQuestion);
+                    bundleToFragment.putBoolean("isComplete", false);
                     questionFragment.setArguments(bundleToFragment);
                     questionFragment.setOnChangedListener(onChangedListener);
                     questionFragment.setScale(0.6f);
-                    fragmentTransaction.add(R.id.questions_content,questionFragment);
+                    fragmentTransaction.add(R.id.questions_content, questionFragment);
                     mQuestionFragments.add(questionFragment);
                 }
             }
             fragmentTransaction.commit();
         }
     }
-    private boolean checkAnswered(){
-        for(QuestionFragment questionFragment:mQuestionFragments){
-            if(!questionFragment.getAnswer().isAnswered()){
+
+    private boolean checkAnswered() {
+        for (QuestionFragment questionFragment : mQuestionFragments) {
+            if (!questionFragment.getAnswer().isAnswered()) {
                 return false;
             }
         }

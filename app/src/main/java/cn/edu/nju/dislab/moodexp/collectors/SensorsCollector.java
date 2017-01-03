@@ -23,6 +23,7 @@ import static android.content.Context.SENSOR_SERVICE;
 public class SensorsCollector {
     private static final String TAG = "SensorCollector";
     private static final String[] PERMISSIONS = {};
+    private final Object LOCK = new Object();
     private SensorsData result;
     private Context mContext;
     private int[] mTypeSensors;
@@ -31,7 +32,6 @@ public class SensorsCollector {
     private Map<Integer, Long> mStartTimes;
     private Map<Integer, Boolean> mIsDone;
     private boolean mIsAllDone;
-    private final Object LOCK = new Object();
     private SensorEventListener sensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
@@ -42,13 +42,13 @@ public class SensorsCollector {
             }
             if (!mIsDone.get(type)) {
                 if (timestamp - mStartTimes.get(type) > mMaxTimes.get(type)) {
-                    mIsAllDone=true;
+                    mIsAllDone = true;
                     mIsDone.put(type, true);
                 } else {
                     result.put(type, event.timestamp, event.values.clone());
                 }
             }
-            if (mIsAllDone||(!mIsDone.containsValue(false))) {
+            if (mIsAllDone || (!mIsDone.containsValue(false))) {
                 synchronized (LOCK) {
                     LOCK.notify();
                 }
@@ -77,11 +77,15 @@ public class SensorsCollector {
         }
     }
 
+    public static String[] getPermissions() {
+        return PERMISSIONS;
+    }
+
     public int collect() {
         result = new SensorsData();
         List<Sensor> sensors = new ArrayList<>();
         mIsDone = new HashMap<>();
-        mIsAllDone=false;
+        mIsAllDone = false;
         for (int typeSensor : mTypeSensors) {
             Sensor sensor = mSensorManager.getDefaultSensor(typeSensor);
             if (sensor != null) {
@@ -106,9 +110,5 @@ public class SensorsCollector {
 
     public SensorsData getResult() {
         return result;
-    }
-
-    public static String[] getPermissions() {
-        return PERMISSIONS;
     }
 }

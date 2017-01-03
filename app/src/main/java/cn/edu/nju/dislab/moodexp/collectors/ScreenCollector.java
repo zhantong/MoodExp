@@ -37,6 +37,10 @@ public class ScreenCollector {
         }
     }
 
+    public static String[] getPermissions() {
+        return PERMISSIONS;
+    }
+
     public int collect() {
         boolean isScreenOn = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
@@ -54,9 +58,5 @@ public class ScreenCollector {
 
     public ScreenData getResult() {
         return result;
-    }
-
-    public static String[] getPermissions() {
-        return PERMISSIONS;
     }
 }

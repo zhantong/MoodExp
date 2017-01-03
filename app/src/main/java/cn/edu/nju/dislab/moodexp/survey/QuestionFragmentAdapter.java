@@ -6,8 +6,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.List;
 
-import cn.edu.nju.dislab.moodexp.survey.QuestionFragment;
-
 /**
  * Created by zhantong on 2016/12/25.
  */
@@ -17,7 +15,7 @@ public class QuestionFragmentAdapter extends FragmentPagerAdapter {
 
     public QuestionFragmentAdapter(FragmentManager fm, List<QuestionFragment> questionFragments) {
         super(fm);
-        mQuestionFragments=questionFragments;
+        mQuestionFragments = questionFragments;
     }
 
 

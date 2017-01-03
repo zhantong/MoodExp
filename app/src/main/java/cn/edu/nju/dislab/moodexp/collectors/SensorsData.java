@@ -14,14 +14,6 @@ import java.util.Map;
  */
 
 public class SensorsData {
-    class Table implements BaseColumns {
-        static final String TABLE_NAME = "sensors";
-        static final String COLUMN_NAME_TYPE = "type";
-        static final String COLUMN_NAME_VALUE_0 = "value_0";
-        static final String COLUMN_NAME_VALUE_1 = "value_1";
-        static final String COLUMN_NAME_VALUE_2 = "value_2";
-        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
-    }
     static String SQL_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
                     Table._ID + " INTEGER PRIMARY KEY," +
@@ -32,23 +24,14 @@ public class SensorsData {
                     Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
     private Map<Integer, ArrayList<Sensor>> sensors;
 
-    private class Sensor {
-        private long timestamp;
-        private float[] values;
-
-        public Sensor(long timestamp, float[] values) {
-            this.timestamp = timestamp;
-            this.values = values;
-        }
-
-        @Override
-        public String toString() {
-            return timestamp + " " + Arrays.toString(values);
-        }
-    }
-
     public SensorsData() {
         sensors = new HashMap<>();
+    }
+
+    public static void DbInit(SQLiteDatabase db) {
+        if (db != null) {
+            db.execSQL(SQL_CREATE_TABLE);
+        }
     }
 
     public void put(int type, long timestamp, float[] values) {
@@ -57,13 +40,9 @@ public class SensorsData {
         }
         sensors.get(type).add(new Sensor(timestamp, values));
     }
-    public static void DbInit(SQLiteDatabase db){
-        if(db!=null){
-            db.execSQL(SQL_CREATE_TABLE);
-        }
-    }
+
     public void toDb(SQLiteDatabase db) {
-        if(db==null){
+        if (db == null) {
             return;
         }
         db.execSQL(SQL_CREATE_TABLE);
@@ -85,5 +64,29 @@ public class SensorsData {
     @Override
     public String toString() {
         return sensors.toString();
+    }
+
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "sensors";
+        static final String COLUMN_NAME_TYPE = "type";
+        static final String COLUMN_NAME_VALUE_0 = "value_0";
+        static final String COLUMN_NAME_VALUE_1 = "value_1";
+        static final String COLUMN_NAME_VALUE_2 = "value_2";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    }
+
+    private class Sensor {
+        private long timestamp;
+        private float[] values;
+
+        public Sensor(long timestamp, float[] values) {
+            this.timestamp = timestamp;
+            this.values = values;
+        }
+
+        @Override
+        public String toString() {
+            return timestamp + " " + Arrays.toString(values);
+        }
     }
 }

@@ -2,7 +2,6 @@ package cn.edu.nju.dislab.moodexp;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
@@ -16,79 +15,48 @@ import com.google.gson.Gson;
 public class DbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "MoodExp.db";
-
-    private SQLiteDatabase mReadableDb;
-
-    public static class ScheduleTable implements BaseColumns {
-        static final String TABLE_NAME = "schedule";
-        static final String COLUMN_NAME_LEVEL = "level";
-        static final String COLUMN_NAME_TYPE = "type";
-        static final String COLUMN_NAME_NEXT_FIRE_TIME = "next_fire_time";
-        static final String COLUMN_NAME_INTERVAL = "interval";
-        static final String COLUMN_NAME_ACTIONS = "actions";
-        static final String COLUMN_NAME_IS_ENABLED = "is_enabled";
-    }
-    public static class CollectDbTable implements BaseColumns{
-        static final String TABLE_NAME = "collect_db";
-        static final String COLUMN_NAME_NAME = "name";
-        static final String COLUMN_NAME_IS_USING = "is_using";
-        static final String COLUMN_NAME_IS_UPLOADED = "is_uploaded";
-        static final String COLUMN_NAME_IS_DELETED = "is_deleted";
-        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
-    }
-    public static class UserTable implements BaseColumns{
-        static final String TABLE_NAME = "user";
-        static final String COLUMN_NAME_KEY = "key";
-        static final String COLUMN_NAME_VALUE = "value";
-        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
-    }
-    public static class MetaTable implements BaseColumns{
-        static final String TABLE_NAME = "meta";
-        static final String COLUMN_NAME_KEY = "key";
-        static final String COLUMN_NAME_TEXT_VALUE = "text_value";
-        static final String COLUMN_NAME_INTEGER_VALUE = "integer_value";
-        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
-    }
-    private static final String SQL_CREATE_TABLE_SCHEDULE=
-            "CREATE TABLE "+ ScheduleTable.TABLE_NAME+" ("+
-                    ScheduleTable.COLUMN_NAME_LEVEL+" INTEGER PRIMARY KEY,"+
-                    ScheduleTable.COLUMN_NAME_TYPE+" TEXT,"+
-                    ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME+" INTEGER,"+
-                    ScheduleTable.COLUMN_NAME_INTERVAL+" INTEGER,"+
-                    ScheduleTable.COLUMN_NAME_ACTIONS +" TEXT,"+
-                    ScheduleTable.COLUMN_NAME_IS_ENABLED+" INTEGER DEFAULT 1)";
-    private static final String SQL_CREATE_TABLE_COLLECT_DB=
-            "CREATE TABLE "+ CollectDbTable.TABLE_NAME+" ("+
-                    CollectDbTable.COLUMN_NAME_NAME+" TEXT PRIMARY KEY,"+
-                    CollectDbTable.COLUMN_NAME_IS_USING+" INTEGER,"+
-                    CollectDbTable.COLUMN_NAME_IS_UPLOADED+" INTEGER,"+
-                    CollectDbTable.COLUMN_NAME_IS_DELETED+" INTEGER DEFAULT 0,"+
-                    CollectDbTable.COLUMN_NAME_TIMESTAMP+" INTEGER)";
-    private static final String SQL_CREATE_TABLE_USER=
-            "CREATE TABLE "+ UserTable.TABLE_NAME+" ("+
-                    UserTable.COLUMN_NAME_KEY+" TEXT PRIMARY KEY,"+
-                    UserTable.COLUMN_NAME_VALUE+" TEXT,"+
-                    UserTable.COLUMN_NAME_TIMESTAMP+" INTEGER)";
-    private static final String SQL_CREATE_TABLE_META=
-            "CREATE TABLE "+ MetaTable.TABLE_NAME+" ("+
+    private static final String SQL_CREATE_TABLE_SCHEDULE =
+            "CREATE TABLE " + ScheduleTable.TABLE_NAME + " (" +
+                    ScheduleTable.COLUMN_NAME_LEVEL + " INTEGER PRIMARY KEY," +
+                    ScheduleTable.COLUMN_NAME_TYPE + " TEXT," +
+                    ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME + " INTEGER," +
+                    ScheduleTable.COLUMN_NAME_INTERVAL + " INTEGER," +
+                    ScheduleTable.COLUMN_NAME_ACTIONS + " TEXT," +
+                    ScheduleTable.COLUMN_NAME_IS_ENABLED + " INTEGER DEFAULT 1)";
+    private static final String SQL_CREATE_TABLE_COLLECT_DB =
+            "CREATE TABLE " + CollectDbTable.TABLE_NAME + " (" +
+                    CollectDbTable.COLUMN_NAME_NAME + " TEXT PRIMARY KEY," +
+                    CollectDbTable.COLUMN_NAME_IS_USING + " INTEGER," +
+                    CollectDbTable.COLUMN_NAME_IS_UPLOADED + " INTEGER," +
+                    CollectDbTable.COLUMN_NAME_IS_DELETED + " INTEGER DEFAULT 0," +
+                    CollectDbTable.COLUMN_NAME_TIMESTAMP + " INTEGER)";
+    private static final String SQL_CREATE_TABLE_USER =
+            "CREATE TABLE " + UserTable.TABLE_NAME + " (" +
+                    UserTable.COLUMN_NAME_KEY + " TEXT PRIMARY KEY," +
+                    UserTable.COLUMN_NAME_VALUE + " TEXT," +
+                    UserTable.COLUMN_NAME_TIMESTAMP + " INTEGER)";
+    private static final String SQL_CREATE_TABLE_META =
+            "CREATE TABLE " + MetaTable.TABLE_NAME + " (" +
                     MetaTable._ID + " INTEGER PRIMARY KEY," +
-                    MetaTable.COLUMN_NAME_KEY+" TEXT,"+
-                    MetaTable.COLUMN_NAME_TEXT_VALUE+" TEXT DEFAULT '',"+
-                    MetaTable.COLUMN_NAME_INTEGER_VALUE+" INTEGER DEFAULT 0,"+
-                    MetaTable.COLUMN_NAME_TIMESTAMP+" INTEGER)";
+                    MetaTable.COLUMN_NAME_KEY + " TEXT," +
+                    MetaTable.COLUMN_NAME_TEXT_VALUE + " TEXT DEFAULT ''," +
+                    MetaTable.COLUMN_NAME_INTEGER_VALUE + " INTEGER DEFAULT 0," +
+                    MetaTable.COLUMN_NAME_TIMESTAMP + " INTEGER)";
+    private SQLiteDatabase mReadableDb;
 
     public DbHelper() {
         this(MainApplication.getContext(), DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public DbHelper(String name){
-        this(MainApplication.getContext(),name,null,1);
+    public DbHelper(String name) {
+        this(MainApplication.getContext(), name, null, 1);
     }
 
     public DbHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
-        mReadableDb=getReadableDatabase();
+        mReadableDb = getReadableDatabase();
     }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_TABLE_SCHEDULE);
@@ -110,63 +78,63 @@ public class DbHelper extends SQLiteOpenHelper {
         db.insert(UserTable.TABLE_NAME,null,userId);
         */
 
-        ContentValues initCollectDb=new ContentValues();
-        initCollectDb.put(CollectDbTable.COLUMN_NAME_NAME,System.currentTimeMillis()+".db");
-        initCollectDb.put(CollectDbTable.COLUMN_NAME_IS_USING,1);
-        initCollectDb.put(CollectDbTable.COLUMN_NAME_IS_UPLOADED,0);
-        initCollectDb.put(CollectDbTable.COLUMN_NAME_TIMESTAMP,System.currentTimeMillis());
-        db.insert(CollectDbTable.TABLE_NAME,null,initCollectDb);
-        if(true) {
+        ContentValues initCollectDb = new ContentValues();
+        initCollectDb.put(CollectDbTable.COLUMN_NAME_NAME, System.currentTimeMillis() + ".db");
+        initCollectDb.put(CollectDbTable.COLUMN_NAME_IS_USING, 1);
+        initCollectDb.put(CollectDbTable.COLUMN_NAME_IS_UPLOADED, 0);
+        initCollectDb.put(CollectDbTable.COLUMN_NAME_TIMESTAMP, System.currentTimeMillis());
+        db.insert(CollectDbTable.TABLE_NAME, null, initCollectDb);
+        if (true) {
             ContentValues valuesSchedule = new ContentValues();
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 1);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "collect");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 60 * 1000L);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{"ForegroundApp","Screen"}));
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{"ForegroundApp", "Screen"}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
-        if(true) {
+        if (true) {
             ContentValues valuesSchedule = new ContentValues();
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 2);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "collect");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 5*60 * 1000L);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{"Audio","Location","RunningApp","Sensors","Wifi"}));
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 5 * 60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{"Audio", "Location", "RunningApp", "Sensors", "Wifi"}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
-        if(true) {
+        if (true) {
             ContentValues valuesSchedule = new ContentValues();
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 3);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "collect");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 5*24*60*60 * 1000L);
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{"CallLog", "Contact","Phone","Sms"}));
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 5 * 24 * 60 * 60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{"CallLog", "Contact", "Phone", "Sms"}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
-        if(true) {
+        if (true) {
             ContentValues valuesSchedule = new ContentValues();
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 4);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "heartBeat");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 10*60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 10 * 60 * 1000L);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
-        if(true) {
+        if (true) {
             ContentValues valuesSchedule = new ContentValues();
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 5);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "newDb");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 60*60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 60 * 60 * 1000L);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
-        if(true) {
+        if (true) {
             ContentValues valuesSchedule = new ContentValues();
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 6);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "upload");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 60*60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 60 * 60 * 1000L);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
@@ -179,30 +147,65 @@ public class DbHelper extends SQLiteOpenHelper {
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }*/
-        if(true){
+        if (true) {
             ContentValues valuesSchedule = new ContentValues();
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_LEVEL, 7);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_TYPE, "notification");
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, System.currentTimeMillis());
-            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 60*60 * 1000L);
+            valuesSchedule.put(ScheduleTable.COLUMN_NAME_INTERVAL, 60 * 60 * 1000L);
             valuesSchedule.put(ScheduleTable.COLUMN_NAME_ACTIONS, new Gson().toJson(new String[]{}));
             db.insert(ScheduleTable.TABLE_NAME, null, valuesSchedule);
         }
-        if(true){
-            ContentValues values=new ContentValues();
-            values.put(MetaTable.COLUMN_NAME_KEY,"last_notification");
-            values.put(MetaTable.COLUMN_NAME_INTEGER_VALUE,System.currentTimeMillis());
-            db.insert(MetaTable.TABLE_NAME,null,values);
+        if (true) {
+            ContentValues values = new ContentValues();
+            values.put(MetaTable.COLUMN_NAME_KEY, "last_notification");
+            values.put(MetaTable.COLUMN_NAME_INTEGER_VALUE, System.currentTimeMillis());
+            db.insert(MetaTable.TABLE_NAME, null, values);
         }
-        if(true){
-            ContentValues values=new ContentValues();
-            values.put(MetaTable.COLUMN_NAME_KEY,"last_survey");
-            values.put(MetaTable.COLUMN_NAME_INTEGER_VALUE,System.currentTimeMillis());
-            db.insert(MetaTable.TABLE_NAME,null,values);
+        if (true) {
+            ContentValues values = new ContentValues();
+            values.put(MetaTable.COLUMN_NAME_KEY, "last_survey");
+            values.put(MetaTable.COLUMN_NAME_INTEGER_VALUE, System.currentTimeMillis());
+            db.insert(MetaTable.TABLE_NAME, null, values);
         }
     }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
+    }
+
+    public static class ScheduleTable implements BaseColumns {
+        static final String TABLE_NAME = "schedule";
+        static final String COLUMN_NAME_LEVEL = "level";
+        static final String COLUMN_NAME_TYPE = "type";
+        static final String COLUMN_NAME_NEXT_FIRE_TIME = "next_fire_time";
+        static final String COLUMN_NAME_INTERVAL = "interval";
+        static final String COLUMN_NAME_ACTIONS = "actions";
+        static final String COLUMN_NAME_IS_ENABLED = "is_enabled";
+    }
+
+    public static class CollectDbTable implements BaseColumns {
+        static final String TABLE_NAME = "collect_db";
+        static final String COLUMN_NAME_NAME = "name";
+        static final String COLUMN_NAME_IS_USING = "is_using";
+        static final String COLUMN_NAME_IS_UPLOADED = "is_uploaded";
+        static final String COLUMN_NAME_IS_DELETED = "is_deleted";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    }
+
+    public static class UserTable implements BaseColumns {
+        static final String TABLE_NAME = "user";
+        static final String COLUMN_NAME_KEY = "key";
+        static final String COLUMN_NAME_VALUE = "value";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    }
+
+    public static class MetaTable implements BaseColumns {
+        static final String TABLE_NAME = "meta";
+        static final String COLUMN_NAME_KEY = "key";
+        static final String COLUMN_NAME_TEXT_VALUE = "text_value";
+        static final String COLUMN_NAME_INTEGER_VALUE = "integer_value";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
     }
 }

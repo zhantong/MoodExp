@@ -11,13 +11,6 @@ import android.provider.BaseColumns;
 
 public class CollectorDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
-
-    public class StatusTable implements BaseColumns {
-        static final String TABLE_NAME = "status";
-        static final String COLUMN_NAME_TYPE = "type";
-        static final String COLUMN_NAME_STATUS = "status";
-        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
-    }
     static String SQL_CREATE_TABLE_STATUS =
             "CREATE TABLE IF NOT EXISTS " + StatusTable.TABLE_NAME + " (" +
                     StatusTable._ID + " INTEGER PRIMARY KEY," +
@@ -41,5 +34,12 @@ public class CollectorDbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
+    }
+
+    public class StatusTable implements BaseColumns {
+        static final String TABLE_NAME = "status";
+        static final String COLUMN_NAME_TYPE = "type";
+        static final String COLUMN_NAME_STATUS = "status";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
     }
 }

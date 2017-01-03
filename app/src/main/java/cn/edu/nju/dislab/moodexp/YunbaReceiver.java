@@ -26,7 +26,8 @@ import io.yunba.android.manager.YunBaManager;
  */
 
 public class YunbaReceiver extends BroadcastReceiver {
-    private static final String TAG="YunbaReceiver";
+    private static final String TAG = "YunbaReceiver";
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (YunBaManager.MESSAGE_RECEIVED_ACTION.equals(intent.getAction())) {
@@ -44,20 +45,20 @@ public class YunbaReceiver extends BroadcastReceiver {
                     .append(YunBaManager.MQTT_MSG)
                     .append(" = ")
                     .append(msgJson);
-            Log.i("yunba notification",showMsg.toString());
-            JsonElement jsonElement= new JsonParser().parse(msgJson);
-            JsonObject jsonObject=jsonElement.getAsJsonObject();
-            String type=jsonObject.get("type").getAsString();
-            if(type.equals("notification")){
-                JsonObject message=jsonObject.get("message").getAsJsonObject();
-                Notification.Builder builder=new Notification.Builder(context)
+            Log.i("yunba notification", showMsg.toString());
+            JsonElement jsonElement = new JsonParser().parse(msgJson);
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            String type = jsonObject.get("type").getAsString();
+            if (type.equals("notification")) {
+                JsonObject message = jsonObject.get("message").getAsJsonObject();
+                Notification.Builder builder = new Notification.Builder(context)
                         .setDefaults(Notification.DEFAULT_ALL)
                         .setPriority(Notification.PRIORITY_MAX)
                         .setAutoCancel(true)
                         .setSmallIcon(R.drawable.icon)
                         .setContentTitle(message.get("title").getAsString())
                         .setContentText(message.get("message").getAsString());
-                Intent resultIntent=new Intent(context,MainActivity.class);
+                Intent resultIntent = new Intent(context, MainActivity.class);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 stackBuilder.addParentStack(MainActivity.class);
                 stackBuilder.addNextIntent(resultIntent);
@@ -67,26 +68,25 @@ public class YunbaReceiver extends BroadcastReceiver {
                                 PendingIntent.FLAG_UPDATE_CURRENT
                         );
                 builder.setContentIntent(resultPendingIntent);
-                NotificationManager notificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.notify(new Random().nextInt(),builder.build());
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.notify(new Random().nextInt(), builder.build());
             }
 
 
-
-            Context applicationContext=MainApplication.getContext();
-            if (Build.VERSION.SDK_INT>Build.VERSION_CODES.LOLLIPOP_MR1) {
-                String pkg=applicationContext.getPackageName();
-                PowerManager pm=applicationContext.getSystemService(PowerManager.class);
+            Context applicationContext = MainApplication.getContext();
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+                String pkg = applicationContext.getPackageName();
+                PowerManager pm = applicationContext.getSystemService(PowerManager.class);
 
                 if (!pm.isIgnoringBatteryOptimizations(pkg)) {
-                    Intent i=
+                    Intent i =
                             new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                                    .setData(Uri.parse("package:"+pkg));
+                                    .setData(Uri.parse("package:" + pkg));
 
                     applicationContext.startActivity(i);
                 }
             }
-            applicationContext.startService(new Intent(applicationContext,ScheduledService.class));
+            applicationContext.startService(new Intent(applicationContext, ScheduledService.class));
         }
     }
 }

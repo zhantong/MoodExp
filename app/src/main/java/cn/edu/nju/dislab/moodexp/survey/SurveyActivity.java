@@ -22,9 +22,9 @@ import cn.edu.nju.dislab.moodexp.R;
  */
 
 public class SurveyActivity extends AppCompatActivity implements OnSubmitAnswerListener {
-    private static final String TAG="SurveyActivity";
+    private static final String TAG = "SurveyActivity";
     private ViewPager mViewPager;
-    private Map<Integer,Answer> answerMap;
+    private Map<Integer, Answer> answerMap;
     private Survey mSurvey;
 
     @Override
@@ -32,71 +32,73 @@ public class SurveyActivity extends AppCompatActivity implements OnSubmitAnswerL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_survey);
 
-        Bundle bundle=getIntent().getExtras();
-        if(bundle==null){
+        Bundle bundle = getIntent().getExtras();
+        if (bundle == null) {
             return;
         }
-        mSurvey=new Gson().fromJson(bundle.getString("survey"),Survey.class);
-        Log.i(TAG,mSurvey.toString());
+        mSurvey = new Gson().fromJson(bundle.getString("survey"), Survey.class);
+        Log.i(TAG, mSurvey.toString());
 
-        List<QuestionFragment> questionFragments=new ArrayList<>();
+        List<QuestionFragment> questionFragments = new ArrayList<>();
 
-        for(Question question:mSurvey.getQuestions()){
-            if(question.getType().equals("Start")){
-                StartFragment startFragment=new StartFragment();
+        for (Question question : mSurvey.getQuestions()) {
+            if (question.getType().equals("Start")) {
+                StartFragment startFragment = new StartFragment();
                 Bundle bundleToFragment = new Bundle();
                 bundleToFragment.putSerializable("data", question);
                 startFragment.setArguments(bundleToFragment);
                 questionFragments.add(startFragment);
             }
         }
-        for(Question question:mSurvey.getQuestions()){
-            QuestionFragment questionFragment= QuestionFragmentFactory.get(question.getType());
-            if(questionFragment!=null) {
+        for (Question question : mSurvey.getQuestions()) {
+            QuestionFragment questionFragment = QuestionFragmentFactory.get(question.getType());
+            if (questionFragment != null) {
                 Bundle bundleToFragment = new Bundle();
                 bundleToFragment.putSerializable("data", question);
                 questionFragment.setArguments(bundleToFragment);
                 questionFragments.add(questionFragment);
             }
         }
-        boolean isFinishFragmentExists=false;
-        for(Question question:mSurvey.getQuestions()){
-            if(question.getType().equals("Finish")){
-                isFinishFragmentExists=true;
-                FinishFragment finishFragment=new FinishFragment();
+        boolean isFinishFragmentExists = false;
+        for (Question question : mSurvey.getQuestions()) {
+            if (question.getType().equals("Finish")) {
+                isFinishFragmentExists = true;
+                FinishFragment finishFragment = new FinishFragment();
                 Bundle bundleToFragment = new Bundle();
                 bundleToFragment.putSerializable("data", question);
                 finishFragment.setArguments(bundleToFragment);
                 questionFragments.add(finishFragment);
             }
         }
-        if(!isFinishFragmentExists){
-            questionFragments.get(questionFragments.size()-1).setIsLast(true);
+        if (!isFinishFragmentExists) {
+            questionFragments.get(questionFragments.size() - 1).setIsLast(true);
         }
-        mViewPager=(ViewPager)findViewById(R.id.view_pager);
-        QuestionFragmentAdapter questionFragmentAdapter=new QuestionFragmentAdapter(getSupportFragmentManager(),questionFragments);
+        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        QuestionFragmentAdapter questionFragmentAdapter = new QuestionFragmentAdapter(getSupportFragmentManager(), questionFragments);
         mViewPager.setAdapter(questionFragmentAdapter);
-        answerMap=new HashMap<>();
+        answerMap = new HashMap<>();
     }
-    public void nextPage(){
-        if(mViewPager.getCurrentItem()==mViewPager.getAdapter().getCount()-1){
+
+    public void nextPage() {
+        if (mViewPager.getCurrentItem() == mViewPager.getAdapter().getCount() - 1) {
             onSurveyFinished();
-        }else {
+        } else {
             mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
         }
     }
 
     @Override
     public void onSubmitAnswer(Answer answer) {
-        answerMap.put(answer.getQuestionId(),answer);
+        answerMap.put(answer.getQuestionId(), answer);
     }
-    public void onSurveyFinished(){
-        Intent intent=new Intent();
-        List<Answer> answers=new ArrayList<>(answerMap.values());
-        SurveyAnswer surveyAnswer=new SurveyAnswer(mSurvey.getId(),mSurvey.getSession(),answers);
-        Gson gson=new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        intent.putExtra("answer",gson.toJson(surveyAnswer));
-        setResult(Activity.RESULT_OK,intent);
+
+    public void onSurveyFinished() {
+        Intent intent = new Intent();
+        List<Answer> answers = new ArrayList<>(answerMap.values());
+        SurveyAnswer surveyAnswer = new SurveyAnswer(mSurvey.getId(), mSurvey.getSession(), answers);
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        intent.putExtra("answer", gson.toJson(surveyAnswer));
+        setResult(Activity.RESULT_OK, intent);
         finish();
     }
 }

@@ -24,34 +24,38 @@ public class FeedbackActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
 
-        final EditText editTextFeedback=(EditText)findViewById(R.id.editText_feedback);
-        Button buttonSubmit=(Button)findViewById(R.id.btn_submit);
+        final EditText editTextFeedback = (EditText) findViewById(R.id.editText_feedback);
+        Button buttonSubmit = (Button) findViewById(R.id.btn_submit);
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String feedback=editTextFeedback.getText().toString();
+                String feedback = editTextFeedback.getText().toString();
                 new SubmitFeedback(FeedbackActivity.this).execute(feedback);
             }
         });
     }
-    private class SubmitFeedback extends AsyncTask<String,Void,JsonObject> {
+
+    private class SubmitFeedback extends AsyncTask<String, Void, JsonObject> {
         private ProgressDialog mProgressDialog;
         private Context mContext;
-        public SubmitFeedback(Context context){
-            mContext =context;
-            mProgressDialog=new ProgressDialog(mContext);
+
+        public SubmitFeedback(Context context) {
+            mContext = context;
+            mProgressDialog = new ProgressDialog(mContext);
         }
+
         @Override
         protected void onPreExecute() {
             mProgressDialog.setIndeterminate(true);
             mProgressDialog.setMessage("正在提交...");
             mProgressDialog.show();
         }
+
         @Override
         protected JsonObject doInBackground(String... params) {
-            String id=MainApplication.getUserId();
-            String feedback=params[0];
-            JsonObject result= HttpAPI.feedback(id,feedback);
+            String id = MainApplication.getUserId();
+            String feedback = params[0];
+            JsonObject result = HttpAPI.feedback(id, feedback);
             return result;
         }
 
@@ -60,7 +64,7 @@ public class FeedbackActivity extends Activity {
             mProgressDialog.dismiss();
             if (result == null) {
                 Toast.makeText(mContext, "未知错误，请检查网络连接是否正常", Toast.LENGTH_SHORT).show();
-            } else{
+            } else {
                 Toast.makeText(mContext, "提交成功，感谢您的反馈！", Toast.LENGTH_SHORT).show();
                 finish();
             }

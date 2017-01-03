@@ -29,19 +29,18 @@ import okio.Source;
  * Created by zhantong on 2016/12/26.
  */
 
-public class DownloadAndInstallAPK extends AsyncTask<String,Integer,Boolean> {
-    interface ProgressListener {
-        void update(long bytesRead, long contentLength, boolean done);
-    }
+public class DownloadAndInstallAPK extends AsyncTask<String, Integer, Boolean> {
+    AsyncTask self;
     private ProgressDialog mProgressDialog;
     private Context mContext;
     private File downloadedFile;
-    AsyncTask self;
-    public DownloadAndInstallAPK(Context context){
-        mContext =context;
-        mProgressDialog=new ProgressDialog(mContext);
-        self=this;
+
+    public DownloadAndInstallAPK(Context context) {
+        mContext = context;
+        mProgressDialog = new ProgressDialog(mContext);
+        self = this;
     }
+
     @Override
     protected void onPreExecute() {
         mProgressDialog.setIndeterminate(true);
@@ -57,6 +56,7 @@ public class DownloadAndInstallAPK extends AsyncTask<String,Integer,Boolean> {
         });
         mProgressDialog.show();
     }
+
     @Override
     protected Boolean doInBackground(String... params) {
         Request request = new Request.Builder()
@@ -64,14 +64,16 @@ public class DownloadAndInstallAPK extends AsyncTask<String,Integer,Boolean> {
                 .build();
 
         final ProgressListener progressListener = new ProgressListener() {
-            @Override public void update(long bytesRead, long contentLength, boolean done) {
-                publishProgress((int)(100 * bytesRead / contentLength));
+            @Override
+            public void update(long bytesRead, long contentLength, boolean done) {
+                publishProgress((int) (100 * bytesRead / contentLength));
             }
         };
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .addNetworkInterceptor(new Interceptor() {
-                    @Override public Response intercept(Interceptor.Chain chain) throws IOException {
+                    @Override
+                    public Response intercept(Interceptor.Chain chain) throws IOException {
                         Response originalResponse = chain.proceed(chain.request());
                         return originalResponse.newBuilder()
                                 .body(new ProgressResponseBody(originalResponse.body(), progressListener))
@@ -81,18 +83,18 @@ public class DownloadAndInstallAPK extends AsyncTask<String,Integer,Boolean> {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()){
+            if (!response.isSuccessful()) {
                 return false;
             }
-            downloadedFile=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"MoodExp.apk");
-            if(downloadedFile.exists()){
+            downloadedFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "MoodExp.apk");
+            if (downloadedFile.exists()) {
                 downloadedFile.delete();
             }
-            BufferedSink sink=Okio.buffer(Okio.sink(downloadedFile));
+            BufferedSink sink = Okio.buffer(Okio.sink(downloadedFile));
             sink.writeAll(response.body().source());
             sink.close();
             return true;
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
@@ -110,16 +112,21 @@ public class DownloadAndInstallAPK extends AsyncTask<String,Integer,Boolean> {
     @Override
     protected void onPostExecute(Boolean status) {
         mProgressDialog.dismiss();
-        if(status!=null&&status){
-            Toast.makeText(mContext,"下载成功！安装中...",Toast.LENGTH_SHORT).show();
-            Intent intent=new Intent(Intent.ACTION_VIEW);
+        if (status != null && status) {
+            Toast.makeText(mContext, "下载成功！安装中...", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(downloadedFile), "application/vnd.android.package-archive");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
-        }else{
-            Toast.makeText(mContext,"下载失败，请重试！",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(mContext, "下载失败，请重试！", Toast.LENGTH_SHORT).show();
         }
     }
+
+    interface ProgressListener {
+        void update(long bytesRead, long contentLength, boolean done);
+    }
+
     private static class ProgressResponseBody extends ResponseBody {
 
         private final ResponseBody responseBody;
@@ -131,15 +138,18 @@ public class DownloadAndInstallAPK extends AsyncTask<String,Integer,Boolean> {
             this.progressListener = progressListener;
         }
 
-        @Override public MediaType contentType() {
+        @Override
+        public MediaType contentType() {
             return responseBody.contentType();
         }
 
-        @Override public long contentLength() {
+        @Override
+        public long contentLength() {
             return responseBody.contentLength();
         }
 
-        @Override public BufferedSource source() {
+        @Override
+        public BufferedSource source() {
             if (bufferedSource == null) {
                 bufferedSource = Okio.buffer(source(responseBody.source()));
             }
@@ -150,7 +160,8 @@ public class DownloadAndInstallAPK extends AsyncTask<String,Integer,Boolean> {
             return new ForwardingSource(source) {
                 long totalBytesRead = 0L;
 
-                @Override public long read(Buffer sink, long byteCount) throws IOException {
+                @Override
+                public long read(Buffer sink, long byteCount) throws IOException {
                     long bytesRead = super.read(sink, byteCount);
                     // read() returns the number of bytes read, or -1 if this source is exhausted.
                     totalBytesRead += bytesRead != -1 ? bytesRead : 0;

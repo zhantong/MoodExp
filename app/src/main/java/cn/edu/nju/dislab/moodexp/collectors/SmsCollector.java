@@ -30,6 +30,10 @@ public class SmsCollector {
         mContentResolver = mContext.getContentResolver();
     }
 
+    public static String[] getPermissions() {
+        return PERMISSIONS;
+    }
+
     public int collect() {
         if (!EasyPermissions.hasPermissions(PERMISSIONS)) {
             return Collector.NO_PERMISSION;
@@ -65,9 +69,5 @@ public class SmsCollector {
 
     public SmsData getResult() {
         return result;
-    }
-
-    public static String[] getPermissions() {
-        return PERMISSIONS;
     }
 }

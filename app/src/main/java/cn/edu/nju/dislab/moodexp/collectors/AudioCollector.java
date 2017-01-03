@@ -17,11 +17,11 @@ public class AudioCollector {
     private static final String[] PERMISSIONS = {Manifest.permission.RECORD_AUDIO};
     private static final int POLL_INTERVAL = 100;
     private static final int MAX_TICKS = 50;
+    private final Object LOCK = new Object();
     private Handler mHandler;
     private MediaRecorder mRecorder;
     private int mTickCount;
     private AudioData result;
-    private final Object LOCK = new Object();
     private Runnable mPollTask = new Runnable() {
         @Override
         public void run() {
@@ -38,6 +38,10 @@ public class AudioCollector {
 
     public AudioCollector() {
         mHandler = new Handler(Looper.getMainLooper());
+    }
+
+    public static String[] getPermissions() {
+        return PERMISSIONS;
     }
 
     private void stop() {
@@ -91,9 +95,5 @@ public class AudioCollector {
 
     public AudioData getResult() {
         return result;
-    }
-
-    public static String[] getPermissions() {
-        return PERMISSIONS;
     }
 }

@@ -12,48 +12,29 @@ import java.util.List;
  */
 
 public class AudioData {
-    class AudioTable implements BaseColumns {
-        static final String TABLE_NAME = "audio";
-        static final String COLUMN_NAME_AMPLITUDE = "amplitude";
-        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
-    }
     static String SQL_CREATE_TABLE_AUDIO =
             "CREATE TABLE IF NOT EXISTS " + AudioTable.TABLE_NAME + " (" +
                     AudioTable._ID + " INTEGER PRIMARY KEY," +
                     AudioTable.COLUMN_NAME_AMPLITUDE + " REAL," +
                     AudioTable.COLUMN_NAME_TIMESTAMP + " INTEGER)";
-
     private List<Audio> audios;
-
-    private class Audio {
-        public long timestamp;
-        public double amplitude;
-
-        public Audio(long timestamp, double amplitude) {
-            this.timestamp = timestamp;
-            this.amplitude = amplitude;
-        }
-
-        @Override
-        public String toString() {
-            return timestamp + " " + amplitude;
-        }
-    }
 
     public AudioData() {
         audios = new ArrayList<>();
     }
 
-    public void put(long timestamp, double amplitude) {
-        audios.add(new Audio(timestamp, amplitude));
-    }
-    public static void DbInit(SQLiteDatabase db){
-        if(db!=null){
+    public static void DbInit(SQLiteDatabase db) {
+        if (db != null) {
             db.execSQL(SQL_CREATE_TABLE_AUDIO);
         }
     }
+
+    public void put(long timestamp, double amplitude) {
+        audios.add(new Audio(timestamp, amplitude));
+    }
+
     public void toDb(SQLiteDatabase db) {
-        if(db==null){
+        if (db == null) {
             return;
         }
         db.execSQL(SQL_CREATE_TABLE_AUDIO);
@@ -68,5 +49,26 @@ public class AudioData {
     @Override
     public String toString() {
         return audios.toString();
+    }
+
+    class AudioTable implements BaseColumns {
+        static final String TABLE_NAME = "audio";
+        static final String COLUMN_NAME_AMPLITUDE = "amplitude";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
+    }
+
+    private class Audio {
+        public long timestamp;
+        public double amplitude;
+
+        public Audio(long timestamp, double amplitude) {
+            this.timestamp = timestamp;
+            this.amplitude = amplitude;
+        }
+
+        @Override
+        public String toString() {
+            return timestamp + " " + amplitude;
+        }
     }
 }

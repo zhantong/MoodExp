@@ -62,9 +62,9 @@ public class Scale {
         );
 
         // If it's a TextView, scale the font size
-        if(root instanceof TextView) {
-            TextView tv = (TextView)root;
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX,tv.getTextSize() * scale); //< We do NOT want to do this.
+        if (root instanceof TextView) {
+            TextView tv = (TextView) root;
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, tv.getTextSize() * scale); //< We do NOT want to do this.
         }
 
 

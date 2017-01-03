@@ -12,11 +12,6 @@ import java.util.Map;
  */
 
 public class PhoneData {
-    class Table implements BaseColumns {
-        static final String TABLE_NAME = "phone";
-        static final String COLUMN_NAME_NAME = "name";
-        static final String COLUMN_NAME_VALUE = "value";
-    }
     static String SQL_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
                     Table.COLUMN_NAME_NAME + " TEXT PRIMARY KEY," +
@@ -27,16 +22,18 @@ public class PhoneData {
         data = new HashMap<>();
     }
 
-    public void put(String key, String value) {
-        data.put(key, value);
-    }
-    public static void DbInit(SQLiteDatabase db){
-        if(db!=null){
+    public static void DbInit(SQLiteDatabase db) {
+        if (db != null) {
             db.execSQL(SQL_CREATE_TABLE);
         }
     }
+
+    public void put(String key, String value) {
+        data.put(key, value);
+    }
+
     public void toDb(SQLiteDatabase db) {
-        if(db==null){
+        if (db == null) {
             return;
         }
         db.execSQL(SQL_CREATE_TABLE);
@@ -51,5 +48,11 @@ public class PhoneData {
     @Override
     public String toString() {
         return data.toString();
+    }
+
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "phone";
+        static final String COLUMN_NAME_NAME = "name";
+        static final String COLUMN_NAME_VALUE = "value";
     }
 }

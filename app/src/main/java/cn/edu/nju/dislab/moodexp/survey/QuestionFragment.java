@@ -15,30 +15,34 @@ import cn.edu.nju.dislab.moodexp.R;
  */
 
 public class QuestionFragment extends Fragment {
-    protected Answer mAnswer=new Answer();
+    protected Answer mAnswer = new Answer();
     protected OnSubmitAnswerListener mCallback;
     protected OnChangedListener mOnChangedListener;
-    protected boolean mIsComplete=true;
+    protected boolean mIsComplete = true;
     protected View mView;
-    protected boolean mIsLast=false;
-    protected float mScale=1.0f;
-    public Answer getAnswer(){
+    protected boolean mIsLast = false;
+    protected float mScale = 1.0f;
+
+    public Answer getAnswer() {
         return mAnswer;
     }
-    public void setOnChangedListener(OnChangedListener onChangedListener){
-        mOnChangedListener=onChangedListener;
+
+    public void setOnChangedListener(OnChangedListener onChangedListener) {
+        mOnChangedListener = onChangedListener;
     }
-    public void setScale(float scale){
-        mScale=scale;
+
+    public void setScale(float scale) {
+        mScale = scale;
     }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        try{
-            mCallback=(OnSubmitAnswerListener)activity;
-        }catch (ClassCastException e){
-            throw new ClassCastException(activity.toString()+" must implement OnSubmitAnswerListener");
+        try {
+            mCallback = (OnSubmitAnswerListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnSubmitAnswerListener");
         }
     }
 
@@ -46,7 +50,7 @@ public class QuestionFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(mIsComplete) {
+        if (mIsComplete) {
             Button buttonNext = (Button) mView.findViewById(R.id.btn_next_question);
             buttonNext.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -55,32 +59,33 @@ public class QuestionFragment extends Fragment {
                     ((SurveyActivity) getActivity()).nextPage();
                 }
             });
-            if(mIsLast){
+            if (mIsLast) {
                 buttonNext.setText("完成");
             }
         }
 
-        TextView textViewTitle=(TextView)mView.findViewById(R.id.txt_title);
-        TextView textViewDescription=(TextView)mView.findViewById(R.id.txt_description);
-        Question question=(Question)getArguments().getSerializable("data");
-        String questionTitle=question.getTitle();
-        int questionId=question.getId();
+        TextView textViewTitle = (TextView) mView.findViewById(R.id.txt_title);
+        TextView textViewDescription = (TextView) mView.findViewById(R.id.txt_description);
+        Question question = (Question) getArguments().getSerializable("data");
+        String questionTitle = question.getTitle();
+        int questionId = question.getId();
         mAnswer.setQuestionTitle(questionTitle);
         mAnswer.setQuestionId(questionId);
-        if(questionTitle!=null){
+        if (questionTitle != null) {
             textViewTitle.setText(questionTitle);
             textViewTitle.setTag(questionId);
-        }else{
+        } else {
             textViewTitle.setVisibility(View.GONE);
         }
-        String description=question.getDescription();
-        if(description!=null){
+        String description = question.getDescription();
+        if (description != null) {
             textViewDescription.setText(description);
-        }else{
+        } else {
             textViewDescription.setVisibility(View.GONE);
         }
     }
-    public void setIsLast(boolean isLast){
-        mIsLast=isLast;
+
+    public void setIsLast(boolean isLast) {
+        mIsLast = isLast;
     }
 }

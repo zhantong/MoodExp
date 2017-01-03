@@ -31,6 +31,10 @@ public class PhoneCollector {
         mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
     }
 
+    public static String[] getPermissions() {
+        return PERMISSIONS;
+    }
+
     public int collect() {
         if (!EasyPermissions.hasPermissions(PERMISSIONS)) {
             return Collector.NO_PERMISSION;
@@ -88,9 +92,5 @@ public class PhoneCollector {
 
     public PhoneData getResult() {
         return result;
-    }
-
-    public static String[] getPermissions() {
-        return PERMISSIONS;
     }
 }

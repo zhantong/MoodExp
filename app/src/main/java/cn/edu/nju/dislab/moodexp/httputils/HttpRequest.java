@@ -29,6 +29,22 @@ public class HttpRequest {
         client = new OkHttpClient();
     }
 
+    public static HttpUrl parseUrl(String host, int port, String segments, Map<String, String> params) {
+        HttpUrl.Builder builder = new HttpUrl.Builder().scheme("http").host(host);
+        if (port != -1) {
+            builder.port(port);
+        }
+        if (segments != null) {
+            builder.addPathSegments(segments);
+        }
+        if (params != null) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                builder.addQueryParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        return builder.build();
+    }
+
     private ResponseBody get(String host, int port, String segments, Map<String, String> params) throws IOException {
         HttpUrl url = parseUrl(host, port, segments, params);
         Request request = new Request.Builder()
@@ -101,21 +117,5 @@ public class HttpRequest {
     public JsonElement postReturnJson(String host, int port, String segments, Map<String, String> params, String filePath) throws IOException {
         JsonParser parser = new JsonParser();
         return parser.parse(postReturnString(host, port, segments, params, filePath));
-    }
-
-    public static HttpUrl parseUrl(String host, int port, String segments, Map<String, String> params) {
-        HttpUrl.Builder builder = new HttpUrl.Builder().scheme("http").host(host);
-        if (port != -1) {
-            builder.port(port);
-        }
-        if (segments != null) {
-            builder.addPathSegments(segments);
-        }
-        if (params != null) {
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                builder.addQueryParameter(entry.getKey(), entry.getValue());
-            }
-        }
-        return builder.build();
     }
 }

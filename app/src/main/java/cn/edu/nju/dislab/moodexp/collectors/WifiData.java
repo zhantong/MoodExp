@@ -13,13 +13,6 @@ import java.util.List;
  */
 
 public class WifiData {
-    class Table implements BaseColumns {
-        static final String TABLE_NAME = "wifi";
-        static final String COLUMN_NAME_BSSID = "bssid";
-        static final String COLUMN_NAME_SSID = "ssid";
-        static final String COLUMN_NAME_LEVEL = "level";
-        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
-    }
     static String SQL_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
                     Table._ID + " INTEGER PRIMARY KEY," +
@@ -33,16 +26,18 @@ public class WifiData {
         scanResults = new ArrayList<>();
     }
 
-    public void put(List<ScanResult> scanResults) {
-        this.scanResults = scanResults;
-    }
-    public static void DbInit(SQLiteDatabase db){
-        if(db!=null){
+    public static void DbInit(SQLiteDatabase db) {
+        if (db != null) {
             db.execSQL(SQL_CREATE_TABLE);
         }
     }
+
+    public void put(List<ScanResult> scanResults) {
+        this.scanResults = scanResults;
+    }
+
     public void toDb(SQLiteDatabase db) {
-        if(db==null){
+        if (db == null) {
             return;
         }
         db.execSQL(SQL_CREATE_TABLE);
@@ -59,5 +54,13 @@ public class WifiData {
     @Override
     public String toString() {
         return scanResults.toString();
+    }
+
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "wifi";
+        static final String COLUMN_NAME_BSSID = "bssid";
+        static final String COLUMN_NAME_SSID = "ssid";
+        static final String COLUMN_NAME_LEVEL = "level";
+        static final String COLUMN_NAME_TIMESTAMP = "timestamp";
     }
 }

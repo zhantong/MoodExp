@@ -24,27 +24,32 @@ public class Answer implements Serializable {
     @Expose
     private int id;
 
-    public void setQuestionTitle(String questionTitle){
+    public void setQuestionTitle(String questionTitle) {
         this.questionTitle = questionTitle;
     }
 
-    public void setQuestionId(int id){
-        this.questionId=id;
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
-    public void setAnswer(String answer){
-        this.answer=answer;
+
+    public void setId(int id) {
+        this.id = id;
     }
-    public void setId(int id){
-        this.id=id;
-    }
-    public int getQuestionId(){
+
+    public int getQuestionId() {
         return questionId;
     }
-    public boolean isAnswered(){
-        return answer!=null;
+
+    public void setQuestionId(int id) {
+        this.questionId = id;
     }
+
+    public boolean isAnswered() {
+        return answer != null;
+    }
+
     @Override
     public String toString() {
-        return "questionTitle: "+ questionTitle +" questionId: "+questionId+" answer: "+answer+" id: "+id;
+        return "questionTitle: " + questionTitle + " questionId: " + questionId + " answer: " + answer + " id: " + id;
     }
 }

@@ -19,13 +19,14 @@ public class SurveyAnswer implements Serializable {
     @Expose
     private List<Answer> answers;
 
-    public String getSession(){
-        return session;
+    public SurveyAnswer(int id, String session, List<Answer> answers) {
+        this.id = id;
+        this.session = session;
+        this.answers = answers;
     }
-    public SurveyAnswer(int id,String session,List<Answer> answers){
-        this.id=id;
-        this.session=session;
-        this.answers=answers;
+
+    public String getSession() {
+        return session;
     }
 
 }

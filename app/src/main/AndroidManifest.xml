@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="cn.edu.nju.dislab.moodexp">
 
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -20,7 +20,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
@@ -38,9 +38,11 @@
     <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
-    <permission android:name="cn.edu.nju.dislab.moodexp.permission.MIPUSH_RECEIVE" android:protectionLevel="signature" />
+    <permission
+        android:name="cn.edu.nju.dislab.moodexp.permission.MIPUSH_RECEIVE"
+        android:protectionLevel="signature" />
     <uses-permission android:name="cn.edu.nju.dislab.moodexp.permission.MIPUSH_RECEIVE" />
 
     <application
@@ -58,28 +60,38 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".FirstTimeIntroActivity"
-            android:theme="@style/Theme.Intro"/>
-        <activity android:name=".permissionintro.PermissionIntroActivity"
-            android:theme="@style/Theme.Intro"/>
-        <activity android:name=".registerandlogin.RegisterAndLoginActivity"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
-        <activity android:name=".AboutActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".FeedbackActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".survey.SurveyActivity"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
+        <activity
+            android:name=".FirstTimeIntroActivity"
+            android:theme="@style/Theme.Intro" />
+        <activity
+            android:name=".permissionintro.PermissionIntroActivity"
+            android:theme="@style/Theme.Intro" />
+        <activity
+            android:name=".registerandlogin.RegisterAndLoginActivity"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <activity
+            android:name=".AboutActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".FeedbackActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".survey.SurveyActivity"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
-        <service android:name=".ScheduledService"/>
+        <service android:name=".ScheduledService" />
 
         <service android:name="com.amap.api.location.APSService" />
+
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="617da92e4efa914378959655eee34e20" />
 
-        <service android:name="io.yunba.android.core.YunBaService"> </service>
-        <meta-data android:name="YUNBA_APPKEY" android:value="5857b778b09557a45c1430d6" />
+        <service android:name="io.yunba.android.core.YunBaService"></service>
+        <meta-data
+            android:name="YUNBA_APPKEY"
+            android:value="5857b778b09557a45c1430d6" />
+
         <receiver android:name="io.yunba.android.core.YunBaReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.USER_PRESENT" />
@@ -110,6 +122,7 @@
         <service
             android:name="com.xiaomi.mipush.sdk.MessageHandleService"
             android:enabled="true" />
+
         <receiver
             android:name="io.yunba.android.thirdparty.receiver.ThirdPartyXMReceiver"
             android:exported="true">
@@ -142,8 +155,7 @@
 
         <service
             android:name="com.huawei.android.pushagent.PushService"
-            android:process=":pushservice" >
-        </service>
+            android:process=":pushservice"></service>
         <!-- 这是第三方华为的接收器权限声明 -->
         <receiver android:name="io.yunba.android.thirdparty.receiver.ThirdPartyHWReceiver">
             <intent-filter>
@@ -159,7 +171,7 @@
         </receiver>
         <receiver
             android:name="com.huawei.android.pushagent.PushEventReceiver"
-            android:process=":pushservice" >
+            android:process=":pushservice">
             <intent-filter>
                 <action android:name="com.huawei.android.push.intent.REFRESH_PUSH_CHANNEL" />
                 <action android:name="com.huawei.intent.action.PUSH" />
@@ -169,12 +181,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="com.huawei.android.pushagent.PushBootReceiver"
-            android:process=":pushservice" >
+            android:process=":pushservice">
             <intent-filter>
                 <action android:name="com.huawei.android.push.intent.REGISTER" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />

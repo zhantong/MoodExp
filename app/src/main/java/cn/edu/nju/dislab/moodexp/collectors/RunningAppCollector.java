@@ -39,29 +39,37 @@ public class RunningAppCollector {
         Log.i(TAG, "using ActivityManager");
     }
 
+    public static String[] getPermissions() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            return PERMISSIONS_EG_L;
+        } else {
+            return PERMISSIONS_LESS_L;
+        }
+    }
+
     public int collect() {
         result = new RunningAppData();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             if (!EasyPermissions.hasPermissions(PERMISSIONS_EG_L)) {
-                Log.i(TAG,"no usage stat permission");
+                Log.i(TAG, "no usage stat permission");
             }
             long INTERVAL = 30 * 60 * 1000;
             long currentTimeMillis = System.currentTimeMillis();
-            List<UsageStats> usageStatses=null;
+            List<UsageStats> usageStatses = null;
             try {
                 usageStatses = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, currentTimeMillis - INTERVAL, currentTimeMillis + INTERVAL);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             if (usageStatses == null || usageStatses.isEmpty()) {
                 Log.i(TAG, "null usageStatses");
-            }else {
+            } else {
                 for (UsageStats usageStats : usageStatses) {
-                    result.put(usageStats.getPackageName(),"UsageStats", System.currentTimeMillis());
+                    result.put(usageStats.getPackageName(), "UsageStats", System.currentTimeMillis());
                 }
             }
         }
-        List<ActivityManager.RunningTaskInfo> runningTaskInfos=null;
+        List<ActivityManager.RunningTaskInfo> runningTaskInfos = null;
         try {
             runningTaskInfos = mActivityManager.getRunningTasks(Integer.MAX_VALUE);
         } catch (Exception e) {
@@ -70,37 +78,37 @@ public class RunningAppCollector {
         }
         if (runningTaskInfos == null) {
             Log.i(TAG, "null runningTaskInfos");
-        }else {
+        } else {
             for (ActivityManager.RunningTaskInfo runningTaskInfo : runningTaskInfos) {
-                result.put(runningTaskInfo.baseActivity.getPackageName(),"RunningTasks", System.currentTimeMillis());
+                result.put(runningTaskInfo.baseActivity.getPackageName(), "RunningTasks", System.currentTimeMillis());
             }
         }
-        List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfos=null;
+        List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfos = null;
         try {
             runningAppProcessInfos = mActivityManager.getRunningAppProcesses();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        if(runningAppProcessInfos==null){
+        if (runningAppProcessInfos == null) {
             Log.i(TAG, "null runningAppProcessInfos");
-        }else{
-            for(ActivityManager.RunningAppProcessInfo runningAppProcessInfo:runningAppProcessInfos){
-                if(runningAppProcessInfo.importance== ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND){
-                    result.put(runningAppProcessInfo.processName,"RunningAppProcesses",System.currentTimeMillis());
+        } else {
+            for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfos) {
+                if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                    result.put(runningAppProcessInfo.processName, "RunningAppProcesses", System.currentTimeMillis());
                 }
             }
         }
-        List<ActivityManager.RunningServiceInfo> runningServiceInfos=null;
+        List<ActivityManager.RunningServiceInfo> runningServiceInfos = null;
         try {
             runningServiceInfos = mActivityManager.getRunningServices(Integer.MAX_VALUE);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        if(runningServiceInfos==null){
-            Log.i(TAG,"null runningServiceInfos");
-        }else{
-            for(ActivityManager.RunningServiceInfo runningServiceInfo:runningServiceInfos){
-                result.put(runningServiceInfo.process,"RunningService",System.currentTimeMillis());
+        if (runningServiceInfos == null) {
+            Log.i(TAG, "null runningServiceInfos");
+        } else {
+            for (ActivityManager.RunningServiceInfo runningServiceInfo : runningServiceInfos) {
+                result.put(runningServiceInfo.process, "RunningService", System.currentTimeMillis());
             }
         }
         return Collector.COLLECT_SUCCESS;
@@ -108,13 +116,5 @@ public class RunningAppCollector {
 
     public RunningAppData getResult() {
         return result;
-    }
-
-    public static String[] getPermissions() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            return PERMISSIONS_EG_L;
-        } else {
-            return PERMISSIONS_LESS_L;
-        }
     }
 }

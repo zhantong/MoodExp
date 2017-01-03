@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/first_time_intro_page"
-        android:title="@string/terms_and_notification"/>
-    <item android:id="@+id/permission_intro"
-        android:title="@string/permission_intro_page"/>
-    <item android:id="@+id/log_out"
-        android:title="@string/logout"/>
-    <item android:id="@+id/check_update"
-        android:title="@string/check_update"/>
-    <item android:id="@+id/submit_survey_answers_manually"
-        android:title="@string/submit_survey_answers_manually"/>
-    <item android:id="@+id/feedback"
-        android:title="@string/feedback"/>
-    <item android:id="@+id/about"
-        android:title="@string/about"/>
+    <item
+        android:id="@+id/first_time_intro_page"
+        android:title="@string/terms_and_notification" />
+    <item
+        android:id="@+id/permission_intro"
+        android:title="@string/permission_intro_page" />
+    <item
+        android:id="@+id/log_out"
+        android:title="@string/logout" />
+    <item
+        android:id="@+id/check_update"
+        android:title="@string/check_update" />
+    <item
+        android:id="@+id/submit_survey_answers_manually"
+        android:title="@string/submit_survey_answers_manually" />
+    <item
+        android:id="@+id/feedback"
+        android:title="@string/feedback" />
+    <item
+        android:id="@+id/about"
+        android:title="@string/about" />
 </menu>

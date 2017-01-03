@@ -1,14 +1,20 @@
 package cn.edu.nju.dislab.moodexp.permissionintro;
 
-import android.app.*;
-import android.content.*;
-import android.content.pm.*;
-import android.net.*;
-import android.os.*;
-import android.provider.*;
-import android.text.*;
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
+import android.os.Build;
+import android.os.PowerManager;
+import android.provider.Settings;
+import android.text.TextUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.edu.nju.dislab.moodexp.MainApplication;
 
@@ -61,6 +67,7 @@ public class IntentWrapper {
     public static final int ZTE_GOD = 117;
 
     public static final List<IntentWrapper> sIntentWrapperList;
+    static String sApplicationName;
 
     static {
 
@@ -100,7 +107,8 @@ public class IntentWrapper {
 
         //三星 5.0+ 智能管理器
         Intent samsungIntent = MainApplication.getContext().getPackageManager().getLaunchIntentForPackage("com.samsung.android.sm");
-        if (samsungIntent != null) sIntentWrapperList.add(new IntentWrapper(samsungIntent, SAMSUNG));
+        if (samsungIntent != null)
+            sIntentWrapperList.add(new IntentWrapper(samsungIntent, SAMSUNG));
 
         //魅族 自启动管理
         Intent meizuIntent = new Intent("com.meizu.safe.security.SHOW_APPSEC");
@@ -174,13 +182,28 @@ public class IntentWrapper {
         sIntentWrapperList.add(new IntentWrapper(zteGodIntent, ZTE_GOD));
     }
 
+    public int mType;
+    Intent mIntent;
+
     IntentWrapper(Intent intent, int type) {
         mIntent = intent;
         mType = type;
     }
 
-    Intent mIntent;
-    public int mType;
+    public static String getApplicationName() {
+        if (!TextUtils.isEmpty(sApplicationName)) return sApplicationName;
+        PackageManager packageManager;
+        ApplicationInfo applicationInfo;
+        try {
+            packageManager = MainApplication.getContext().getPackageManager();
+            applicationInfo = packageManager.getApplicationInfo(MainApplication.getContext().getPackageName(), 0);
+            sApplicationName = packageManager.getApplicationLabel(applicationInfo).toString();
+            return sApplicationName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return MainApplication.getContext().getPackageName();
+        }
+    }
 
     /**
      * 安全地启动一个Activity
@@ -200,22 +223,5 @@ public class IntentWrapper {
         PackageManager pm = MainApplication.getContext().getPackageManager();
         List<ResolveInfo> list = pm.queryIntentActivities(mIntent, PackageManager.MATCH_DEFAULT_ONLY);
         return list != null && list.size() > 0;
-    }
-
-    static String sApplicationName;
-
-    public static String getApplicationName() {
-        if (!TextUtils.isEmpty(sApplicationName)) return sApplicationName;
-        PackageManager packageManager;
-        ApplicationInfo applicationInfo;
-        try {
-            packageManager = MainApplication.getContext().getPackageManager();
-            applicationInfo = packageManager.getApplicationInfo(MainApplication.getContext().getPackageName(), 0);
-            sApplicationName = packageManager.getApplicationLabel(applicationInfo).toString();
-            return sApplicationName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            return MainApplication.getContext().getPackageName();
-        }
     }
 }

@@ -12,11 +12,6 @@ import java.util.List;
  */
 
 public class ContactData {
-    class Table implements BaseColumns {
-        static final String TABLE_NAME = "contact";
-        static final String COLUMN_NAME_NAME = "name";
-        static final String COLUMN_NAME_NUMBER = "number";
-    }
     static String SQL_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + Table.TABLE_NAME + " (" +
                     Table.COLUMN_NAME_NAME + " INTEGER," +
@@ -24,6 +19,44 @@ public class ContactData {
                     "PRIMARY KEY (" + Table.COLUMN_NAME_NAME + ", " + Table.COLUMN_NAME_NUMBER + ")" +
                     ")";
     private List<Contact> contacts;
+
+    public ContactData() {
+        contacts = new ArrayList<>();
+    }
+
+    public static void DbInit(SQLiteDatabase db) {
+        if (db != null) {
+            db.execSQL(SQL_CREATE_TABLE);
+        }
+    }
+
+    public void put(String name, String number) {
+        contacts.add(new Contact(name, number));
+    }
+
+    public void toDb(SQLiteDatabase db) {
+        if (db == null) {
+            return;
+        }
+        db.execSQL(SQL_CREATE_TABLE);
+        for (Contact contact : contacts) {
+            ContentValues values = new ContentValues();
+            values.put(Table.COLUMN_NAME_NAME, contact.name == null ? null : contact.name.hashCode());
+            values.put(Table.COLUMN_NAME_NUMBER, contact.number == null ? null : contact.number.hashCode());
+            db.insertWithOnConflict(Table.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return contacts.toString();
+    }
+
+    class Table implements BaseColumns {
+        static final String TABLE_NAME = "contact";
+        static final String COLUMN_NAME_NAME = "name";
+        static final String COLUMN_NAME_NUMBER = "number";
+    }
 
     private class Contact {
         public String name;
@@ -38,35 +71,5 @@ public class ContactData {
         public String toString() {
             return name + " " + number;
         }
-    }
-
-    public ContactData() {
-        contacts = new ArrayList<>();
-    }
-
-    public void put(String name, String number) {
-        contacts.add(new Contact(name, number));
-    }
-    public static void DbInit(SQLiteDatabase db){
-        if(db!=null){
-            db.execSQL(SQL_CREATE_TABLE);
-        }
-    }
-    public void toDb(SQLiteDatabase db) {
-        if(db==null){
-            return;
-        }
-        db.execSQL(SQL_CREATE_TABLE);
-        for (Contact contact : contacts) {
-            ContentValues values = new ContentValues();
-            values.put(Table.COLUMN_NAME_NAME, contact.name==null?null:contact.name.hashCode());
-            values.put(Table.COLUMN_NAME_NUMBER, contact.number==null?null:contact.number.hashCode());
-            db.insertWithOnConflict(Table.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
-        }
-    }
-
-    @Override
-    public String toString() {
-        return contacts.toString();
     }
 }

@@ -5,8 +5,8 @@ package cn.edu.nju.dislab.moodexp.survey;
  */
 
 public class QuestionFragmentFactory {
-    public static QuestionFragment get(String type){
-        switch (type){
+    public static QuestionFragment get(String type) {
+        switch (type) {
             case "CheckBoxes":
                 return new CheckBoxesFragment();
             case "MultiLines":
