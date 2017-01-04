@@ -1,5 +1,6 @@
 package cn.edu.nju.dislab.moodexp.permissionintro;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -15,11 +16,11 @@ import cn.edu.nju.dislab.moodexp.R;
  * Created by zhantong on 2016/12/24.
  */
 
-public class BackgroundPermissionSlide extends SlideFragment {
+public class PermissionSlide extends SlideFragment {
     //private boolean canMoveFurther=false;
     private String mTitle;
     private String mMessage;
-    private IntentWrapper mIntentWrapper;
+    private Intent mIntent;
 
     public void setTitle(String title) {
         mTitle = title;
@@ -29,8 +30,8 @@ public class BackgroundPermissionSlide extends SlideFragment {
         mMessage = message;
     }
 
-    public void setIntentWrapper(IntentWrapper intentWrapper) {
-        mIntentWrapper = intentWrapper;
+    public void setIntent(Intent intent) {
+        mIntent = intent;
     }
 
     @Nullable
@@ -47,7 +48,7 @@ public class BackgroundPermissionSlide extends SlideFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mIntentWrapper.startActivity(getActivity());
+                startActivity(mIntent);
             }
         });
         return view;

@@ -105,6 +105,10 @@ public class MainApplication extends Application {
         return versionName;
     }
 
+    public static String getAppName() {
+        return getContext().getString(R.string.app_name);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
