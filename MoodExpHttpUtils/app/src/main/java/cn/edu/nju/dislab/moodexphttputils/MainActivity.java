@@ -47,17 +47,304 @@ public class MainActivity extends Activity {
         });
     }
 
+    public static JsonObject register(String class_name, String name, String id, String phone) {
+        Map<String, String> params = new HashMap<>();
+        params.put("class", class_name);
+        params.put("name", name);
+        params.put("id", id);
+        params.put("phone", phone);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "register", params);
+            JsonObject result = element.getAsJsonObject();
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static JsonElement statistic() {
+        HttpRequest request = new HttpRequest();
+        try {
+            return request.getReturnJson(HOST, PORT, "statistic", null);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static boolean upload(String filePath, String id, int count, String version) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+        params.put("count", Integer.toString(count));
+        params.put("version", version);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.postReturnJson(HOST, PORT, "upload", params, filePath);
+            JsonObject result = element.getAsJsonObject();
+            if (result.get("status").getAsBoolean()) {
+                String serverSHA1 = result.get("sha1").getAsString();
+                String localSHA1 = Utils.fileToSHA1(filePath);
+                if (localSHA1 != null && localSHA1.toLowerCase().equals(serverSHA1.toLowerCase())) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean download(String id, int count, String version, String filePath) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+        params.put("count", Integer.toString(count));
+        params.put("version", version);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            request.download(HOST, PORT, "download", params, filePath);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static String studentClass(String id) {
+        JsonObject info = studentInfo(id);
+        if (info != null && info.get("status").getAsBoolean()) {
+            return info.get("class").getAsString();
+        }
+        return null;
+    }
+
+    public static JsonObject studentInfo(String id) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "info", params);
+            JsonObject result = element.getAsJsonObject();
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static boolean delete(String id) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "delete", params);
+            JsonObject result = element.getAsJsonObject();
+            return result.get("status").getAsBoolean();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static String getReleaseVersion() {
+        return getVersion("release");
+    }
+
+    public static String getDebugVersion() {
+        return getVersion("debug");
+    }
+
+    private static String getVersion(String type) {
+        Map<String, String> params = new HashMap<>();
+        params.put("type", type);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "version", params);
+            JsonObject result = element.getAsJsonObject();
+            if (result.get("status").getAsBoolean()) {
+                return result.get("version").getAsString();
+            }
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static JsonObject checkUpdate(String id, String currentVersion) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+        params.put("version", currentVersion);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "checkUpdate", params);
+            JsonObject result = element.getAsJsonObject();
+            if (result.get("status").getAsBoolean()) {
+                return result;
+            }
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static boolean setReleaseVersion(String version) {
+        return setVersion("release", version);
+    }
+
+    public static boolean setDebugVersion(String version) {
+        return setVersion("debug", version);
+    }
+
+    private static boolean setVersion(String type, String version) {
+        Map<String, String> params = new HashMap<>();
+        params.put("type", type);
+        params.put("version", version);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.postReturnJson(HOST, PORT, "version", params, null);
+            JsonObject result = element.getAsJsonObject();
+            return result.get("status").getAsBoolean();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean heartBeat(String id) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+
+        HttpRequest request = new HttpRequest();
+        try {
+
+            JsonElement element = request.getReturnJson(HOST, PORT, "heartbeat", params);
+            JsonObject result = element.getAsJsonObject();
+            return result.get("status").getAsBoolean();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static JsonObject getSurvey(String id) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "survey", params);
+            JsonObject result = element.getAsJsonObject();
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static JsonObject submitSurvey(String id, String session, String answer) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+        params.put("session", session);
+        params.put("answer", answer);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.postReturnJson(HOST, PORT, "submitSurvey", params, null);
+            JsonObject result = element.getAsJsonObject();
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static JsonObject getSurveyCount(String id) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "surveyCount", params);
+            JsonObject result = element.getAsJsonObject();
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static JsonObject feedback(String id, String feedback) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+        params.put("feedback", feedback);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "feedback", params);
+            JsonObject result = element.getAsJsonObject();
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String getQuestionnaireUrl(String group) {
+        Map<String, String> params = new HashMap<>();
+        params.put("group", group);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.getReturnJson(HOST, PORT, "questionnaireurl", params);
+            JsonObject result = element.getAsJsonObject();
+            if (result.get("status").getAsBoolean()) {
+                return result.get("url").getAsString();
+            }
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static boolean setQuestionnaireUrl(String group, String url) {
+        Map<String, String> params = new HashMap<>();
+        params.put("group", group);
+        params.put("url", url);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.postReturnJson(HOST, PORT, "questionnaireurl", params, null);
+            JsonObject result = element.getAsJsonObject();
+            return result.get("status").getAsBoolean();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public void testHttpRequest() {
         boolean resultBoolean;
-        JsonElement resultJson;
+        JsonObject resultJson;
 
         if (false) {
-            resultBoolean = register("一班", "我", "150001", "13888888888");
-            if (resultBoolean) {
+            resultJson = register("一班", "我", "150001", "13888888888");
+            if (resultJson.get("status").getAsBoolean()) {
                 Log.d(TAG, "success");
             }
-            resultBoolean = register("二班", "你", "150003", "18666666666");
-            if (resultBoolean) {
+            resultJson = register("二班", "你", "150003", "18666666666");
+            if (resultJson.get("status").getAsBoolean()) {
                 Log.d(TAG, "success");
             }
         }
@@ -92,9 +379,9 @@ public class MainActivity extends Activity {
         }
 
         if (false) {
-            resultJson = statistic();
-            if (resultJson != null) {
-                JsonArray students = resultJson.getAsJsonArray();
+            JsonElement result = statistic();
+            if (result != null) {
+                JsonArray students = result.getAsJsonArray();
                 for (Iterator<JsonElement> it = students.iterator(); it.hasNext(); ) {
                     JsonObject student = it.next().getAsJsonObject();
                     Log.d(TAG, "name: " + student.get("name").getAsString());
@@ -188,211 +475,6 @@ public class MainActivity extends Activity {
                     Log.d(TAG, group + " questionnair url: " + url);
                 }
             }
-        }
-    }
-
-    public boolean register(String class_name, String name, String id, String phone) {
-        Map<String, String> params = new HashMap<>();
-        params.put("class", class_name);
-        params.put("name", name);
-        params.put("id", id);
-        params.put("phone", phone);
-
-        HttpRequest request = new HttpRequest();
-        try {
-            JsonElement element = request.getReturnJson(HOST, PORT, "register", params);
-            JsonObject result = element.getAsJsonObject();
-            return result.get("status").getAsBoolean();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public JsonElement statistic() {
-        HttpRequest request = new HttpRequest();
-        try {
-            return request.getReturnJson(HOST, PORT, "statistic", null);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public boolean upload(String filePath, String id, int count, String version) {
-        Map<String, String> params = new HashMap<>();
-        params.put("id", id);
-        params.put("count", Integer.toString(count));
-        params.put("version", version);
-
-        HttpRequest request = new HttpRequest();
-        try {
-            JsonElement element = request.postReturnJson(HOST, PORT, "upload", params, filePath);
-            JsonObject result = element.getAsJsonObject();
-            if (result.get("status").getAsBoolean()) {
-                String serverSHA1 = result.get("sha1").getAsString();
-                String localSHA1 = Utils.fileToSHA1(filePath);
-                if (localSHA1 != null && localSHA1.toLowerCase().equals(serverSHA1.toLowerCase())) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public boolean download(String id, int count, String version, String filePath) {
-        Map<String, String> params = new HashMap<>();
-        params.put("id", id);
-        params.put("count", Integer.toString(count));
-        params.put("version", version);
-
-        HttpRequest request = new HttpRequest();
-        try {
-            request.download(HOST, PORT, "download", params, filePath);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public String studentClass(String id) {
-        JsonObject info = studentInfo(id);
-        if (info != null && info.get("status").getAsBoolean()) {
-            return info.get("class").getAsString();
-        }
-        return null;
-    }
-
-    private JsonObject studentInfo(String id) {
-        Map<String, String> params = new HashMap<>();
-        params.put("id", id);
-
-        HttpRequest request = new HttpRequest();
-        try {
-            JsonElement element = request.getReturnJson(HOST, PORT, "info", params);
-            JsonObject result = element.getAsJsonObject();
-            return result;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public boolean delete(String id) {
-        Map<String, String> params = new HashMap<>();
-        params.put("id", id);
-
-        HttpRequest request = new HttpRequest();
-        try {
-            JsonElement element = request.getReturnJson(HOST, PORT, "delete", params);
-            JsonObject result = element.getAsJsonObject();
-            return result.get("status").getAsBoolean();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public String getReleaseVersion() {
-        return getVersion("release");
-    }
-
-    public String getDebugVersion() {
-        return getVersion("debug");
-    }
-
-    private String getVersion(String type) {
-        Map<String, String> params = new HashMap<>();
-        params.put("type", type);
-
-        HttpRequest request = new HttpRequest();
-        try {
-            JsonElement element = request.getReturnJson(HOST, PORT, "version", params);
-            JsonObject result = element.getAsJsonObject();
-            if (result.get("status").getAsBoolean()) {
-                return result.get("version").getAsString();
-            }
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public boolean setReleaseVersion(String version) {
-        return setVersion("release", version);
-    }
-
-    public boolean setDebugVersion(String version) {
-        return setVersion("debug", version);
-    }
-
-    private boolean setVersion(String type, String version) {
-        Map<String, String> params = new HashMap<>();
-        params.put("type", type);
-        params.put("version", version);
-
-        HttpRequest request = new HttpRequest();
-        try {
-            JsonElement element = request.postReturnJson(HOST, PORT, "version", params, null);
-            JsonObject result = element.getAsJsonObject();
-            return result.get("status").getAsBoolean();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public boolean heartBeat(String id) {
-        Map<String, String> params = new HashMap<>();
-        params.put("id", id);
-
-        HttpRequest request = new HttpRequest();
-        try {
-
-            JsonElement element = request.getReturnJson(HOST, PORT, "heartbeat", params);
-            JsonObject result = element.getAsJsonObject();
-            return result.get("status").getAsBoolean();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public String getQuestionnaireUrl(String group) {
-        Map<String, String> params = new HashMap<>();
-        params.put("group", group);
-
-        HttpRequest request = new HttpRequest();
-        try {
-            JsonElement element = request.getReturnJson(HOST, PORT, "questionnaireurl", params);
-            JsonObject result = element.getAsJsonObject();
-            if (result.get("status").getAsBoolean()) {
-                return result.get("url").getAsString();
-            }
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public boolean setQuestionnaireUrl(String group, String url) {
-        Map<String, String> params = new HashMap<>();
-        params.put("group", group);
-        params.put("url", url);
-
-        HttpRequest request = new HttpRequest();
-        try {
-            JsonElement element = request.postReturnJson(HOST, PORT, "questionnaireurl", params, null);
-            JsonObject result = element.getAsJsonObject();
-            return result.get("status").getAsBoolean();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
         }
     }
 }
