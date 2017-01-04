@@ -21,31 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends Activity {
+public class HttpAPI {
     private static final String TAG = "MoodExp";
     private static final String HOST = "114.212.80.16";
     private static final int PORT = 9000;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Button btnTest = (Button) findViewById(R.id.button_test);
-        btnTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        testHttpRequest();
-                    }
-                });
-                thread.start();
-                Toast.makeText(getApplicationContext(), "clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     public static JsonObject register(String class_name, String name, String id, String phone) {
         Map<String, String> params = new HashMap<>();
