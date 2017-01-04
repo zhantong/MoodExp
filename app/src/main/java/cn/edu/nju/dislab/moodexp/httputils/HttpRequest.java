@@ -1,4 +1,4 @@
-package cn.edu.nju.dislab.moodexphttputils;
+package cn.edu.nju.dislab.moodexp.httputils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;

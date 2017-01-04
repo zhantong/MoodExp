@@ -1,12 +1,7 @@
-package cn.edu.nju.dislab.moodexphttputils;
+package cn.edu.nju.dislab.moodexp.httputils;
 
-import android.app.Activity;
-import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
