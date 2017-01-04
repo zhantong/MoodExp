@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import cn.edu.nju.dislab.moodexp.firsttimeintro.FirstTimeIntroActivity;
 import cn.edu.nju.dislab.moodexp.httputils.HttpAPI;
 import cn.edu.nju.dislab.moodexp.permissionintro.PermissionIntroActivity;
 import cn.edu.nju.dislab.moodexp.registerandlogin.RegisterAndLoginActivity;
