@@ -72,6 +72,24 @@ public class HttpAPI {
         return false;
     }
 
+    public static boolean uploadLog(String filePath, String id, String version) {
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id);
+        params.put("version", version);
+
+        HttpRequest request = new HttpRequest();
+        try {
+            JsonElement element = request.postReturnJson(HOST, PORT, "uploadLog", params, filePath);
+            JsonObject result = element.getAsJsonObject();
+            if (result.get("status").getAsBoolean()) {
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static boolean download(String id, int count, String version, String filePath) {
         Map<String, String> params = new HashMap<>();
         params.put("id", id);

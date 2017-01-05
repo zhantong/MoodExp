@@ -50,4 +50,5 @@
     <string name="submit_feedback">提交反馈</string>
     <string name="feedback">意见反馈</string>
     <string name="crash_report">呃……APP崩溃了，崩溃报告已经发送给程序猿了，等着程序猿联系你吧！</string>
+    <string name="upload_log">上传诊断信息</string>
 </resources>
