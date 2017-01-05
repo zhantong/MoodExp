@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
-import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cn.edu.nju.dislab.moodexp.EasyPermissions;
 import cn.edu.nju.dislab.moodexp.MainApplication;
@@ -21,6 +23,8 @@ public class WifiCollector {
     private WifiManager mWifiManager;
     private Context mContext;
     private WifiData result;
+
+    private static final Logger LOG = LoggerFactory.getLogger(WifiCollector.class);
 
     public WifiCollector() {
         this(MainApplication.getContext());
@@ -39,27 +43,29 @@ public class WifiCollector {
         if (!EasyPermissions.hasPermissions(PERMISSIONS)) {
             return Collector.NO_PERMISSION;
         }
+        LOG.info("preparing to collect");
         boolean originIsWifiEnabled = mWifiManager.isWifiEnabled();
         if (!originIsWifiEnabled) {
             boolean isEnableWifiSuccess;
             try {
                 isEnableWifiSuccess = mWifiManager.setWifiEnabled(true);
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.info("error enable wifi {}", e);
                 return Collector.NO_PERMISSION;
             }
             if (!isEnableWifiSuccess) {
-                Log.i(TAG, "failed to enable wifi");
+                LOG.info("failed to enable wifi");
                 return Collector.COLLECT_FAILED;
             }
         }
+        LOG.info("start collecting");
         try {
             mWifiManager.startScan();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.info("error start scan {}", e);
             return Collector.NO_PERMISSION;
         }
-        Log.i(TAG, "scan started");
+        LOG.info("scan started");
         final Object scanFinished = new Object();
         mContext.registerReceiver(new BroadcastReceiver() {
             @Override
@@ -74,12 +80,13 @@ public class WifiCollector {
             try {
                 scanFinished.wait();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.info("error interrupt {}", e);
                 return Collector.COLLECT_FAILED;
             }
             result = new WifiData();
             result.put(mWifiManager.getScanResults());
         }
+        LOG.info("finished collect");
         return Collector.COLLECT_SUCCESS;
     }
 

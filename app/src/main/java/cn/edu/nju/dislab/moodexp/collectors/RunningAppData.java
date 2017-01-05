@@ -4,6 +4,9 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,14 +23,18 @@ public class RunningAppData {
                     Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
     private List<RunningApp> runningApps;
 
+    private static final Logger LOG = LoggerFactory.getLogger(RunningAppData.class);
+
     public RunningAppData() {
         runningApps = new ArrayList<>();
     }
 
     public static void DbInit(SQLiteDatabase db) {
+        LOG.info("start init database");
         if (db != null) {
             db.execSQL(SQL_CREATE_TABLE);
         }
+        LOG.info("finished init database");
     }
 
     public void put(String packageName, String type, long timestamp) {
@@ -35,6 +42,7 @@ public class RunningAppData {
     }
 
     public void toDb(SQLiteDatabase db) {
+        LOG.info("start write data to database");
         if (db == null) {
             return;
         }
@@ -47,6 +55,7 @@ public class RunningAppData {
             values.put(Table.COLUMN_NAME_TIMESTAMP, runningApp.timestamp);
             db.insert(Table.TABLE_NAME, null, values);
         }
+        LOG.info("finished write data to database");
     }
 
     @Override

@@ -7,6 +7,9 @@ import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.util.Log;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 import cn.edu.nju.dislab.moodexp.EasyPermissions;
@@ -26,6 +29,8 @@ public class ForegroundAppCollector {
     private UsageStatsManager mUsageStatsManager;
     private ForegroundAppData result;
 
+    private static final Logger LOG = LoggerFactory.getLogger(ForegroundAppCollector.class);
+
     public ForegroundAppCollector() {
         this(MainApplication.getContext());
     }
@@ -34,10 +39,8 @@ public class ForegroundAppCollector {
         mContext = context;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             mUsageStatsManager = (UsageStatsManager) mContext.getSystemService(Context.USAGE_STATS_SERVICE);
-            Log.i(TAG, "using UsageStatsManager");
         }
         mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-        Log.i(TAG, "using ActivityManager");
     }
 
     public static String[] getPermissions() {
@@ -49,18 +52,20 @@ public class ForegroundAppCollector {
     }
 
     public int collect() {
+        LOG.info("preparing to collect");
         result = new ForegroundAppData();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             if (!EasyPermissions.hasPermissions(PERMISSIONS_EG_L)) {
-                Log.i(TAG, "no usage stat permission");
+                LOG.info("no usage stat permission");
             } else {
+                LOG.info("using UsageEvents");
                 long INTERVAL = 10 * 1000;
                 long currentTimeMillis = System.currentTimeMillis();
                 UsageEvents usageEvents = null;
                 try {
                     usageEvents = mUsageStatsManager.queryEvents(currentTimeMillis - INTERVAL, currentTimeMillis + INTERVAL);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LOG.info("error getting UsageEvents {}", e);
                 }
                 if (usageEvents != null) {
                     UsageEvents.Event event = new UsageEvents.Event();
@@ -75,41 +80,46 @@ public class ForegroundAppCollector {
                         }
                     }
                     if (foregroundApp == null) {
-                        Log.i(TAG, "no foreground app");
+                        LOG.info("no foreground app");
                     } else {
+                        LOG.info("start collecting");
                         result.put(foregroundApp, "UsageStats", System.currentTimeMillis());
                     }
                 }
             }
         }
+        LOG.info("using RunningTaskInfo");
         ActivityManager.RunningTaskInfo foregroundTaskInfo = null;
         try {
             foregroundTaskInfo = mActivityManager.getRunningTasks(1).get(0);
         } catch (Exception e) {
-            Log.i(TAG, "error when getting foregroundTaskInfo");
-            e.printStackTrace();
+            LOG.info("error getting RunningTaskInfo {}", e);
         }
         if (foregroundTaskInfo == null) {
-            Log.i(TAG, "null foregroundTaskInfo");
+            LOG.info("null RunningTaskInfo");
         } else {
+            LOG.info("start collecting");
             String foregroundApp = foregroundTaskInfo.baseActivity.getPackageName();
             result.put(foregroundApp, "RunningTasks", System.currentTimeMillis());
         }
+        LOG.info("using RunningAppProcessInfo");
         List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfos = null;
         try {
             runningAppProcessInfos = mActivityManager.getRunningAppProcesses();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.info("error getting RunningAppProcessInfo {}", e);
         }
         if (runningAppProcessInfos == null) {
-            Log.i(TAG, "null runningAppProcessInfos");
+            LOG.info("null RunningAppProcessInfo");
         } else {
+            LOG.info("start collecting");
             for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfos) {
                 if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
                     result.put(runningAppProcessInfo.processName, "RunningAppProcesses", System.currentTimeMillis());
                 }
             }
         }
+        LOG.info("finished collect");
         return Collector.COLLECT_SUCCESS;
     }
 

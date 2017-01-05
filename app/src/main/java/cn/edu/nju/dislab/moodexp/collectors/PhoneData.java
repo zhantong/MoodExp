@@ -4,6 +4,9 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,14 +21,18 @@ public class PhoneData {
                     Table.COLUMN_NAME_VALUE + " TEXT)";
     private Map<String, String> data;
 
+    private static final Logger LOG = LoggerFactory.getLogger(PhoneData.class);
+
     public PhoneData() {
         data = new HashMap<>();
     }
 
     public static void DbInit(SQLiteDatabase db) {
+        LOG.info("start init database");
         if (db != null) {
             db.execSQL(SQL_CREATE_TABLE);
         }
+        LOG.info("finished init database");
     }
 
     public void put(String key, String value) {
@@ -33,6 +40,7 @@ public class PhoneData {
     }
 
     public void toDb(SQLiteDatabase db) {
+        LOG.info("start write data to database");
         if (db == null) {
             return;
         }
@@ -43,6 +51,7 @@ public class PhoneData {
             values.put(Table.COLUMN_NAME_VALUE, entry.getValue());
             db.insertWithOnConflict(Table.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
         }
+        LOG.info("finished write data to database");
     }
 
     @Override

@@ -6,6 +6,9 @@ import android.provider.BaseColumns;
 
 import com.amap.api.location.AMapLocation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Created by zhantong on 2016/12/23.
  */
@@ -34,14 +37,18 @@ public class LocationData {
                     Table.COLUMN_NAME_ERROR_INFO + " TEXT)";
     private AMapLocation aMapLocation;
 
+    private static final Logger LOG = LoggerFactory.getLogger(LocationData.class);
+
     public LocationData(AMapLocation aMapLocation) {
         this.aMapLocation = aMapLocation;
     }
 
     public static void DbInit(SQLiteDatabase db) {
+        LOG.info("start init database");
         if (db != null) {
             db.execSQL(SQL_CREATE_TABLE);
         }
+        LOG.info("finished init database");
     }
 
     public AMapLocation getLocation() {
@@ -49,6 +56,7 @@ public class LocationData {
     }
 
     public void toDb(SQLiteDatabase db) {
+        LOG.info("start write data to database");
         if (db == null) {
             return;
         }
@@ -78,6 +86,7 @@ public class LocationData {
             values.put(Table.COLUMN_NAME_ERROR_INFO, aMapLocation.getErrorInfo());
             db.insert(Table.TABLE_NAME, null, values);
         }
+        LOG.info("finished write data to database");
     }
 
     @Override

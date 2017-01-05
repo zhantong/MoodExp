@@ -9,6 +9,9 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cn.edu.nju.dislab.moodexp.EasyPermissions;
 import cn.edu.nju.dislab.moodexp.MainApplication;
 
@@ -33,6 +36,8 @@ public class LocationCollector {
         }
     };
 
+    private static final Logger LOG = LoggerFactory.getLogger(LocationCollector.class);
+
     public LocationCollector() {
         this(MainApplication.getContext());
     }
@@ -51,6 +56,7 @@ public class LocationCollector {
         if (!EasyPermissions.hasPermissions(PERMISSIONS)) {
             return Collector.NO_PERMISSION;
         }
+        LOG.info("preparing to collect");
         AMapLocationClientOption locationClientOption = new AMapLocationClientOption();
         locationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
         //locationClientOption.setOnceLocation(true);
@@ -58,6 +64,7 @@ public class LocationCollector {
         locationClientOption.setHttpTimeOut(6000);
         locationClientOption.setLocationCacheEnable(false);
 
+        LOG.info("start collecting");
         mLocationClient.setLocationOption(locationClientOption);
         mLocationClient.startLocation();
 
@@ -74,8 +81,10 @@ public class LocationCollector {
         mLocationClient.stopLocation();
         mLocationClient.onDestroy();
         if (result == null) {
+            LOG.info("null location");
             return Collector.COLLECT_FAILED;
         }
+        LOG.info("finished collect");
         return Collector.COLLECT_SUCCESS;
     }
 

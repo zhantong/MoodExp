@@ -20,12 +20,16 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -72,6 +76,8 @@ public class ScheduledService extends Service implements Runnable {
     private SQLiteDatabase readableDatabase;
     private SQLiteDatabase writableDatabase;
 
+    private static final Logger LOG = LoggerFactory.getLogger(MainApplication.class);
+
     public static Thread getCollectorThread(final String type, final SQLiteDatabase db) {
         return new Thread(new Runnable() {
             @Override
@@ -79,160 +85,193 @@ public class ScheduledService extends Service implements Runnable {
                 int status = -1;
                 switch (type) {
                     case "Audio":
+                        LOG.info("preparing {}", type);
                         AudioData.DbInit(db);
                         AudioCollector audioCollector = new AudioCollector();
                         status = audioCollector.collect();
+                        LOG.info("{} status {}", type, status);
                         if (status == Collector.COLLECT_SUCCESS) {
                             AudioData result = audioCollector.getResult();
+                            //LOG.info("{} result {}",type,result);
                             if (result != null) {
                                 if (db != null) {
                                     result.toDb(db);
                                 }
-                                Log.i(TAG, result.toString());
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                     case "CallLog":
+                        LOG.info("preparing {}", type);
                         CallLogData.DbInit(db);
                         CallLogCollector callLogCollector = new CallLogCollector();
                         status = callLogCollector.collect();
+                        LOG.info("{} status {}", type, status);
                         if (status == Collector.COLLECT_SUCCESS) {
                             CallLogData result = callLogCollector.getResult();
+                            //LOG.info("{} result {}",type,result);
                             if (result != null) {
                                 if (db != null) {
                                     result.toDb(db);
                                 }
-                                Log.i(TAG, result.toString());
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                     case "Contact":
+                        LOG.info("preparing {}", type);
                         ContactData.DbInit(db);
                         ContactCollector contactCollector = new ContactCollector();
                         status = contactCollector.collect();
+                        LOG.info("{} status {}", type, status);
                         if (status == Collector.COLLECT_SUCCESS) {
                             ContactData result = contactCollector.getResult();
+                            //LOG.info("{} result {}",type,result);
                             if (result != null) {
                                 if (db != null) {
                                     result.toDb(db);
                                 }
-                                Log.i(TAG, result.toString());
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                     case "ForegroundApp":
+                        LOG.info("preparing {}", type);
                         ForegroundAppData.DbInit(db);
                         ForegroundAppCollector foregroundAppCollector = new ForegroundAppCollector();
                         status = foregroundAppCollector.collect();
+                        LOG.info("{} status {}", type, status);
                         if (status == Collector.COLLECT_SUCCESS) {
                             ForegroundAppData result = foregroundAppCollector.getResult();
+                            //LOG.info("{} result {}",type,result);
                             if (result != null) {
                                 if (db != null) {
                                     result.toDb(db);
                                 }
-                                Log.i(TAG, result.toString());
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                     case "Location":
+                        LOG.info("preparing {}", type);
                         LocationData.DbInit(db);
                         LocationCollector locationCollector = new LocationCollector();
                         status = locationCollector.collect();
+                        LOG.info("{} status {}", type, status);
                         if (status == Collector.COLLECT_SUCCESS) {
                             LocationData result = locationCollector.getResult();
+                            //LOG.info("{} result {}",type,result);
                             if (result != null) {
                                 if (db != null) {
                                     result.toDb(db);
                                 }
-                                Log.i(TAG, result.toString());
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                     case "Phone":
+                        LOG.info("preparing {}", type);
                         PhoneData.DbInit(db);
                         PhoneCollector phoneCollector = new PhoneCollector();
                         status = phoneCollector.collect();
+                        LOG.info("{} status {}", type, status);
                         if (status == Collector.COLLECT_SUCCESS) {
                             PhoneData result = phoneCollector.getResult();
+                            //LOG.info("{} result {}",type,result);
                             if (result != null) {
                                 if (db != null) {
                                     result.toDb(db);
                                 }
-                                Log.i(TAG, result.toString());
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                     case "RunningApp":
+                        LOG.info("preparing {}", type);
                         RunningAppData.DbInit(db);
                         RunningAppCollector runningAppCollector = new RunningAppCollector();
                         status = runningAppCollector.collect();
+                        LOG.info("{} status {}", type, status);
                         if (status == Collector.COLLECT_SUCCESS) {
                             RunningAppData result = runningAppCollector.getResult();
+                            //LOG.info("{} result {}",type,result);
                             if (result != null) {
                                 if (db != null) {
                                     result.toDb(db);
                                 }
-                                Log.i(TAG, result.toString());
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                     case "Screen":
+                        LOG.info("preparing {}", type);
                         ScreenData.DbInit(db);
                         ScreenCollector screenCollector = new ScreenCollector();
                         status = screenCollector.collect();
+                        LOG.info("{} status {}", type, status);
                         if (status == Collector.COLLECT_SUCCESS) {
                             ScreenData result = screenCollector.getResult();
+                            //LOG.info("{} result {}",type,result);
                             if (result != null) {
                                 if (db != null) {
                                     result.toDb(db);
                                 }
-                                Log.i(TAG, result.toString());
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                     case "Sensors":
+                        LOG.info("preparing {}", type);
                         SensorsData.DbInit(db);
                         int[] typeSensors = new int[]{Sensor.TYPE_GYROSCOPE, Sensor.TYPE_MAGNETIC_FIELD, Sensor.TYPE_LIGHT, Sensor.TYPE_ACCELEROMETER};
                         long[] maxTimes = new long[]{5000000000L, 5000000000L, 5000000000L, 5000000000L};
                         SensorsCollector sensorsCollector = new SensorsCollector(typeSensors, maxTimes);
                         status = sensorsCollector.collect();
+                        LOG.info("{} status {}", type, status);
                         if (status == Collector.COLLECT_SUCCESS) {
                             SensorsData result = sensorsCollector.getResult();
+                            //LOG.info("{} result {}",type,result);
                             if (result != null) {
                                 if (db != null) {
                                     result.toDb(db);
                                 }
-                                Log.i(TAG, result.toString());
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                     case "Sms":
+                        LOG.info("preparing {}", type);
                         SmsData.DbInit(db);
                         SmsCollector smsCollector = new SmsCollector();
                         status = smsCollector.collect();
+                        LOG.info("{} status {}", type, status);
                         if (status == Collector.COLLECT_SUCCESS) {
                             SmsData result = smsCollector.getResult();
+                            //LOG.info("{} result {}",type,result);
                             if (result != null) {
                                 if (db != null) {
                                     result.toDb(db);
                                 }
-                                Log.i(TAG, result.toString());
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                     case "Wifi":
+                        LOG.info("preparing {}", type);
                         WifiData.DbInit(db);
                         WifiCollector wifiCollector = new WifiCollector();
                         status = wifiCollector.collect();
+                        LOG.info("{} status {}", type, status);
                         if (status == Collector.COLLECT_SUCCESS) {
                             WifiData result = wifiCollector.getResult();
+                            //LOG.info("{} result {}",type,result);
                             if (result != null) {
                                 if (db != null) {
                                     result.toDb(db);
                                 }
-                                Log.i(TAG, result.toString());
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                 }
                 if (db != null) {
@@ -299,27 +338,31 @@ public class ScheduledService extends Service implements Runnable {
 
     @Override
     public void run() {
-        Log.i(TAG, "running started");
+        LOG.info("Scheduled Task running");
         String id = MainApplication.getUserId();
         if (id == null || id.equals("")) {
+            LOG.info("id not set, Scheduled Task finished");
             return;
         }
         try (Cursor cursorSchedule = readableDatabase.query(DbHelper.ScheduleTable.TABLE_NAME, null, DbHelper.ScheduleTable.COLUMN_NAME_IS_ENABLED + " = ?", new String[]{"1"}, null, null, null)) {
             while (cursorSchedule.moveToNext()) {
                 long nextFireTime = cursorSchedule.getLong(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME));
                 long currentTime = System.currentTimeMillis();
-                if (currentTime < nextFireTime) {
-                    continue;
-                }
                 long level = cursorSchedule.getLong(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_LEVEL));
                 String type = cursorSchedule.getString(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_TYPE));
                 long interval = cursorSchedule.getLong(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_INTERVAL));
-                String[] actions = new Gson().fromJson(cursorSchedule.getString(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_ACTIONS)), String[].class);
-                Log.i(TAG, "level: " + level + " type: " + type + " interval: " + interval);
+                LOG.info("level {}, type {}, interval {}, current time {}, next fire time {}", level, type, interval, currentTime, nextFireTime);
+                if (currentTime < nextFireTime) {
+                    LOG.info("{} finished because time isn't up", type);
+                    continue;
+                }
 
                 switch (type) {
                     case "collect":
+                        LOG.info("starting {}", type);
                         String collectDbName;
+                        String[] actions = new Gson().fromJson(cursorSchedule.getString(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_ACTIONS)), String[].class);
+                        LOG.info("actions {}", Arrays.toString(actions));
                         try (Cursor cursorCollectDb = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ?", new String[]{"1"}, null, null, null)) {
                             if (cursorCollectDb.getCount() > 0) {
                                 cursorCollectDb.moveToFirst();
@@ -328,6 +371,7 @@ public class ScheduledService extends Service implements Runnable {
                                 break;
                             }
                         }
+                        LOG.info("using collector database {}", collectDbName);
                         CollectorDbHelper collectorDbHelper = new CollectorDbHelper(collectDbName);
                         final SQLiteDatabase collectorDb = collectorDbHelper.getWritableDatabase();
                         List<Thread> threads = new ArrayList<>();
@@ -344,26 +388,31 @@ public class ScheduledService extends Service implements Runnable {
                                 e.printStackTrace();
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                     case "upload":
+                        LOG.info("starting {}", type);
                         if (!isWifiConnected()) {
-                            Log.i(TAG, "no wifi connection");
+                            LOG.info("{} finished because wifi connection", type);
                             break;
                         }
                         final String userId = MainApplication.getUserId();
                         final String version = MainApplication.getVersionName();
                         try (Cursor cursorCheckUpload = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ? AND " + DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED + " = ?", new String[]{"0", "0"}, null, null, null)) {
-                            Log.i(TAG, cursorCheckUpload.getCount() + " databases need upload" + " at thread " + Thread.currentThread().getId());
+                            LOG.info("{} databases need to upload", cursorCheckUpload.getCount());
                             while (cursorCheckUpload.moveToNext()) {
                                 final String dbName = cursorCheckUpload.getString(cursorCheckUpload.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
-                                Log.i(TAG, "uploading " + dbName + " at thread " + Thread.currentThread().getId());
+                                LOG.info("preparing to upload {}", dbName);
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
                                         File dbPath = getDatabasePath(dbName);
                                         File tempDir = MainApplication.getContext().getCacheDir();
                                         File gzipFile = new File(tempDir, dbPath.getName() + ".gz");
-                                        Log.i(dbPath.getAbsolutePath(), gzipFile.getAbsolutePath());
+                                        if (gzipFile.exists()) {
+                                            gzipFile.delete();
+                                        }
+                                        LOG.info("gzip {} to {}", dbPath.getAbsolutePath(), gzipFile.getAbsolutePath());
                                         boolean result = gzip(dbPath.getAbsolutePath(), gzipFile.getAbsolutePath());
                                         String uploadFilePath;
                                         if (result) {
@@ -371,11 +420,15 @@ public class ScheduledService extends Service implements Runnable {
                                         } else {
                                             uploadFilePath = dbPath.getAbsolutePath();
                                         }
+                                        LOG.info("uploading {} with id {} version {}", uploadFilePath, userId, version);
                                         boolean isUploadSuccess = HttpAPI.upload(uploadFilePath, userId, 0, version);
                                         if (isUploadSuccess) {
                                             ContentValues updateValues = new ContentValues();
                                             updateValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED, 1);
                                             writableDatabase.update(DbHelper.CollectDbTable.TABLE_NAME, updateValues, DbHelper.CollectDbTable.COLUMN_NAME_NAME + " = ?", new String[]{dbName});
+                                            LOG.info("successfully uploaded {}", uploadFilePath);
+                                        } else {
+                                            LOG.info("upload {} failed", uploadFilePath);
                                         }
                                         if (gzipFile.exists()) {
                                             gzipFile.delete();
@@ -384,8 +437,10 @@ public class ScheduledService extends Service implements Runnable {
                                 }).start();
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                     case "newDb":
+                        LOG.info("starting {}", type);
                         String currentUsingDb = null;
                         try (Cursor cursorCurrentUsingDb = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ?", new String[]{"1"}, null, null, null)) {
                             if (cursorCurrentUsingDb.getCount() > 0) {
@@ -393,6 +448,7 @@ public class ScheduledService extends Service implements Runnable {
                                 currentUsingDb = cursorCurrentUsingDb.getString(cursorCurrentUsingDb.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
                             }
                         }
+                        LOG.info("database {} is current using", currentUsingDb);
                         if (currentUsingDb == null) {
                             ContentValues initCollectDb = new ContentValues();
                             initCollectDb.put(DbHelper.CollectDbTable.COLUMN_NAME_NAME, System.currentTimeMillis() + ".db");
@@ -414,33 +470,45 @@ public class ScheduledService extends Service implements Runnable {
                             writableDatabase.setTransactionSuccessful();
                             writableDatabase.endTransaction();
                         }
+                        LOG.info("changed database successfully");
+                        LOG.info("finished {}", type);
                         break;
                     case "heartBeat":
+                        LOG.info("starting {}", type);
                         writeHeartBeatToDb();
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
+                                LOG.info("sending heartbeat");
                                 HttpAPI.heartBeat(MainApplication.getUserId());
+                                LOG.info("sent heartbeat");
                             }
                         }).start();
+                        LOG.info("finished {}", type);
                         break;
                     case "cleanUp":
+                        LOG.info("starting {}", type);
                         try (Cursor cursorCheckUpload = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ? AND " + DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED + " = ? AND " + DbHelper.CollectDbTable.COLUMN_NAME_IS_DELETED + " = ?", new String[]{"0", "1", "0"}, null, null, null)) {
                             while (cursorCheckUpload.moveToNext()) {
                                 final String dbName = cursorCheckUpload.getString(cursorCheckUpload.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
                                 File dbPath = getDatabasePath(dbName);
+                                LOG.info("deleting {}", dbPath.getAbsolutePath());
                                 if ((!dbPath.exists()) || dbPath.delete()) {
                                     ContentValues updateValues = new ContentValues();
                                     updateValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_DELETED, 1);
                                     writableDatabase.update(DbHelper.CollectDbTable.TABLE_NAME, updateValues, DbHelper.CollectDbTable.COLUMN_NAME_NAME + " = ?", new String[]{dbName});
+                                    LOG.info("{} is deleted successfully", dbPath.getAbsolutePath());
                                 }
                             }
                         }
+                        LOG.info("finished {}", type);
                         break;
                     case "notification":
+                        LOG.info("starting {}", type);
                         Calendar calendar = Calendar.getInstance();
                         int hour = calendar.get(Calendar.HOUR_OF_DAY);
                         if (hour < 9 || hour > 21) {
+                            LOG.info("{} finished because it's {} (21:00 - 9:00)");
                             break;
                         }
                         long lastNotification = 0;
@@ -448,6 +516,7 @@ public class ScheduledService extends Service implements Runnable {
                             if (cursorLastNotification.getCount() > 0) {
                                 cursorLastNotification.moveToFirst();
                                 lastNotification = cursorLastNotification.getLong(cursorLastNotification.getColumnIndex("MAX"));
+                                LOG.info("last notification is at {}", lastNotification);
                             } else {
                                 if (true) {
                                     ContentValues values = new ContentValues();
@@ -464,9 +533,10 @@ public class ScheduledService extends Service implements Runnable {
                             }
                         }
                         if (lastNotification == 0 || currentTime - lastNotification < 5 * 60 * 60 * 1000) {
+                            LOG.info("{} finished because last notification is {}, current time is {}", lastNotification, currentTime);
                             break;
                         }
-
+                        LOG.info("preparing to send notification");
                         Context notificationContext = MainApplication.getContext();
                         Notification.Builder builder = new Notification.Builder(notificationContext)
                                 .setDefaults(Notification.DEFAULT_ALL)
@@ -487,27 +557,31 @@ public class ScheduledService extends Service implements Runnable {
                         builder.setContentIntent(resultPendingIntent);
                         NotificationManager notificationManager = (NotificationManager) notificationContext.getSystemService(Context.NOTIFICATION_SERVICE);
                         notificationManager.notify(new Random().nextInt(), builder.build());
+                        LOG.info("notification is sent");
 
                         ContentValues updateValues = new ContentValues();
                         updateValues.put(DbHelper.MetaTable.COLUMN_NAME_INTEGER_VALUE, System.currentTimeMillis());
                         writableDatabase.update(DbHelper.MetaTable.TABLE_NAME, updateValues, DbHelper.MetaTable.COLUMN_NAME_KEY + " = ?", new String[]{"last_notification"});
+                        LOG.info("finished {}", type);
                         break;
                 }
                 if (interval > 0) {
                     while (nextFireTime < System.currentTimeMillis()) {
                         nextFireTime += interval;
                     }
+                    LOG.info("next fire time is set to {} with interval {}", nextFireTime, interval);
                     ContentValues updateValues = new ContentValues();
                     updateValues.put(DbHelper.ScheduleTable.COLUMN_NAME_NEXT_FIRE_TIME, nextFireTime);
                     writableDatabase.update(DbHelper.ScheduleTable.TABLE_NAME, updateValues, DbHelper.ScheduleTable.COLUMN_NAME_LEVEL + " = ?", new String[]{Long.toString(level)});
                 } else {
+                    LOG.info("it's one time task because interval is {}, disabling task", interval);
                     ContentValues updateValues = new ContentValues();
                     updateValues.put(DbHelper.ScheduleTable.COLUMN_NAME_IS_ENABLED, 0);
                     writableDatabase.update(DbHelper.ScheduleTable.TABLE_NAME, updateValues, DbHelper.ScheduleTable.COLUMN_NAME_LEVEL + " = ?", new String[]{Long.toString(level)});
                 }
             }
         }
-        Log.i(TAG, "running at thread " + Thread.currentThread().getId());
+        LOG.info("Scheduled Task stopping");
     }
 
     private void writeHeartBeatToDb() {
@@ -516,6 +590,7 @@ public class ScheduledService extends Service implements Runnable {
             static final String COLUMN_NAME_TIME = "time";
             static final String COLUMN_NAME_TIMESTAMP = "timestamp";
         }
+        LOG.info("preparing to write heart beat to database");
         String collectDbName;
         try (Cursor cursorCollectDb = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ?", new String[]{"1"}, null, null, null)) {
             if (cursorCollectDb.getCount() > 0) {
@@ -541,6 +616,7 @@ public class ScheduledService extends Service implements Runnable {
         db.insert(HeartBeatTable.TABLE_NAME, null, values);
         db.close();
         collectorDbHelper.close();
+        LOG.info("write heart beat to database successfully");
     }
 
     @Override

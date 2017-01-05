@@ -4,6 +4,9 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,14 +27,18 @@ public class SensorsData {
                     Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
     private Map<Integer, ArrayList<Sensor>> sensors;
 
+    private static final Logger LOG = LoggerFactory.getLogger(SensorsData.class);
+
     public SensorsData() {
         sensors = new HashMap<>();
     }
 
     public static void DbInit(SQLiteDatabase db) {
+        LOG.info("start init database");
         if (db != null) {
             db.execSQL(SQL_CREATE_TABLE);
         }
+        LOG.info("finished init database");
     }
 
     public void put(int type, long timestamp, float[] values) {
@@ -42,6 +49,7 @@ public class SensorsData {
     }
 
     public void toDb(SQLiteDatabase db) {
+        LOG.info("start write data to database");
         if (db == null) {
             return;
         }
@@ -59,6 +67,7 @@ public class SensorsData {
                 db.insert(Table.TABLE_NAME, null, values);
             }
         }
+        LOG.info("finished write data to database");
     }
 
     @Override

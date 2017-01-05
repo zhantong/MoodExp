@@ -4,6 +4,9 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,14 +22,18 @@ public class AudioData {
                     AudioTable.COLUMN_NAME_TIMESTAMP + " INTEGER)";
     private List<Audio> audios;
 
+    private static final Logger LOG = LoggerFactory.getLogger(AudioData.class);
+
     public AudioData() {
         audios = new ArrayList<>();
     }
 
     public static void DbInit(SQLiteDatabase db) {
+        LOG.info("start init database");
         if (db != null) {
             db.execSQL(SQL_CREATE_TABLE_AUDIO);
         }
+        LOG.info("finished init database");
     }
 
     public void put(long timestamp, double amplitude) {
@@ -34,6 +41,7 @@ public class AudioData {
     }
 
     public void toDb(SQLiteDatabase db) {
+        LOG.info("start write data to database");
         if (db == null) {
             return;
         }
@@ -44,6 +52,7 @@ public class AudioData {
             values.put(AudioTable.COLUMN_NAME_TIMESTAMP, audio.timestamp);
             db.insert(AudioTable.TABLE_NAME, null, values);
         }
+        LOG.info("finished write data to database");
     }
 
     @Override

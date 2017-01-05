@@ -7,6 +7,9 @@ import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.util.Log;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 import cn.edu.nju.dislab.moodexp.EasyPermissions;
@@ -24,6 +27,8 @@ public class RunningAppCollector {
     private ActivityManager mActivityManager;
     private UsageStatsManager mUsageStatsManager;
     private RunningAppData result;
+
+    private static final Logger LOG = LoggerFactory.getLogger(ForegroundAppCollector.class);
 
     public RunningAppCollector() {
         this(MainApplication.getContext());
@@ -48,69 +53,80 @@ public class RunningAppCollector {
     }
 
     public int collect() {
+        LOG.info("preparing to collect");
         result = new RunningAppData();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             if (!EasyPermissions.hasPermissions(PERMISSIONS_EG_L)) {
-                Log.i(TAG, "no usage stat permission");
-            }
-            long INTERVAL = 30 * 60 * 1000;
-            long currentTimeMillis = System.currentTimeMillis();
-            List<UsageStats> usageStatses = null;
-            try {
-                usageStatses = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, currentTimeMillis - INTERVAL, currentTimeMillis + INTERVAL);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (usageStatses == null || usageStatses.isEmpty()) {
-                Log.i(TAG, "null usageStatses");
+                LOG.info("no usage stat permission");
             } else {
-                for (UsageStats usageStats : usageStatses) {
-                    result.put(usageStats.getPackageName(), "UsageStats", System.currentTimeMillis());
+                LOG.info("using UsageEvents");
+                long INTERVAL = 30 * 60 * 1000;
+                long currentTimeMillis = System.currentTimeMillis();
+                List<UsageStats> usageStatses = null;
+                try {
+                    usageStatses = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, currentTimeMillis - INTERVAL, currentTimeMillis + INTERVAL);
+                } catch (Exception e) {
+                    LOG.info("error getting UsageEvents {}", e);
+                }
+                if (usageStatses == null || usageStatses.isEmpty()) {
+                    LOG.info("null or empty usageStatses");
+                } else {
+                    LOG.info("start collecting");
+                    for (UsageStats usageStats : usageStatses) {
+                        result.put(usageStats.getPackageName(), "UsageStats", System.currentTimeMillis());
+                    }
                 }
             }
         }
+        LOG.info("using RunningTaskInfo");
         List<ActivityManager.RunningTaskInfo> runningTaskInfos = null;
         try {
             runningTaskInfos = mActivityManager.getRunningTasks(Integer.MAX_VALUE);
         } catch (Exception e) {
-            Log.i(TAG, "error when getting runningTaskInfos");
+            LOG.info("error getting RunningTaskInfo {}", e);
             e.printStackTrace();
         }
         if (runningTaskInfos == null) {
-            Log.i(TAG, "null runningTaskInfos");
+            LOG.info("null RunningTaskInfo");
         } else {
+            LOG.info("start collecting");
             for (ActivityManager.RunningTaskInfo runningTaskInfo : runningTaskInfos) {
                 result.put(runningTaskInfo.baseActivity.getPackageName(), "RunningTasks", System.currentTimeMillis());
             }
         }
+        LOG.info("using RunningAppProcessInfo");
         List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfos = null;
         try {
             runningAppProcessInfos = mActivityManager.getRunningAppProcesses();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.info("error getting RunningAppProcessInfo {}", e);
         }
         if (runningAppProcessInfos == null) {
-            Log.i(TAG, "null runningAppProcessInfos");
+            LOG.info("null RunningAppProcessInfo");
         } else {
+            LOG.info("start collecting");
             for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfos) {
                 if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
                     result.put(runningAppProcessInfo.processName, "RunningAppProcesses", System.currentTimeMillis());
                 }
             }
         }
+        LOG.info("using RunningServiceInfo");
         List<ActivityManager.RunningServiceInfo> runningServiceInfos = null;
         try {
             runningServiceInfos = mActivityManager.getRunningServices(Integer.MAX_VALUE);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.info("error getting RunningServiceInfo {}", e);
         }
         if (runningServiceInfos == null) {
-            Log.i(TAG, "null runningServiceInfos");
+            LOG.info("null RunningServiceInfo");
         } else {
+            LOG.info("start collecting");
             for (ActivityManager.RunningServiceInfo runningServiceInfo : runningServiceInfos) {
                 result.put(runningServiceInfo.process, "RunningService", System.currentTimeMillis());
             }
         }
+        LOG.info("finished collect");
         return Collector.COLLECT_SUCCESS;
     }
 

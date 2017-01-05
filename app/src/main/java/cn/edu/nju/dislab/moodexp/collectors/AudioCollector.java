@@ -4,7 +4,9 @@ import android.Manifest;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cn.edu.nju.dislab.moodexp.EasyPermissions;
 
@@ -36,6 +38,8 @@ public class AudioCollector {
         }
     };
 
+    private static final Logger LOG = LoggerFactory.getLogger(AudioCollector.class);
+
     public AudioCollector() {
         mHandler = new Handler(Looper.getMainLooper());
     }
@@ -59,6 +63,7 @@ public class AudioCollector {
         if (!EasyPermissions.hasPermissions(PERMISSIONS)) {
             return Collector.NO_PERMISSION;
         }
+        LOG.info("preparing to collect");
         try {
             mRecorder = new MediaRecorder();
             mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -68,21 +73,22 @@ public class AudioCollector {
             mRecorder.prepare();
             mRecorder.start();
         } catch (Exception e) {
-            Log.i(TAG, "unable to record audio");
-            e.printStackTrace();
+            LOG.info("unable to record audio {}", e);
             return Collector.NO_PERMISSION;
         }
         mTickCount = 0;
         result = new AudioData();
+        LOG.info("start collecting");
         mHandler.postDelayed(mPollTask, POLL_INTERVAL);
         synchronized (LOCK) {
             try {
                 LOCK.wait();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.info("interrupted {}", e);
                 return Collector.COLLECT_FAILED;
             }
         }
+        LOG.info("finished collect");
         return Collector.COLLECT_SUCCESS;
     }
 

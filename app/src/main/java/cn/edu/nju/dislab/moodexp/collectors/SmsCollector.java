@@ -5,7 +5,9 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.Telephony;
-import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cn.edu.nju.dislab.moodexp.EasyPermissions;
 import cn.edu.nju.dislab.moodexp.MainApplication;
@@ -20,6 +22,8 @@ public class SmsCollector {
     private Context mContext;
     private ContentResolver mContentResolver;
     private SmsData result;
+
+    private static final Logger LOG = LoggerFactory.getLogger(SmsCollector.class);
 
     public SmsCollector() {
         this(MainApplication.getContext());
@@ -38,18 +42,20 @@ public class SmsCollector {
         if (!EasyPermissions.hasPermissions(PERMISSIONS)) {
             return Collector.NO_PERMISSION;
         }
+        LOG.info("preparing to collect");
         Cursor cursor;
         try {
             cursor = mContentResolver.query(Telephony.Sms.CONTENT_URI, null, null, null, null);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.info("error get cursor {}", e);
             return Collector.NO_PERMISSION;
         }
         if (cursor == null) {
-            Log.i(TAG, "null cursor");
+            LOG.info("null cursor");
             return Collector.NO_PERMISSION;
         }
         if (cursor.getCount() > 0) {
+            LOG.info("start collecting");
             result = new SmsData();
             while (cursor.moveToNext()) {
                 String address = cursor.getString(cursor.getColumnIndex(Telephony.Sms.ADDRESS));
@@ -60,10 +66,11 @@ public class SmsCollector {
             }
         } else {
             cursor.close();
-            Log.i(TAG, "empty cursor");
+            LOG.info("empty cursor");
             return Collector.COLLECT_FAILED;
         }
         cursor.close();
+        LOG.info("finished collect");
         return Collector.COLLECT_SUCCESS;
     }
 

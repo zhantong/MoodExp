@@ -5,7 +5,9 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.CallLog;
-import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cn.edu.nju.dislab.moodexp.EasyPermissions;
 import cn.edu.nju.dislab.moodexp.MainApplication;
@@ -20,6 +22,8 @@ public class CallLogCollector {
     private Context mContext;
     private ContentResolver mContentResolver;
     private CallLogData result;
+
+    private static final Logger LOG = LoggerFactory.getLogger(CallLogCollector.class);
 
     public CallLogCollector() {
         this(MainApplication.getContext());
@@ -38,19 +42,21 @@ public class CallLogCollector {
         if (!EasyPermissions.hasPermissions(PERMISSIONS)) {
             return Collector.NO_PERMISSION;
         }
+        LOG.info("preparing to collect");
         Cursor cursor;
         try {
             cursor = mContentResolver.query(CallLog.Calls.CONTENT_URI, null, null, null, null);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.info("error get cursor {}", e);
             return Collector.NO_PERMISSION;
         }
         if (cursor == null) {
-            Log.i(TAG, "null cursor");
+            LOG.info("null cursor");
             return Collector.NO_PERMISSION;
         }
         if (cursor.getCount() > 0) {
             result = new CallLogData();
+            LOG.info("start collecting");
             while (cursor.moveToNext()) {
                 String number = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
                 String type = cursor.getString(cursor.getColumnIndex(CallLog.Calls.TYPE));
@@ -60,10 +66,11 @@ public class CallLogCollector {
             }
         } else {
             cursor.close();
-            Log.i(TAG, "empty cursor");
+            LOG.info("empty cursor");
             return Collector.COLLECT_FAILED;
         }
         cursor.close();
+        LOG.info("finished collect");
         return Collector.COLLECT_SUCCESS;
     }
 

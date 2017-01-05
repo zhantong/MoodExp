@@ -17,9 +17,18 @@ import org.acra.annotation.ReportsCrashes;
 import org.acra.sender.HttpSender;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.rolling.RollingFileAppender;
+import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
+import ch.qos.logback.core.util.StatusPrinter;
 import io.yunba.android.manager.YunBaManager;
 
 /**
@@ -114,6 +123,8 @@ public class MainApplication extends Application {
         super.onCreate();
         mContext = this;
 
+        configureLogbackDirectly();
+
         YunBaManager.setThirdPartyEnable(getApplicationContext(), true);
         YunBaManager.setXMRegister("2882303761517536019", "5531753647019");
         YunBaManager.start(getApplicationContext());
@@ -139,5 +150,39 @@ public class MainApplication extends Application {
         super.attachBaseContext(base);
 
         ACRA.init(this);
+    }
+
+    private void configureLogbackDirectly() {
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        context.reset();
+
+        String logDir = getFilesDir().getAbsolutePath() + "/log";
+
+        RollingFileAppender<ILoggingEvent> rollingFileAppender = new RollingFileAppender<>();
+        rollingFileAppender.setAppend(true);
+        rollingFileAppender.setContext(context);
+
+        TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new TimeBasedRollingPolicy<>();
+        rollingPolicy.setFileNamePattern(logDir + "/log.%d.txt");
+        rollingPolicy.setMaxHistory(2);
+        rollingPolicy.setParent(rollingFileAppender);
+        rollingPolicy.setContext(context);
+        rollingPolicy.start();
+
+        rollingFileAppender.setRollingPolicy(rollingPolicy);
+
+        PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+        encoder.setPattern("%d [%thread] %level %logger{36} - %msg%n");
+        encoder.setContext(context);
+        encoder.start();
+
+        rollingFileAppender.setEncoder(encoder);
+        rollingFileAppender.start();
+
+        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(Level.TRACE);
+        root.addAppender(rollingFileAppender);
+
+        StatusPrinter.print(context);
     }
 }

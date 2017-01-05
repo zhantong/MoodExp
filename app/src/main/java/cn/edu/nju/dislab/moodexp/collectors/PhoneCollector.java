@@ -6,6 +6,9 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cn.edu.nju.dislab.moodexp.EasyPermissions;
 import cn.edu.nju.dislab.moodexp.MainApplication;
 
@@ -20,6 +23,8 @@ public class PhoneCollector {
     private TelephonyManager mTelecomManager;
     private WifiManager mWifiManager;
     private PhoneData result;
+
+    private static final Logger LOG = LoggerFactory.getLogger(PhoneCollector.class);
 
     public PhoneCollector() {
         this(MainApplication.getContext());
@@ -39,6 +44,7 @@ public class PhoneCollector {
         if (!EasyPermissions.hasPermissions(PERMISSIONS)) {
             return Collector.NO_PERMISSION;
         }
+        LOG.info("preparing to collect");
         try {
             int dataState = mTelecomManager.getDataState();
             String deviceId = mTelecomManager.getDeviceId();
@@ -57,6 +63,7 @@ public class PhoneCollector {
             String simSerialNumber = mTelecomManager.getSimSerialNumber();
             int simState = mTelecomManager.getSimState();
 
+            LOG.info("start collecting");
             result = new PhoneData();
             result.put("data_state", Integer.toString(dataState));
             result.put("device_id", deviceId);
@@ -75,7 +82,7 @@ public class PhoneCollector {
             result.put("sim_serial_number", simSerialNumber);
             result.put("sim_state", Integer.toString(simState));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.info("error when collecting {}", e);
             return Collector.NO_PERMISSION;
         }
         try {
@@ -84,9 +91,10 @@ public class PhoneCollector {
 
             result.put("mac_address", macAddress);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.info("error when collecting {}", e);
             return Collector.NO_PERMISSION;
         }
+        LOG.info("finished collect");
         return Collector.COLLECT_SUCCESS;
     }
 

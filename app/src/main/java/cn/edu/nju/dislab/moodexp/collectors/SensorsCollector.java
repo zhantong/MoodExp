@@ -5,7 +5,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +63,8 @@ public class SensorsCollector {
         }
     };
 
+    private static final Logger LOG = LoggerFactory.getLogger(SensorsCollector.class);
+
     public SensorsCollector(int[] typeSensors, long[] maxTimes) {
         this(MainApplication.getContext(), typeSensors, maxTimes);
     }
@@ -82,10 +86,12 @@ public class SensorsCollector {
     }
 
     public int collect() {
+        LOG.info("preparing to collect");
         result = new SensorsData();
         List<Sensor> sensors = new ArrayList<>();
         mIsDone = new HashMap<>();
         mIsAllDone = false;
+        LOG.info("start collecting");
         for (int typeSensor : mTypeSensors) {
             Sensor sensor = mSensorManager.getDefaultSensor(typeSensor);
             if (sensor != null) {
@@ -93,18 +99,19 @@ public class SensorsCollector {
                 sensors.add(sensor);
                 mSensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
             } else {
-                Log.i(TAG, "sensor " + typeSensor + " not exists");
+                LOG.info("sensor {} not exist", typeSensor);
             }
         }
         synchronized (LOCK) {
             try {
                 LOCK.wait();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.info("error interrupted {}", e);
                 return Collector.COLLECT_FAILED;
             }
         }
         mSensorManager.unregisterListener(sensorEventListener);
+        LOG.info("finished collect");
         return Collector.COLLECT_SUCCESS;
     }
 

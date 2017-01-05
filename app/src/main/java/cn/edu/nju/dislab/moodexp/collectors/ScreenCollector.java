@@ -7,6 +7,9 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.view.Display;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cn.edu.nju.dislab.moodexp.MainApplication;
 
 import static android.content.Context.POWER_SERVICE;
@@ -22,6 +25,8 @@ public class ScreenCollector {
     private DisplayManager mDisplayManager;
     private PowerManager mPowerManager;
     private ScreenData result;
+
+    private static final Logger LOG = LoggerFactory.getLogger(ScreenCollector.class);
 
     public ScreenCollector() {
         this(MainApplication.getContext());
@@ -42,6 +47,7 @@ public class ScreenCollector {
     }
 
     public int collect() {
+        LOG.info("preparing to collect");
         boolean isScreenOn = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             for (Display display : mDisplayManager.getDisplays()) {
@@ -52,7 +58,9 @@ public class ScreenCollector {
         } else {
             isScreenOn = mPowerManager.isScreenOn();
         }
+        LOG.info("start collecting");
         result = new ScreenData(isScreenOn, System.currentTimeMillis());
+        LOG.info("finished collect");
         return Collector.COLLECT_SUCCESS;
     }
 

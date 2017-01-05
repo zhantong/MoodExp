@@ -5,6 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.wifi.ScanResult;
 import android.provider.BaseColumns;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,14 +25,17 @@ public class WifiData {
                     Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
     private List<ScanResult> scanResults;
 
+    private static final Logger LOG = LoggerFactory.getLogger(SmsData.class);
     public WifiData() {
         scanResults = new ArrayList<>();
     }
 
     public static void DbInit(SQLiteDatabase db) {
+        LOG.info("start init database");
         if (db != null) {
             db.execSQL(SQL_CREATE_TABLE);
         }
+        LOG.info("finished init database");
     }
 
     public void put(List<ScanResult> scanResults) {
@@ -37,6 +43,7 @@ public class WifiData {
     }
 
     public void toDb(SQLiteDatabase db) {
+        LOG.info("start write data to database");
         if (db == null) {
             return;
         }
@@ -49,6 +56,7 @@ public class WifiData {
             values.put(Table.COLUMN_NAME_TIMESTAMP, scanResult.timestamp);
             db.insert(Table.TABLE_NAME, null, values);
         }
+        LOG.info("finished write data to database");
     }
 
     @Override
