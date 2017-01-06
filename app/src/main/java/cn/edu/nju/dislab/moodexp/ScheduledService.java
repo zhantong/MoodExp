@@ -21,6 +21,8 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +67,9 @@ import cn.edu.nju.dislab.moodexp.collectors.SmsData;
 import cn.edu.nju.dislab.moodexp.collectors.WifiCollector;
 import cn.edu.nju.dislab.moodexp.collectors.WifiData;
 import cn.edu.nju.dislab.moodexp.httputils.HttpAPI;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 /**
  * Created by zhantong on 2016/12/23.
@@ -413,38 +418,53 @@ public class ScheduledService extends Service implements Runnable {
                             while (cursorCheckUpload.moveToNext()) {
                                 final String dbName = cursorCheckUpload.getString(cursorCheckUpload.getColumnIndexOrThrow(DbHelper.CollectDbTable.COLUMN_NAME_NAME));
                                 LOG.info("preparing to upload {}", dbName);
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        File dbPath = getDatabasePath(dbName);
-                                        File tempDir = MainApplication.getContext().getCacheDir();
-                                        File gzipFile = new File(tempDir, dbPath.getName() + ".gz");
-                                        if (gzipFile.exists()) {
-                                            gzipFile.delete();
+                                File dbPath = getDatabasePath(dbName);
+                                File tempDir = MainApplication.getContext().getCacheDir();
+                                final File gzipFile = new File(tempDir, dbPath.getName() + ".gz");
+                                if (gzipFile.exists()) {
+                                    gzipFile.delete();
+                                }
+                                LOG.info("gzip {} to {}", dbPath.getAbsolutePath(), gzipFile.getAbsolutePath());
+                                boolean result = gzip(dbPath.getAbsolutePath(), gzipFile.getAbsolutePath());
+                                String uploadFilePath;
+                                if (result) {
+                                    uploadFilePath = gzipFile.getAbsolutePath();
+                                } else {
+                                    uploadFilePath = dbPath.getAbsolutePath();
+                                }
+                                LOG.info("uploading {} with id {} version {}", uploadFilePath, userId, version);
+                                try {
+                                    HttpAPI.upload(uploadFilePath, userId, 0, version, new Callback() {
+                                        @Override
+                                        public void onFailure(Call call, IOException e) {
+                                            LOG.info("uploading failed {}", e);
+                                            if (gzipFile.exists()) {
+                                                gzipFile.delete();
+                                            }
                                         }
-                                        LOG.info("gzip {} to {}", dbPath.getAbsolutePath(), gzipFile.getAbsolutePath());
-                                        boolean result = gzip(dbPath.getAbsolutePath(), gzipFile.getAbsolutePath());
-                                        String uploadFilePath;
-                                        if (result) {
-                                            uploadFilePath = gzipFile.getAbsolutePath();
-                                        } else {
-                                            uploadFilePath = dbPath.getAbsolutePath();
+
+                                        @Override
+                                        public void onResponse(Call call, Response response) throws IOException {
+                                            if (!response.isSuccessful()) {
+                                                throw new IOException("Unexpected code " + response);
+                                            }
+                                            JsonElement jsonElement = new JsonParser().parse(response.body().charStream());
+                                            if (jsonElement.getAsJsonObject().get("status").getAsBoolean()) {
+                                                ContentValues updateValues = new ContentValues();
+                                                updateValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED, 1);
+                                                writableDatabase.update(DbHelper.CollectDbTable.TABLE_NAME, updateValues, DbHelper.CollectDbTable.COLUMN_NAME_NAME + " = ?", new String[]{dbName});
+                                                LOG.info("file uploaded successfully");
+                                            } else {
+                                                LOG.info("upload failed, something wrong in the server side");
+                                            }
+                                            if (gzipFile.exists()) {
+                                                gzipFile.delete();
+                                            }
                                         }
-                                        LOG.info("uploading {} with id {} version {}", uploadFilePath, userId, version);
-                                        boolean isUploadSuccess = HttpAPI.upload(uploadFilePath, userId, 0, version);
-                                        if (isUploadSuccess) {
-                                            ContentValues updateValues = new ContentValues();
-                                            updateValues.put(DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED, 1);
-                                            writableDatabase.update(DbHelper.CollectDbTable.TABLE_NAME, updateValues, DbHelper.CollectDbTable.COLUMN_NAME_NAME + " = ?", new String[]{dbName});
-                                            LOG.info("successfully uploaded {}", uploadFilePath);
-                                        } else {
-                                            LOG.info("upload {} failed", uploadFilePath);
-                                        }
-                                        if (gzipFile.exists()) {
-                                            gzipFile.delete();
-                                        }
-                                    }
-                                }).start();
+                                    });
+                                } catch (IOException e) {
+                                    LOG.info("uploading failed {}", e);
+                                }
                             }
                         }
                         LOG.info("finished {}", type);
@@ -490,14 +510,30 @@ public class ScheduledService extends Service implements Runnable {
                             break;
                         }
                         writeHeartBeatToDb();
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                LOG.info("sending heartbeat");
-                                HttpAPI.heartBeat(MainApplication.getUserId());
-                                LOG.info("sent heartbeat");
-                            }
-                        }).start();
+                        LOG.info("sending heartbeat");
+                        try {
+                            HttpAPI.heartBeat(MainApplication.getUserId(), new Callback() {
+                                @Override
+                                public void onFailure(Call call, IOException e) {
+                                    LOG.info("sending heartbeat failed {}", e);
+                                }
+
+                                @Override
+                                public void onResponse(Call call, Response response) throws IOException {
+                                    if (!response.isSuccessful()) {
+                                        throw new IOException("Unexpected code " + response);
+                                    }
+                                    JsonElement jsonElement = new JsonParser().parse(response.body().charStream());
+                                    if (jsonElement.getAsJsonObject().get("status").getAsBoolean()) {
+                                        LOG.info("sent heartbeat successfully");
+                                    } else {
+                                        LOG.info("send heartbeat failed, something wrong in the server side");
+                                    }
+                                }
+                            });
+                        } catch (IOException e) {
+                            LOG.info("sending heartbeat failed {}", e);
+                        }
                         LOG.info("finished {}", type);
                         break;
                     case "cleanUp":

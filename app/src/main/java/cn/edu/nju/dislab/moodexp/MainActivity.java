@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
@@ -336,7 +337,15 @@ public class MainActivity extends Activity {
         @Override
         protected JsonObject doInBackground(Void... params) {
             String id = MainApplication.getUserId();
-            JsonObject result = HttpAPI.getSurveyCount(id);
+            JsonObject result = null;
+            try {
+                JsonElement jsonElement = HttpAPI.getSurveyCount(id, null);
+                if (jsonElement != null) {
+                    result = jsonElement.getAsJsonObject();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return result;
         }
 
@@ -382,7 +391,16 @@ public class MainActivity extends Activity {
 
         @Override
         protected JsonObject doInBackground(Void... params) {
-            return HttpAPI.getSurvey(MainApplication.getUserId());
+            JsonObject result = null;
+            try {
+                JsonElement jsonElement = HttpAPI.getSurvey(MainApplication.getUserId(), null);
+                if (jsonElement != null) {
+                    result = jsonElement.getAsJsonObject();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return result;
         }
 
         @Override
@@ -436,7 +454,15 @@ public class MainActivity extends Activity {
             String answer = params[0];
             SurveyAnswer surveyAnswer = new Gson().fromJson(answer, SurveyAnswer.class);
             String session = surveyAnswer.getSession();
-            JsonObject result = HttpAPI.submitSurvey(id, session, answer);
+            JsonObject result = null;
+            try {
+                JsonElement jsonElement = HttpAPI.submitSurvey(id, session, answer, null);
+                if (jsonElement != null) {
+                    result = jsonElement.getAsJsonObject();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return result;
         }
 
@@ -489,7 +515,11 @@ public class MainActivity extends Activity {
                     if (answer != null) {
                         SurveyAnswer surveyAnswer = new Gson().fromJson(answer, SurveyAnswer.class);
                         String session = surveyAnswer.getSession();
-                        HttpAPI.submitSurvey(id, session, answer);
+                        try {
+                            HttpAPI.submitSurvey(id, session, answer, null);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

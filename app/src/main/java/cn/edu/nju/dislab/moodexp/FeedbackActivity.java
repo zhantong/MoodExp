@@ -10,7 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.io.IOException;
 
 import cn.edu.nju.dislab.moodexp.httputils.HttpAPI;
 
@@ -55,7 +58,15 @@ public class FeedbackActivity extends Activity {
         protected JsonObject doInBackground(String... params) {
             String id = MainApplication.getUserId();
             String feedback = params[0];
-            JsonObject result = HttpAPI.feedback(id, feedback);
+            JsonObject result = null;
+            try {
+                JsonElement jsonElement = HttpAPI.feedback(id, feedback, null);
+                if (jsonElement != null) {
+                    result = jsonElement.getAsJsonObject();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return result;
         }
 

@@ -10,7 +10,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonElement;
+
 import java.io.File;
+import java.io.IOException;
 
 import cn.edu.nju.dislab.moodexp.httputils.HttpAPI;
 
@@ -56,6 +59,7 @@ public class AboutActivity extends Activity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
+            boolean isUploadSuccess = false;
             File logDir = new File(getFilesDir(), "log");
             File[] files = logDir.listFiles();
             if (files != null) {
@@ -74,16 +78,20 @@ public class AboutActivity extends Activity {
                     } else {
                         uploadFilePath = file.getAbsolutePath();
                     }
-                    boolean isUploadSuccess = HttpAPI.uploadLog(uploadFilePath, id, version);
-                    if (!isUploadSuccess) {
-                        return false;
+                    try {
+                        JsonElement jsonElement = HttpAPI.uploadLog(uploadFilePath, id, version, null);
+                        if (jsonElement != null && jsonElement.getAsJsonObject().get("status").getAsBoolean()) {
+                            isUploadSuccess = true;
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                     if (gzipFile.exists()) {
                         gzipFile.delete();
                     }
                 }
             }
-            return true;
+            return isUploadSuccess;
         }
 
         @Override

@@ -13,9 +13,11 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.widget.Toast;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.File;
+import java.io.IOException;
 
 import cn.edu.nju.dislab.moodexp.httputils.HttpAPI;
 
@@ -47,7 +49,15 @@ public class CheckUpdate extends AsyncTask<Void, Void, JsonObject> {
     protected JsonObject doInBackground(Void... params) {
         String id = MainApplication.getUserId();
         String version = MainApplication.getVersionName();
-        JsonObject result = HttpAPI.checkUpdate(id, version);
+        JsonObject result = null;
+        try {
+            JsonElement jsonElement = HttpAPI.checkUpdate(id, version, null);
+            if (jsonElement != null) {
+                result = jsonElement.getAsJsonObject();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return result;
     }
 

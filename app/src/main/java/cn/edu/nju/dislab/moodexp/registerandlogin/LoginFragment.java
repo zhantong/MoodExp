@@ -16,7 +16,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.io.IOException;
 
 import cn.edu.nju.dislab.moodexp.R;
 import cn.edu.nju.dislab.moodexp.httputils.HttpAPI;
@@ -113,7 +116,15 @@ public class LoginFragment extends Fragment {
         @Override
         protected JsonObject doInBackground(String... params) {
             String id = params[0];
-            JsonObject studentInfo = HttpAPI.studentInfo(id);
+            JsonObject studentInfo = null;
+            try {
+                JsonElement jsonElement = HttpAPI.studentInfo(id, null);
+                if (jsonElement != null) {
+                    studentInfo = jsonElement.getAsJsonObject();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return studentInfo;
         }
 

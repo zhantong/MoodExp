@@ -16,7 +16,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.io.IOException;
 
 import cn.edu.nju.dislab.moodexp.R;
 import cn.edu.nju.dislab.moodexp.httputils.HttpAPI;
@@ -131,9 +134,25 @@ public class RegisterFragment extends Fragment {
             String name = params[1];
             String phone = params[2];
 
-            JsonObject registerResult = HttpAPI.register("0", name, id, phone);
+            JsonObject registerResult = null;
+            try {
+                JsonElement jsonElement = HttpAPI.register("0", name, id, phone, null);
+                if (jsonElement != null) {
+                    registerResult = jsonElement.getAsJsonObject();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             if (registerResult != null && registerResult.get("status").getAsBoolean()) {
-                JsonObject studentInfo = HttpAPI.studentInfo(id);
+                JsonObject studentInfo = null;
+                try {
+                    JsonElement jsonElement = HttpAPI.studentInfo(id, null);
+                    if (jsonElement != null) {
+                        studentInfo = jsonElement.getAsJsonObject();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return studentInfo;
             }
             return registerResult;
