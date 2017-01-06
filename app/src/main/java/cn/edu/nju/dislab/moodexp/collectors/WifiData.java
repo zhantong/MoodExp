@@ -25,7 +25,8 @@ public class WifiData {
                     Table.COLUMN_NAME_TIMESTAMP + " INTEGER)";
     private List<ScanResult> scanResults;
 
-    private static final Logger LOG = LoggerFactory.getLogger(SmsData.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WifiData.class);
+
     public WifiData() {
         scanResults = new ArrayList<>();
     }

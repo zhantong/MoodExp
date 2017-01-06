@@ -13,6 +13,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.BaseColumns;
@@ -286,12 +288,20 @@ public class ScheduledService extends Service implements Runnable {
     }
 
     public static boolean isNetworkConnected() {
-        return ((ConnectivityManager) MainApplication.getContext().getSystemService(CONNECTIVITY_SERVICE)).getActiveNetworkInfo() != null;
+        ConnectivityManager connectivityManager = (ConnectivityManager) MainApplication.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 
     public static boolean isWifiConnected() {
-        NetworkInfo activeNetwork = ((ConnectivityManager) MainApplication.getContext().getSystemService(CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-        return (activeNetwork != null) && (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI);
+        WifiManager wifiManager = (WifiManager) MainApplication.getContext().getSystemService(Context.WIFI_SERVICE);
+        if (wifiManager.isWifiEnabled()) {
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            if (wifiInfo != null && wifiInfo.getNetworkId() != -1) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean gzip(String inputFilePath, String outputFilePath) {
@@ -393,7 +403,7 @@ public class ScheduledService extends Service implements Runnable {
                     case "upload":
                         LOG.info("starting {}", type);
                         if (!isWifiConnected()) {
-                            LOG.info("{} finished because wifi connection", type);
+                            LOG.info("{} finished because no wifi connection", type);
                             break;
                         }
                         final String userId = MainApplication.getUserId();
@@ -475,6 +485,10 @@ public class ScheduledService extends Service implements Runnable {
                         break;
                     case "heartBeat":
                         LOG.info("starting {}", type);
+                        if (!isNetworkConnected()) {
+                            LOG.info("{} finished because no network", type);
+                            break;
+                        }
                         writeHeartBeatToDb();
                         new Thread(new Runnable() {
                             @Override
@@ -508,7 +522,7 @@ public class ScheduledService extends Service implements Runnable {
                         Calendar calendar = Calendar.getInstance();
                         int hour = calendar.get(Calendar.HOUR_OF_DAY);
                         if (hour < 9 || hour > 21) {
-                            LOG.info("{} finished because it's {} (21:00 - 9:00)");
+                            LOG.info("{} finished because it's {} (21:00 - 9:00)", type, hour);
                             break;
                         }
                         long lastNotification = 0;

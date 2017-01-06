@@ -28,7 +28,7 @@ public class RunningAppCollector {
     private UsageStatsManager mUsageStatsManager;
     private RunningAppData result;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ForegroundAppCollector.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RunningAppCollector.class);
 
     public RunningAppCollector() {
         this(MainApplication.getContext());
