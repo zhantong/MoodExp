@@ -7,8 +7,8 @@ android {
         applicationId "cn.edu.nju.dislab.moodexp"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 7
-        versionName "4.0.4b2"
+        versionCode 8
+        versionName "4.0.4b3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

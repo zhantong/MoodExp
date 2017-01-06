@@ -83,7 +83,7 @@ public class ScheduledService extends Service implements Runnable {
     private SQLiteDatabase readableDatabase;
     private SQLiteDatabase writableDatabase;
 
-    private static final Logger LOG = LoggerFactory.getLogger(MainApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScheduledService.class);
 
     public static Thread getCollectorThread(final String type, final SQLiteDatabase db) {
         return new Thread(new Runnable() {

@@ -32,6 +32,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,6 +56,8 @@ public class MainActivity extends Activity {
     private static final int REQUEST_CODE_SURVEY = 2;
     private static final int REQUEST_CODE_REGISTER_AND_LOGIN = 3;
     private SharedPreferences preferences;
+
+    private static final Logger LOG = LoggerFactory.getLogger(MainActivity.class);
 
     public static String convertStreamToString(InputStream is) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -393,12 +398,15 @@ public class MainActivity extends Activity {
         protected JsonObject doInBackground(Void... params) {
             JsonObject result = null;
             try {
+                LOG.info("requesting survey from server");
                 JsonElement jsonElement = HttpAPI.getSurvey(MainApplication.getUserId(), null);
                 if (jsonElement != null) {
                     result = jsonElement.getAsJsonObject();
+                } else {
+                    LOG.info("null survey");
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.info("error when requesting survey {}", e);
             }
             return result;
         }
