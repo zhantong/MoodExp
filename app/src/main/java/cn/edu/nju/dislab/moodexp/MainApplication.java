@@ -125,7 +125,7 @@ public class MainApplication extends Application {
 
         configureLogbackDirectly();
 
-        YunBaManager.setThirdPartyEnable(getApplicationContext(), true);
+/*        YunBaManager.setThirdPartyEnable(getApplicationContext(), true);
         YunBaManager.setXMRegister("2882303761517536019", "5531753647019");
         YunBaManager.start(getApplicationContext());
 
@@ -142,7 +142,7 @@ public class MainApplication extends Application {
             public void onFailure(IMqttToken arg0, Throwable arg1) {
                 Log.d(TAG, "Subscribe topic failed");
             }
-        });
+        });*/
     }
 
     @Override
