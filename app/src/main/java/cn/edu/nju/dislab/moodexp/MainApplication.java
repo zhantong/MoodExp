@@ -163,7 +163,7 @@ public class MainApplication extends Application {
         rollingFileAppender.setContext(context);
 
         TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new TimeBasedRollingPolicy<>();
-        rollingPolicy.setFileNamePattern(logDir + "/log.%d.txt");
+        rollingPolicy.setFileNamePattern(logDir + "/log.%d.txt.gz");
         rollingPolicy.setMaxHistory(2);
         rollingPolicy.setParent(rollingFileAppender);
         rollingPolicy.setContext(context);
