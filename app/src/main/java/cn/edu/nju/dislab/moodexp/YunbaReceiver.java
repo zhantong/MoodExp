@@ -30,7 +30,7 @@ public class YunbaReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (YunBaManager.MESSAGE_RECEIVED_ACTION.equals(intent.getAction())) {
+/*        if (YunBaManager.MESSAGE_RECEIVED_ACTION.equals(intent.getAction())) {
 
             String topic = intent.getStringExtra(YunBaManager.MQTT_TOPIC);
             String msgJson = intent.getStringExtra(YunBaManager.MQTT_MSG);
@@ -87,6 +87,6 @@ public class YunbaReceiver extends BroadcastReceiver {
                 }
             }
             applicationContext.startService(new Intent(applicationContext, ScheduledService.class));
-        }
+        }*/
     }
 }
