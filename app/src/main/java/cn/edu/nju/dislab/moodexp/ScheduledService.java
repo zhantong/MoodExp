@@ -405,7 +405,7 @@ public class ScheduledService extends Service implements Runnable {
                         }
                         LOG.info("finished {}", type);
                         break;
-                    case "upload":
+/*                    case "upload":
                         LOG.info("starting {}", type);
                         if (!isWifiConnected()) {
                             LOG.info("{} finished because no wifi connection", type);
@@ -468,7 +468,7 @@ public class ScheduledService extends Service implements Runnable {
                             }
                         }
                         LOG.info("finished {}", type);
-                        break;
+                        break;*/
                     case "newDb":
                         LOG.info("starting {}", type);
                         String currentUsingDb = null;
@@ -503,7 +503,7 @@ public class ScheduledService extends Service implements Runnable {
                         LOG.info("changed database successfully");
                         LOG.info("finished {}", type);
                         break;
-                    case "heartBeat":
+/*                    case "heartBeat":
                         LOG.info("starting {}", type);
                         if (!isNetworkConnected()) {
                             LOG.info("{} finished because no network", type);
@@ -535,7 +535,7 @@ public class ScheduledService extends Service implements Runnable {
                             LOG.info("sending heartbeat failed {}", e);
                         }
                         LOG.info("finished {}", type);
-                        break;
+                        break;*/
                     case "cleanUp":
                         LOG.info("starting {}", type);
                         try (Cursor cursorCheckUpload = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ? AND " + DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED + " = ? AND " + DbHelper.CollectDbTable.COLUMN_NAME_IS_DELETED + " = ?", new String[]{"0", "1", "0"}, null, null, null)) {

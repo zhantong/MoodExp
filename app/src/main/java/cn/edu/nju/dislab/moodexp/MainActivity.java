@@ -84,7 +84,7 @@ public class MainActivity extends Activity {
             if (MainApplication.getUserId().isEmpty()) {
                 checkRegisterAndLogin();
             }
-            //startScheduledService();
+            startScheduledService();
             new CheckUpdate(MainActivity.this, false).execute();
         }
 
@@ -435,7 +435,7 @@ public class MainActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            //startScheduledService();
+            startScheduledService();
             new CheckUpdate(MainActivity.this, false).execute();
         }
     }
