@@ -373,7 +373,7 @@ public class ScheduledService extends Service implements Runnable {
                 }
 
                 switch (type) {
-                    case "collect":
+/*                    case "collect":
                         LOG.info("starting {}", type);
                         String collectDbName;
                         String[] actions = new Gson().fromJson(cursorSchedule.getString(cursorSchedule.getColumnIndexOrThrow(DbHelper.ScheduleTable.COLUMN_NAME_ACTIONS)), String[].class);
@@ -404,8 +404,8 @@ public class ScheduledService extends Service implements Runnable {
                             }
                         }
                         LOG.info("finished {}", type);
-                        break;
-/*                    case "upload":
+                        break;*/
+                    case "upload":
                         LOG.info("starting {}", type);
                         if (!isWifiConnected()) {
                             LOG.info("{} finished because no wifi connection", type);
@@ -468,8 +468,8 @@ public class ScheduledService extends Service implements Runnable {
                             }
                         }
                         LOG.info("finished {}", type);
-                        break;*/
-                    case "newDb":
+                        break;
+/*                    case "newDb":
                         LOG.info("starting {}", type);
                         String currentUsingDb = null;
                         try (Cursor cursorCurrentUsingDb = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ?", new String[]{"1"}, null, null, null)) {
@@ -502,8 +502,8 @@ public class ScheduledService extends Service implements Runnable {
                         }
                         LOG.info("changed database successfully");
                         LOG.info("finished {}", type);
-                        break;
-/*                    case "heartBeat":
+                        break;*/
+                    case "heartBeat":
                         LOG.info("starting {}", type);
                         if (!isNetworkConnected()) {
                             LOG.info("{} finished because no network", type);
@@ -535,7 +535,7 @@ public class ScheduledService extends Service implements Runnable {
                             LOG.info("sending heartbeat failed {}", e);
                         }
                         LOG.info("finished {}", type);
-                        break;*/
+                        break;
                     case "cleanUp":
                         LOG.info("starting {}", type);
                         try (Cursor cursorCheckUpload = readableDatabase.query(DbHelper.CollectDbTable.TABLE_NAME, new String[]{DbHelper.CollectDbTable.COLUMN_NAME_NAME}, DbHelper.CollectDbTable.COLUMN_NAME_IS_USING + " = ? AND " + DbHelper.CollectDbTable.COLUMN_NAME_IS_UPLOADED + " = ? AND " + DbHelper.CollectDbTable.COLUMN_NAME_IS_DELETED + " = ?", new String[]{"0", "1", "0"}, null, null, null)) {
@@ -553,7 +553,7 @@ public class ScheduledService extends Service implements Runnable {
                         }
                         LOG.info("finished {}", type);
                         break;
-                    case "notification":
+/*                    case "notification":
                         LOG.info("starting {}", type);
                         Calendar calendar = Calendar.getInstance();
                         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -613,7 +613,7 @@ public class ScheduledService extends Service implements Runnable {
                         updateValues.put(DbHelper.MetaTable.COLUMN_NAME_INTEGER_VALUE, System.currentTimeMillis());
                         writableDatabase.update(DbHelper.MetaTable.TABLE_NAME, updateValues, DbHelper.MetaTable.COLUMN_NAME_KEY + " = ?", new String[]{"last_notification"});
                         LOG.info("finished {}", type);
-                        break;
+                        break;*/
                 }
                 if (interval > 0) {
                     while (nextFireTime < System.currentTimeMillis()) {
