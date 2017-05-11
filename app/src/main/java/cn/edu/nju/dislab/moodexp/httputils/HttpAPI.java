@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Callback;
@@ -207,6 +208,7 @@ public class HttpAPI {
                 .addQueryParameter("id", id)
                 .build();
         Request request = new Request.Builder()
+                .addHeader("Accept-Language", Locale.getDefault().getLanguage())
                 .url(url)
                 .build();
         if (callback != null) {
@@ -258,6 +260,7 @@ public class HttpAPI {
                 .addQueryParameter("id", id)
                 .build();
         Request request = new Request.Builder()
+                .addHeader("Accept-Language", Locale.getDefault().getLanguage())
                 .url(url)
                 .build();
         if (callback != null) {

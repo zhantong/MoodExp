@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MoodExp</string>
+    <string name="main_title">Emotional Questionnaire Survey of College Students</string>
+    <string name="do_survey">Fill in the questionnaire</string>
+    <string name="done">Finish</string>
+    <string name="feedback">Feedback</string>
+    <string name="view_history">View history</string>
+</resources>

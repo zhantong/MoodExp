@@ -60,7 +60,7 @@ public class QuestionFragment extends Fragment {
                 }
             });
             if (mIsLast) {
-                buttonNext.setText("完成");
+                buttonNext.setText(R.string.done);
             }
         }
 

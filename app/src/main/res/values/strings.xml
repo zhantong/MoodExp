@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MoodExp</string>
-    <string name="terms_and_notification">安装条款与用户须知</string>
-    <string name="terms_and_notification_hint">
+    <string name="terms_and_notification" translatable="false">安装条款与用户须知</string>
+    <string name="terms_and_notification_hint" translatable="false">
         1. 本应用主要用于情绪问卷调查研究。应用会收集手机传感器信息，GPS经纬度信息，环境声音分贝值，屏幕点亮熄灭时间，各个应用使用时间，通讯录和通话/短信记录中姓名和号码的随机哈希值等信息。所有信息经过匿名和加密处理，不会记录用户短信和通话的内容。
         \n
         \n
@@ -16,39 +16,39 @@
         \n
         5. 我们承诺所收集数据仅用于情绪问卷调查研究目的，不用作他用途。
     </string>
-    <string name="skip">跳过</string>
+    <string name="skip" translatable="false">跳过</string>
     <string name="done">完成</string>
-    <string name="background_and_boot_permission">后台与自启动权限</string>
-    <string name="background_and_boot_permission_hint">应用需要后台运行与自动启动权限，请在弹出的提示框中点击设置。</string>
-    <string name="setting_now">现在设置</string>
-    <string name="privacy_permission">应用权限</string>
-    <string name="privacy_permission_hint">应用在运行中需要申请定位、使用录音机、查看联系人等权限，请在弹出的权限申请中选择『默认允许』。</string>
-    <string name="usage_permission">使用情况权限</string>
-    <string name="usage_permission_hint">应用需要分析设备的使用情况，请在弹出的提示框中点击设置。</string>
-    <string name="register">注册</string>
-    <string name="login">登录</string>
-    <string name="student_id">学号</string>
-    <string name="student_id_or_user_id">学号／用户名</string>
-    <string name="name">姓名</string>
-    <string name="mail">邮箱</string>
-    <string name="phone_number">手机号</string>
-    <string name="about">关于</string>
-    <string name="display_version_name">版本：%1$s</string>
-    <string name="intro_page">引导页面</string>
-    <string name="logout">退出登录</string>
-    <string name="confirm_logout">确定退出登录吗？</string>
-    <string name="ok">确定</string>
-    <string name="cancel">取消</string>
-    <string name="next_question">下一题</string>
+    <string name="background_and_boot_permission" translatable="false">后台与自启动权限</string>
+    <string name="background_and_boot_permission_hint" translatable="false">应用需要后台运行与自动启动权限，请在弹出的提示框中点击设置。</string>
+    <string name="setting_now" translatable="false">现在设置</string>
+    <string name="privacy_permission" translatable="false">应用权限</string>
+    <string name="privacy_permission_hint" translatable="false">应用在运行中需要申请定位、使用录音机、查看联系人等权限，请在弹出的权限申请中选择『默认允许』。</string>
+    <string name="usage_permission" translatable="false">使用情况权限</string>
+    <string name="usage_permission_hint" translatable="false">应用需要分析设备的使用情况，请在弹出的提示框中点击设置。</string>
+    <string name="register" translatable="false">注册</string>
+    <string name="login" translatable="false">登录</string>
+    <string name="student_id" translatable="false">学号</string>
+    <string name="student_id_or_user_id" translatable="false">学号／用户名</string>
+    <string name="name" translatable="false">姓名</string>
+    <string name="mail" translatable="false">邮箱</string>
+    <string name="phone_number" translatable="false">手机号</string>
+    <string name="about" translatable="false">关于</string>
+    <string name="display_version_name" translatable="false">版本：%1$s</string>
+    <string name="intro_page" translatable="false">引导页面</string>
+    <string name="logout" translatable="false">退出登录</string>
+    <string name="confirm_logout" translatable="false">确定退出登录吗？</string>
+    <string name="ok" translatable="false">确定</string>
+    <string name="cancel" translatable="false">取消</string>
+    <string name="next_question" translatable="false">下一题</string>
     <string name="do_survey">填写问卷</string>
-    <string name="permission_intro_page">权限设置引导</string>
-    <string name="check_update">检查更新</string>
+    <string name="permission_intro_page" translatable="false">权限设置引导</string>
+    <string name="check_update" translatable="false">检查更新</string>
     <string name="main_title">大学生情绪问卷调查</string>
     <string name="view_history">查看历史</string>
-    <string name="submit_survey_answers_manually">手动提交问卷回答</string>
-    <string name="feedback_message">您的意见或建议对我们很宝贵</string>
-    <string name="submit_feedback">提交反馈</string>
+    <string name="submit_survey_answers_manually" translatable="false">手动提交问卷回答</string>
+    <string name="feedback_message" translatable="false">您的意见或建议对我们很宝贵</string>
+    <string name="submit_feedback" translatable="false">提交反馈</string>
     <string name="feedback">意见反馈</string>
-    <string name="crash_report">呃……APP崩溃了，崩溃报告已经发送给程序猿了，等着程序猿联系你吧！</string>
-    <string name="upload_log">上传诊断信息</string>
+    <string name="crash_report" translatable="false">呃……APP崩溃了，崩溃报告已经发送给程序猿了，等着程序猿联系你吧！</string>
+    <string name="upload_log" translatable="false">上传诊断信息</string>
 </resources>

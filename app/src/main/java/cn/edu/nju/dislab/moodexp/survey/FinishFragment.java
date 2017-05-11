@@ -37,7 +37,7 @@ public class FinishFragment extends QuestionFragment {
         super.onActivityCreated(savedInstanceState);
 
         Button buttonFinish = (Button) mView.findViewById(R.id.btn_next_question);
-        buttonFinish.setText("完成");
+        buttonFinish.setText(R.string.done);
         buttonFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
